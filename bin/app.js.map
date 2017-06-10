@@ -1,0 +1,8 @@
+{
+"version":3,
+"file":"app.js",
+"sourceRoot":"file:///",
+"sources":["/Users/matthijs/Documents/workingdir/haxe/hx-markdown-editor/src/App.hx"],
+"names":[],
+"mappings":";;;;WAYW,WAEH;AAAA,iBAAgB,WAAW;AAAA,EAEvB,+BAA0B,wBAAyB;EAEnD,WAAqB,AAAC,cAAW,iBAAkB;EAAnD,+BAAU,0BAAV;EACA,YAAiB,AAAC,UAAO;EAAzB,+BAAU,sBAAV;EACA,YAAmB,mBAAmB,MAAI;EAA1C,+BAAU,wBAAV;;;;;;;;"
+}
