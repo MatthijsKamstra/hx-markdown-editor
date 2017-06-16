@@ -7,17 +7,6 @@
 
 -resource src/assets/markdown.md@markdown00
 
---each
-
---next
--js bin/main.js
--main Main
-
---next
--js bin/hxmarkdowneditor.js
--main App
-
---next
 # Don't generate node.js version warning when -D hxnodejs-no-version-warning
 -D hxnodejs_no_version_warning
 -js docs/hxmarkdowneditor.js

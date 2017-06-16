@@ -4,14 +4,22 @@ if (process.version < "v4.0.0") console.warn("Module " + (typeof(module) == "und
 var Main = function() { };
 Main.main = function() {
 	electron_CrashReporter.start({ companyName : "hxelectron (not a company)", submitURL : "https://github.com/fponticelli/hxelectron/issues"});
-	electron_main_App.on("ready",function(e) {
-		var win = new electron_main_BrowserWindow({ width : 720, height : 480});
-		win.on("closed",function(e1) {
+	var mainWindow = null;
+	electron_main_App.on("window_all_closed",function(e) {
+		if(process.platform != "darwin") {
+			electron_main_App.quit();
+		}
+	});
+	electron_main_App.on("ready",function(e1) {
+		mainWindow = new electron_main_BrowserWindow({ width : 800, height : 600});
+		mainWindow.on("closed",function() {
 			if(process.platform != "darwin") {
 				electron_main_App.quit();
 			}
+			mainWindow = null;
 		});
-		win.loadURL("file://" + __dirname + "/app.html");
+		mainWindow.webContents.openDevTools();
+		mainWindow.loadURL("file://" + __dirname + "/index.html");
 	});
 };
 var electron_CrashReporter = require("electron").crashReporter;

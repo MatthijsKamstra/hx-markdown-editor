@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<link rel="icon" href="favicon.ico">
+
+		<title>Markdown Editor</title>
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<!-- <link rel="stylesheet" href="hxjsondef.css" > -->
+
+		<!-- custom css -->
+		<style type="text/css">
+
+		    html, body {
+			  	position: relative;
+			  	min-height: 100%;
+            	height: 100%;
+            	margin: 0;
+				padding: 0;
+			}
+
+			#hx-markdown-container{
+				height: 100%;
+				width: 100%;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+			}
+
+			#workbench_parts_title{
+				background-color: #505050;
+
+				box-sizing: border-box;
+				width: 100%;
+				font-size: 12px;
+				padding: 0 70px;
+				overflow: hidden;
+				flex-shrink: 0;
+				align-items: center;
+				justify-content: center;
+				-webkit-user-select: none;
+				-webkit-app-region: drag;
+				zoom: 1;
+				line-height: 22px;
+				height: 22px;
+				display: flex;
+			}
+			.window-title {
+				flex: 0 1 auto;
+				overflow: hidden;
+				white-space: nowrap;
+				line-height: 22px;
+				text-overflow: ellipsis;
+				-webkit-app-region: drag;
+				zoom: 1;
+				color: white;
+			}
+
+			#workbench_parts_editor_container{
+				width: 100%;
+				height: 100%;
+				display: inline-flex;
+			}
+
+			#workbench_parts_activitybar{
+				background-color: #353535;
+				display: inline-block;
+				width: 50px;
+				height: 100%;
+				color: white;
+			}
+			#workbench_parts_sidebar{
+				background-color: rgb(39, 39, 39);
+				width: 230px;
+				height: 100%;
+				top: 22px;
+				left: 50px;
+				position: absolute;
+				display: none;
+			}
+			#workbench_parts_editor{
+				width: 100%;
+				height: 100%;
+				display: inline-flex;
+			}
+			#workbench_parts_editor_one{
+				width: 50%;
+				height: 100%;
+				display: inline-flex;
+			}
+			#workbench_parts_editor_two{
+				width: 50%;
+				height: 100%;
+				display: inline-flex;
+			}
+
+			#in_markdown{
+				height: 100%;
+				background-color: #28282A;
+				border: 0;
+				border-radius: 0;
+				color: #CCCCCC;
+				padding: 15px;
+			    font-size: large;
+			}
+
+			#preview_markdown{
+				height: 100%;
+				overflow-y: scroll;
+				padding: 15px;
+			    font-size: large;
+			}
+
+			textarea {
+				outline: none;
+				resize: none;
+			}
+
+			input[type="file"] {
+				display: none;
+			}
+
+			.activitybar-btn{
+				cursor: pointer;
+				display: inline-block;
+				width: 50px;
+				height: 50px;
+				font-size: 25px;
+				color:white;
+				text-align: center;
+				padding: 10px;
+			}
+
+		</style>
+
+		<!-- Electron specific code -->
+		<!-- Insert this line above script imports  -->
+		<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+	</head>
+	<body>
+		<div id="hx-markdown-container">
+			<div id="workbench_parts_title" class="hidden">
+				<div class="window-title">hx-markdown-editor</div>
+			</div>
+			<div id="workbench_parts_editor_container">
+				<div id="workbench_parts_activitybar">
+					<label for="file-upload" class="custom-file-upload activitybar-btn">
+						<span class="glyphicon glyphicon-open-file" aria-hidden="true"></span>
+					</label>
+					<input id="file-upload" type="file" accept=".txt,.text,.md"/>
+					<a class="activitybar-btn" href="#" role="button" id="btn-save"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span></a>
+				</div>
+				<div id="workbench_parts_sidebar">sidebar</div>
+				<div id="workbench_parts_editor">
+					<div id="workbench_parts_editor_one">
+						<!--<div class="form-group">-->
+							<textarea id="in_markdown" class="form-control" rows="20" placeholder="What's up?" required></textarea>
+						<!--</div>-->
+					</div>
+					<div id="workbench_parts_editor_two">
+						<div class="formm-group">
+							<textarea id="out_markdown" class="form-control hidden" rows="20" placeholder="What's up?" required></textarea>
+							<div id="preview_markdown" ></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- https://github.com/eligrey/FileSaver.js/ -->
+		<script type="text/javascript" src="FileSaver.js"></script>
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>		<!-- Code generated using Haxe -->
+		<script type="text/javascript" src="hxmarkdowneditor.js"></script>
+
+		<!-- Insert this line after script imports -->
+		<script>if (window.module) module = window.module;</script>
+	</body>
+</html>
