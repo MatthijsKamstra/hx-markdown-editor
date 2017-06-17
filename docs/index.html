@@ -36,34 +36,6 @@
 				overflow: hidden;
 			}
 
-			#workbench_parts_title{
-				background-color: #505050;
-
-				box-sizing: border-box;
-				width: 100%;
-				font-size: 12px;
-				padding: 0 70px;
-				overflow: hidden;
-				flex-shrink: 0;
-				align-items: center;
-				justify-content: center;
-				-webkit-user-select: none;
-				-webkit-app-region: drag;
-				zoom: 1;
-				line-height: 22px;
-				height: 22px;
-				display: flex;
-			}
-			.window-title {
-				flex: 0 1 auto;
-				overflow: hidden;
-				white-space: nowrap;
-				line-height: 22px;
-				text-overflow: ellipsis;
-				-webkit-app-region: drag;
-				zoom: 1;
-				color: white;
-			}
 
 			#workbench_parts_editor_container{
 				width: 100%;
@@ -106,18 +78,15 @@
 			#in_markdown{
 				height: 100%;
 				background-color: #28282A;
-				border: 0;
-				border-radius: 0;
 				color: #CCCCCC;
+				overflow-y: scroll;
 				padding: 15px;
-			    font-size: large;
 			}
 
-			#preview_markdown{
+			#out_markdown{
 				height: 100%;
 				overflow-y: scroll;
 				padding: 15px;
-			    font-size: large;
 			}
 
 			textarea {
@@ -140,6 +109,11 @@
 				padding: 10px;
 			}
 
+
+			 remember to define focus styles!
+			:focus {
+			outline: 0;
+			}
 		</style>
 
 		<!-- Electron specific code -->
@@ -163,15 +137,10 @@
 				<div id="workbench_parts_sidebar">sidebar</div>
 				<div id="workbench_parts_editor">
 					<div id="workbench_parts_editor_one">
-						<!--<div class="form-group">-->
-							<textarea id="in_markdown" class="form-control" rows="20" placeholder="What's up?" required></textarea>
-						<!--</div>-->
+						<div id="in_markdown" contenteditable="true" spellcheck="true"></div>
 					</div>
 					<div id="workbench_parts_editor_two">
-						<div class="formm-group">
-							<textarea id="out_markdown" class="form-control hidden" rows="20" placeholder="What's up?" required></textarea>
-							<div id="preview_markdown" ></div>
-						</div>
+						<div id="out_markdown" ></div>
 					</div>
 				</div>
 			</div>

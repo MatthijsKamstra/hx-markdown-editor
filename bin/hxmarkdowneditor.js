@@ -10,29 +10,17 @@ function $extend(from, fields) {
 }
 var App = function() {
 	this.markdowExample2 = haxe_Resource.getString("markdown00");
-	this.markdowExample1 = "# heading 1\n\ntest";
 	var _gthis = this;
 	$(function() {
 		window.console.log("document ready");
-		$("#btn_convert").click($bind(_gthis,_gthis.onClick));
-		$("#btn_select").click($bind(_gthis,_gthis.onClick));
-		$("#example1").click($bind(_gthis,_gthis.onClick));
-		$("#example2").click($bind(_gthis,_gthis.onClick));
-		_gthis.inArea = $("#in_markdown");
-		_gthis.outArea = $("#out_markdown");
-		_gthis.inTextArea = js_Boot.__cast(window.document.getElementById("in_markdown") , HTMLTextAreaElement);
-		_gthis.outTextArea = js_Boot.__cast(window.document.getElementById("out_markdown") , HTMLTextAreaElement);
-		_gthis.previewArea = js_Boot.__cast(window.document.getElementById("preview_markdown") , HTMLDivElement);
-		_gthis.inTextArea.oninput = $bind(_gthis,_gthis.onChange);
+		_gthis.inMarkdown = window.document.getElementById("in_markdown");
+		_gthis.outMarkdown = window.document.getElementById("out_markdown");
+		_gthis.inMarkdown.oninput = $bind(_gthis,_gthis.onChange);
+		_gthis.inMarkdown.innerText = _gthis.markdowExample2;
 		_gthis.convert(_gthis.markdowExample2);
 		window.document.getElementById("file-upload").addEventListener("change",$bind(_gthis,_gthis.readSingleFile),false);
-		$("#btn-save").click(function(e) {
-			e.preventDefault();
-			var text = _gthis.inArea.val();
-			var filename = "test";
-			var blob = new Blob([text],{ type : "text/plain;charset=utf-8"});
-			saveAs(blob,filename + ".md");
-		});
+		window.document.getElementById("btn-save").addEventListener("click",$bind(_gthis,_gthis.onSaveHandler),false);
+		window.document.addEventListener("keydown",$bind(_gthis,_gthis.onKeydownHandler),false);
 	});
 };
 App.__name__ = true;
@@ -40,7 +28,77 @@ App.main = function() {
 	var app = new App();
 };
 App.prototype = {
-	readSingleFile: function(e) {
+	onSaveHandler: function(e) {
+		e.preventDefault();
+		var text = this.inMarkdown.innerText;
+		var filename = "foo";
+		var blob = new Blob([text],{ type : "text/plain;charset=utf-8"});
+		saveAs(blob,filename + ".md");
+	}
+	,onKeydownHandler: function(e) {
+		if(e.metaKey) {
+			var _g = e.key.toLowerCase();
+			switch(_g) {
+			case "1":
+				console.log("change to h1");
+				this.keyboardShortCut("1");
+				break;
+			case "2":
+				console.log("change to h2");
+				this.keyboardShortCut("2");
+				break;
+			case "3":
+				console.log("change to h3");
+				this.keyboardShortCut("3");
+				break;
+			case "4":
+				console.log("change to h4");
+				this.keyboardShortCut("4");
+				break;
+			case "5":
+				console.log("change to h5");
+				this.keyboardShortCut("5");
+				break;
+			case "6":
+				console.log("change to h6");
+				this.keyboardShortCut("6");
+				break;
+			case "b":
+				console.log("change to bold");
+				this.keyboardShortCut("b");
+				break;
+			case "i":
+				console.log("change to italic");
+				break;
+			case "o":
+				console.log("open");
+				break;
+			case "s":
+				console.log("save");
+				break;
+			}
+		}
+		var tmp = e.ctrlKey && e.keyCode == 40;
+	}
+	,keyboardShortCut: function(cmdKey) {
+		this.replaceSelectedText("**");
+	}
+	,replaceSelectedText: function(replacementText) {
+		var sel;
+		var range;
+		if(($_=window,$bind($_,$_.getSelection)) != null) {
+			sel = window.getSelection();
+			if(sel.rangeCount != null) {
+				range = sel.getRangeAt(0);
+				range.deleteContents();
+				range.insertNode(window.document.createTextNode(replacementText + Std.string(sel) + replacementText));
+			}
+		} else if(window.document.selection && window.document.selection.createRange) {
+			range = window.document.selection.createRange();
+			range.text = replacementText;
+		}
+	}
+	,readSingleFile: function(e) {
 		var _gthis = this;
 		var file = e.target.files[0];
 		if(file == null) {
@@ -54,40 +112,16 @@ App.prototype = {
 		reader.readAsText(file);
 	}
 	,displayContents: function(contents) {
-		this.inArea.val(contents);
+		this.inMarkdown.innerText = contents;
 		this.convert(contents);
 	}
 	,onChange: function(e) {
-		var str = $(e.currentTarget).val();
+		console.log("onChange: " + Std.string(e));
+		var str = this.inMarkdown.innerText;
 		this.convert(str);
 	}
 	,convert: function(str) {
-		this.inArea.val(str);
-		this.outArea.val(Markdown.markdownToHtml(str));
-		this.previewArea.innerHTML = Markdown.markdownToHtml(str);
-		this.outTextArea.scrollTop = this.outTextArea.scrollHeight;
-		this.outTextArea.select();
-	}
-	,selectAll: function() {
-		this.outTextArea.select();
-	}
-	,onClick: function(e) {
-		var id = e.currentTarget.id;
-		switch(id) {
-		case "btn_convert":
-			this.convert(this.inArea.val());
-			break;
-		case "btn_select":
-			this.selectAll();
-			break;
-		case "example1":
-			this.convert(this.markdowExample1);
-			break;
-		case "example2":
-			this.convert(this.markdowExample2);
-			break;
-		}
-		e.preventDefault();
+		this.outMarkdown.innerHTML = Markdown.markdownToHtml(str);
 	}
 	,__class__: App
 };
@@ -785,13 +819,6 @@ js_Boot.__instanceof = function(o,cl) {
 			return true;
 		}
 		return o.__enum__ == cl;
-	}
-};
-js_Boot.__cast = function(o,t) {
-	if(js_Boot.__instanceof(o,t)) {
-		return o;
-	} else {
-		throw new js__$Boot_HaxeError("Cannot cast " + Std.string(o) + " to " + Std.string(t));
 	}
 };
 js_Boot.__nativeClassName = function(o) {
