@@ -1,0 +1,18 @@
+{
+	"license": "MIT",
+	"name": "hx-markdown-editor",
+	"version": "0.0.1",
+	"description": "",
+	"private": true,
+	"author": "Matthijs Kamstra aka [mck]",
+	"scripts": {
+		"prewatch": "haxe build.hxml",
+		"watch": "onchange 'src/*.hx' 'src/*/*.hx' 'src/*/*/*.hx' 'src/*/*/*/*.hx' 'src/assets/*/*.css' 'src/assets/*/*.html' 'src/assets/*/*.md' -v -- haxe build.hxml & livereload docs/"
+	},
+	"dependencies": {
+	},
+	"devDependencies": {
+		"livereload": "0.6.0",
+		"onchange": "3.0.2"
+	}
+}
