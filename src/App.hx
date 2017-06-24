@@ -26,8 +26,9 @@ class App {
     var inMarkdown : DivElement;
 	var outMarkdown : DivElement;
 
-	var markdowExample1 : String = '# heading 1\n\nthis is a test piece of text just for testing\n\n## heading 2\n\njust because we can\n\n- one\n- two';
-	var markdowExample2 : String = haxe.Resource.getString("markdown00");
+	var markdowExample0 : String = haxe.Resource.getString("markdown00");
+	var markdowExample1 : String = haxe.Resource.getString("markdown01");
+	var markdowExample2 : String = haxe.Resource.getString("markdown02");
 
     public function new()
 	{
@@ -44,7 +45,7 @@ class App {
 			inMarkdown.oninput = onChange;
 			// inMarkdown.onchange = onChange;
 
-			var md = markdowExample1;
+			var md = markdowExample2;
 
 			inMarkdown.innerText = (md);
 			convert(md);
@@ -77,18 +78,24 @@ class App {
 			switch(e.key.toLowerCase()){
 				case '1':
 					trace('change to h1');
-					keyboardShortCut('1');
-				case '2': trace('change to h2'); keyboardShortCut('2');
-				case '3': trace('change to h3'); keyboardShortCut('3');
-				case '4': trace('change to h4'); keyboardShortCut('4');
-				case '5': trace('change to h5'); keyboardShortCut('5');
-				case '6': trace('change to h6'); keyboardShortCut('6');
+					keyboardShortCut(e,1);
+				case '2': trace('change to h2'); keyboardShortCut(e,2);
+				case '3': trace('change to h3'); keyboardShortCut(e,3);
+				case '4': trace('change to h4'); keyboardShortCut(e,4);
+				case '5': trace('change to h5'); keyboardShortCut(e,5);
+				case '6': trace('change to h6'); keyboardShortCut(e,6);
 				case 'b':
 					trace('change to bold');
 					wrap('**');
 				case 'i':
 					trace('change to italic');
 					wrap('_');
+				case 'k':
+					trace('change to inline code (k)');
+					wrap('`');
+				case '/':
+					trace('change to comment');
+					wrap('<!-- ', ' -->');
 				case 's': trace('save');
 				case 'o': trace('open');
 			}
@@ -99,27 +106,39 @@ class App {
 			// pauseSound();
 		}
 
-		// e.preventDefault();
-		// e.stopPropagation();
+
 	}
 
-	function keyboardShortCut(cmdKey:String){
+	function keyboardShortCut(e:KeyboardEvent,cmdKey:Int){
+		e.preventDefault();
+		e.stopPropagation();
 		// trace('vv '+getCaretPosition(inMarkdown));
 		// replaceSelectedText('**');
-		wrap('**');
+		var str = '';
+		var counter = 0;
+		while (counter<cmdKey){
+			str += '#';
+			counter++;
+		}
+		// wrap(str, '');
+		getCaretPosition();
+
 	}
 
-	function wrap(tag:String) {
+	function wrap(tag:String,?endtag:String) {
 		var sel, range;
 		var selectedText:String;
-
 		if (window.getSelection != null) {
 			sel = window.getSelection();
 			if (sel.rangeCount != null) {
 				range = sel.getRangeAt(0);
 				selectedText = Std.string(range);
 				range.deleteContents();
-				range.insertNode(document.createTextNode(tag + selectedText + tag));
+				if(endtag != null){
+					range.insertNode(document.createTextNode(tag + selectedText + endtag));
+				} else {
+					range.insertNode(document.createTextNode(tag + selectedText + tag));
+				}
 			}
 		}
 		// else if (document.selection && document.selection.createRange) {
@@ -127,73 +146,49 @@ class App {
 		// 	selectedText = document.selection.createRange().text + "";
 		// 	range.text = '[' + tag + ']' + selectedText + '[/' + tag + ']';
 		// }
-
+		onChange (null);
 	}
 
 
-	// function surroundSelection(wrapperText:String) {
-	// 	if (window.getSelection != null) {
-	// 		var sel = window.getSelection();
-	// 		if (sel.rangeCount != null) {
-	// 			var range = sel.getRangeAt(0).cloneRange();
-	// 			range.surroundContents(new Node(wrapperText));
-	// 			sel.removeAllRanges();
-	// 			sel.addRange(range);
-	// 		}
-	// 	}
-	// }
+	function getCaretPosition() {
+		var caretPos = 0;
+		var range;
+		var selection : Selection;
+		if (window.getSelection != null) {
+			selection = window.getSelection();
+			trace( 'selection: ' + selection );
+			trace(selection.anchorNode );
+			trace(selection.anchorOffset );
+			trace(selection.caretBidiLevel );
+			trace(selection.containsNode );
+			trace(selection.focusNode );
+			trace(selection.rangeCount );
+			// selection.extend(selection.anchorNode, 1000)
 
+			// var temp = untyped selection.setBaseAndExtent(selection.anchorNode, 0, selection.focusNode,0);
+			// trace(temp);
 
-	// function replaceSelectedText(replacementText:String) {
-	// 	var sel : Selection;
-	// 	var range : Range;
-	// 	var range2 : Range;
-	// 	if (window.getSelection != null) {
-	// 		sel = window.getSelection();
+			if (selection.rangeCount != null) {
+				range = selection.getRangeAt(0);
+				range.setStart(range.startContainer, range.startOffset - range.startOffset);
+				// range.collapse(true);
+				// caretPos = range.endOffset;
 
-	// 		trace(sel);
+				// range.setStart(range.startContainer, range.startOffset - 1);
+				// range.setEnd(range.endContainer, range.endOffset + 1);
 
-	// 		if (sel.rangeCount != null) {
-	// 			range = sel.getRangeAt(0);
-	// 			range2 = sel.getRangeAt(sel.focusOffset - sel.anchorOffset);
+				trace(untyped range.toString());
+				// var selectedContent = range.extractContents().textContent;
+				// trace(selectedContent);
+				// if (range.commonAncestorContainer.parentNode == editableDiv) {
+				// 	caretPos = range.endOffset;
+				// }
 
-	// 			// range.deleteContents();
-
-
-	// 			range.insertNode(document.createTextNode(replacementText));
-	// 			range2.insertNode(document.createTextNode(replacementText));
-
-
-	// 		}
-	// 	} else if (untyped document.selection && document.selection.createRange) {
-	// 		range = untyped document.selection.createRange();
-	// 		untyped range.text = replacementText;
-	// 	}
-	// }
-
-
-	// function getCaretPosition(editableDiv) {
-	// 	var caretPos = 0;
-	// 	var range;
-	// 	var selection : Selection;
-	// 	if (window.getSelection != null) {
-	// 		selection = window.getSelection();
-	// 		trace( 'selection: ' + selection );
-	// 		trace(selection.anchorNode );
-	// 		trace(selection.anchorOffset );
-	// 		trace(selection.caretBidiLevel );
-	// 		trace(selection.containsNode );
-	// 		trace(selection.focusNode );
-	// 		trace(selection.rangeCount );
-	// 		if (selection.rangeCount != null) {
-	// 			range = selection.getRangeAt(0);
-	// 			if (range.commonAncestorContainer.parentNode == editableDiv) {
-	// 				caretPos = range.endOffset;
-	// 			}
-	// 		}
-	// 	}
-	// 	return caretPos;
-	// }
+				range.insertNode(document.createTextNode('-->'));
+			}
+		}
+		return caretPos;
+	}
 
 	function readSingleFile(e) {
 		// trace(e);
