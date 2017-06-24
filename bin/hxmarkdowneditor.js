@@ -99,7 +99,7 @@ App.prototype = {
 			str += "#";
 			++counter;
 		}
-		this.getCaretPosition();
+		this.getCaretPosition(str);
 	}
 	,wrap: function(tag,endtag) {
 		var sel;
@@ -120,27 +120,20 @@ App.prototype = {
 		}
 		this.onChange(null);
 	}
-	,getCaretPosition: function() {
+	,getCaretPosition: function(tag) {
 		var caretPos = 0;
 		var range;
 		var selection;
 		if(($_=window,$bind($_,$_.getSelection)) != null) {
 			selection = window.getSelection();
-			console.log("selection: " + Std.string(selection));
-			console.log(selection.anchorNode);
-			console.log(selection.anchorOffset);
-			console.log(selection.caretBidiLevel);
-			console.log($bind(selection,selection.containsNode));
-			console.log(selection.focusNode);
-			console.log(selection.rangeCount);
 			if(selection.rangeCount != null) {
 				range = selection.getRangeAt(0);
 				range.setStart(range.startContainer,range.startOffset - range.startOffset);
 				console.log(range.toString());
-				range.insertNode(window.document.createTextNode("-->"));
+				range.insertNode(window.document.createTextNode("" + tag + " "));
 			}
 		}
-		return caretPos;
+		this.onChange(null);
 	}
 	,readSingleFile: function(e) {
 		var _gthis = this;

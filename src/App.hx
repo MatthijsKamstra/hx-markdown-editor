@@ -121,7 +121,7 @@ class App {
 			counter++;
 		}
 		// wrap(str, '');
-		getCaretPosition();
+		getCaretPosition(str);
 
 	}
 
@@ -150,24 +150,12 @@ class App {
 	}
 
 
-	function getCaretPosition() {
+	function getCaretPosition(tag:String) {
 		var caretPos = 0;
 		var range;
 		var selection : Selection;
 		if (window.getSelection != null) {
 			selection = window.getSelection();
-			trace( 'selection: ' + selection );
-			trace(selection.anchorNode );
-			trace(selection.anchorOffset );
-			trace(selection.caretBidiLevel );
-			trace(selection.containsNode );
-			trace(selection.focusNode );
-			trace(selection.rangeCount );
-			// selection.extend(selection.anchorNode, 1000)
-
-			// var temp = untyped selection.setBaseAndExtent(selection.anchorNode, 0, selection.focusNode,0);
-			// trace(temp);
-
 			if (selection.rangeCount != null) {
 				range = selection.getRangeAt(0);
 				range.setStart(range.startContainer, range.startOffset - range.startOffset);
@@ -184,10 +172,10 @@ class App {
 				// 	caretPos = range.endOffset;
 				// }
 
-				range.insertNode(document.createTextNode('-->'));
+				range.insertNode(document.createTextNode('${tag} '));
 			}
 		}
-		return caretPos;
+		onChange (null);
 	}
 
 	function readSingleFile(e) {

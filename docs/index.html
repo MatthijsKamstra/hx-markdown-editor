@@ -12,110 +12,23 @@
 
 		<title>Markdown Editor</title>
 
+
+		<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+
 		<!-- Latest compiled and minified CSS -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
 
-		<!-- <link rel="stylesheet" href="hxjsondef.css" > -->
+		<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
 
-		<!-- custom css -->
-		<style type="text/css">
+		<!-- custom-code -->
+		<link rel="stylesheet" href="css/normalize.css" >
+		<!-- sizes etc -->
+		<link rel="stylesheet" href="css/markdowneditor.css" >
+		<!-- #in_markdown -->
+		<link rel="stylesheet" href="css/styles/Github2.css" >
+		<!-- #out_markdow -->
+		<link rel="stylesheet" href="css/theme/default.css" >
 
-		    html, body {
-			  	position: relative;
-			  	min-height: 100%;
-            	height: 100%;
-            	margin: 0;
-				padding: 0;
-			}
-
-			#hx-markdown-container{
-				height: 100%;
-				width: 100%;
-				margin: 0;
-				padding: 0;
-				overflow: hidden;
-			}
-
-
-			#workbench_parts_editor_container{
-				width: 100%;
-				height: 100%;
-				display: inline-flex;
-			}
-
-			#workbench_parts_activitybar{
-				background-color: #353535;
-				display: inline-block;
-				width: 50px;
-				height: 100%;
-				color: white;
-			}
-			#workbench_parts_sidebar{
-				background-color: rgb(39, 39, 39);
-				width: 230px;
-				height: 100%;
-				top: 22px;
-				left: 50px;
-				position: absolute;
-				display: none;
-			}
-			#workbench_parts_editor{
-				width: 100%;
-				height: 100%;
-				display: inline-flex;
-			}
-			#workbench_parts_editor_one{
-				width: 50%;
-				height: 100%;
-				display: inline-flex;
-			}
-			#workbench_parts_editor_two{
-				width: 50%;
-				height: 100%;
-				display: inline-flex;
-			}
-
-			#in_markdown{
-				background-color: #28282A;
-				color: #CCCCCC;
-				height: 100%;
-				width: 100%;
-				overflow-y: scroll;
-				padding: 15px;
-			}
-
-			#out_markdown{
-				height: 100%;
-				width: 100%;
-				overflow-y: scroll;
-				padding: 15px;
-			}
-
-			textarea {
-				outline: none;
-				resize: none;
-			}
-
-			input[type="file"] {
-				display: none;
-			}
-
-			.activitybar-btn{
-				cursor: pointer;
-				display: inline-block;
-				width: 50px;
-				height: 50px;
-				font-size: 25px;
-				color:white;
-				text-align: center;
-				padding: 10px;
-			}
-
-
-			 remember to define focus styles!
-			:focus {
-			outline: 0;
-			}
 		</style>
 
 		<!-- Electron specific code -->
@@ -124,17 +37,21 @@
 
 	</head>
 	<body>
+
+
 		<div id="hx-markdown-container">
-			<div id="workbench_parts_title" class="hidden">
+			<div id="workbench_parts_title">
 				<div class="window-title">hx-markdown-editor</div>
 			</div>
 			<div id="workbench_parts_editor_container">
 				<div id="workbench_parts_activitybar">
-					<label for="file-upload" class="custom-file-upload activitybar-btn">
-						<span class="glyphicon glyphicon-open-file" aria-hidden="true"></span>
+					<label for="file-upload" class="custom-file-upload activitybar-btn" title="open">
+						<i class="fa fa-folder-open-o" aria-hidden="true"></i>
 					</label>
 					<input id="file-upload" type="file" accept=".txt,.text,.md"/>
-					<a class="activitybar-btn" href="#" role="button" id="btn-save"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span></a>
+					<a class="activitybar-btn" href="#" role="button" id="btn-save" title="save">
+						<i class="fa fa-floppy-o" aria-hidden="true"></i>
+					</a>
 				</div>
 				<div id="workbench_parts_sidebar">sidebar</div>
 				<div id="workbench_parts_editor">
