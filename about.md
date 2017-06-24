@@ -19,5 +19,7 @@ cmd + 5 | change to h5
 cmd + 6 | change to h6
 cmd + b | change to bold
 cmd + i | change to italic
+cmd + k | change to inline code
+cmd + / | change to comment
 cmd + s | save
 cmd + o | open
