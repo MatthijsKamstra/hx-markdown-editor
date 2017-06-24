@@ -6,6 +6,7 @@
 	"private": true,
 	"author": "Matthijs Kamstra aka [mck]",
 	"scripts": {
+		"electron": "haxe build.hxml & electron docs/",
 		"prewatch": "haxe build.hxml",
 		"watch": "onchange 'src/*.hx' 'src/*/*.hx' 'src/*/*/*.hx' 'src/*/*/*/*.hx' 'src/assets/*/*.css' 'src/assets/*/*.html' 'src/assets/*/*.md' -v -- haxe build.hxml & livereload docs/"
 	},

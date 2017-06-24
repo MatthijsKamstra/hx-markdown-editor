@@ -35,7 +35,8 @@ class App {
 		new JQuery( function():Void
 		{
 			// when document is ready
-			console.info('check https://github.com/MatthijsKamstra/hx-markdown-editor for more info');
+			console.info('This project is a WIP-sideproject written in Haxe (www.haxe.org)');
+			console.info('For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor');
 
 			inMarkdown = cast document.getElementById('in_markdown');
 			outMarkdown = cast document.getElementById('out_markdown');
