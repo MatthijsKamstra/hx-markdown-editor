@@ -12,16 +12,8 @@
 --each
 
 --next
--js bin/main.js
--main Main
-
---next
 -js docs/main.js
 -main Main
-
---next
--js bin/hxmarkdowneditor.js
--main App
 
 --next
 # Don't generate node.js version warning when -D hxnodejs-no-version-warning

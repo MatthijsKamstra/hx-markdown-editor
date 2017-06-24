@@ -1,7 +1,5 @@
 # todo
 
-
-
 - nice font
 - split screen
 - keyboard shortcuts
@@ -16,7 +14,7 @@
 - <http://layout.jquery-dev.com/index.cfm>
 
 
-Editor
+## Editor
 
 
 Spell check
