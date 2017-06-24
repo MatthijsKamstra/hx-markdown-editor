@@ -35,7 +35,7 @@ class App {
 		new JQuery( function():Void
 		{
 			// when document is ready
-			console.log('document ready');
+			console.info('check https://github.com/MatthijsKamstra/hx-markdown-editor for more info');
 
 			inMarkdown = cast document.getElementById('in_markdown');
 			outMarkdown = cast document.getElementById('out_markdown');

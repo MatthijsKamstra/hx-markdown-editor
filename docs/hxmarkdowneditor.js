@@ -11,7 +11,7 @@ var App = function() {
 	this.markdowExample2 = haxe_Resource.getString("markdown02");
 	var _gthis = this;
 	$(function() {
-		window.console.log("document ready");
+		window.console.info("check https://github.com/MatthijsKamstra/hx-markdown-editor for more info");
 		_gthis.inMarkdown = window.document.getElementById("in_markdown");
 		_gthis.outMarkdown = window.document.getElementById("out_markdown");
 		_gthis.inMarkdown.oninput = $bind(_gthis,_gthis.onChange);
