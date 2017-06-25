@@ -89,12 +89,12 @@ class AppMain {
 			switch(e.key.toLowerCase()){
 				case '1':
 					trace('change to h1');
-					keyboardShortCut(e,1);
-				case '2': trace('change to h2'); keyboardShortCut(e,2);
-				case '3': trace('change to h3'); keyboardShortCut(e,3);
-				case '4': trace('change to h4'); keyboardShortCut(e,4);
-				case '5': trace('change to h5'); keyboardShortCut(e,5);
-				case '6': trace('change to h6'); keyboardShortCut(e,6);
+					prefixLine(e,1);
+				case '2': trace('change to h2'); prefixLine(e,2);
+				case '3': trace('change to h3'); prefixLine(e,3);
+				case '4': trace('change to h4'); prefixLine(e,4);
+				case '5': trace('change to h5'); prefixLine(e,5);
+				case '6': trace('change to h6'); prefixLine(e,6);
 				case 'b':
 					trace('change to bold');
 					wrap('**');
@@ -118,7 +118,14 @@ class AppMain {
 		}
 	}
 
-	function keyboardShortCut(e:KeyboardEvent,cmdKey:Int){
+	/**
+	 *  add a tag at the beginning of the line
+	 *  like <h1>
+	 *
+	 *  @param e -
+	 *  @param cmdKey -
+	 */
+	function prefixLine(e:KeyboardEvent,cmdKey:Int){
 		e.preventDefault();
 		e.stopPropagation();
 		// trace('vv '+getCaretPosition(inMarkdown));
@@ -131,7 +138,6 @@ class AppMain {
 		}
 		// wrap(str, '');
 		getCaretPosition(str);
-
 	}
 
 	function wrap(tag:String,?endtag:String) {
@@ -174,7 +180,18 @@ class AppMain {
 				// range.setStart(range.startContainer, range.startOffset - 1);
 				// range.setEnd(range.endContainer, range.endOffset + 1);
 
-				trace(untyped range.toString());
+				// trace(untyped range.toString());
+
+				// trace(range.startContainer.textContent.indexOf('#'));
+				// var temp = range.startContainer.textContent;
+
+				// trace(temp.indexOf('e'));
+
+				// if (range.startContainer.textContent.indexOf('#') != -1){
+				// 	trace('hash');
+				// }
+
+
 				// var selectedContent = range.extractContents().textContent;
 				// trace(selectedContent);
 				// if (range.commonAncestorContainer.parentNode == editableDiv) {
@@ -186,9 +203,6 @@ class AppMain {
 		}
 		onBrowserChange (null);
 	}
-
-
-
 
 	function setWorkbench (content){
 		inMarkdownValue = content;
@@ -243,9 +257,9 @@ class AppMain {
 	}
 
 	function onBrowserChange (e:Event){
-		trace( 'onBrowserChange: ' + e );
+		// trace( 'onBrowserChange: ' + e );
 		var str = inMarkdown.innerText;
-		setWorkbench (str);
+		outMarkdownValue = str;
 	}
 
 	function onClick (e:Dynamic) {

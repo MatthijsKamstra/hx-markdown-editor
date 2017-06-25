@@ -44,27 +44,27 @@ AppMain.prototype = {
 				break;
 			case "1":
 				console.log("change to h1");
-				this.keyboardShortCut(e,1);
+				this.prefixLine(e,1);
 				break;
 			case "2":
 				console.log("change to h2");
-				this.keyboardShortCut(e,2);
+				this.prefixLine(e,2);
 				break;
 			case "3":
 				console.log("change to h3");
-				this.keyboardShortCut(e,3);
+				this.prefixLine(e,3);
 				break;
 			case "4":
 				console.log("change to h4");
-				this.keyboardShortCut(e,4);
+				this.prefixLine(e,4);
 				break;
 			case "5":
 				console.log("change to h5");
-				this.keyboardShortCut(e,5);
+				this.prefixLine(e,5);
 				break;
 			case "6":
 				console.log("change to h6");
-				this.keyboardShortCut(e,6);
+				this.prefixLine(e,6);
 				break;
 			case "b":
 				console.log("change to bold");
@@ -88,7 +88,7 @@ AppMain.prototype = {
 		}
 		var tmp = e.ctrlKey && e.keyCode == 40;
 	}
-	,keyboardShortCut: function(e,cmdKey) {
+	,prefixLine: function(e,cmdKey) {
 		e.preventDefault();
 		e.stopPropagation();
 		var str = "";
@@ -127,7 +127,6 @@ AppMain.prototype = {
 			if(selection.rangeCount != null) {
 				range = selection.getRangeAt(0);
 				range.setStart(range.startContainer,range.startOffset - range.startOffset);
-				console.log(range.toString());
 				range.insertNode(window.document.createTextNode("" + tag + " "));
 			}
 		}
@@ -158,9 +157,8 @@ AppMain.prototype = {
 		saveAs(blob,filename + ".md");
 	}
 	,onBrowserChange: function(e) {
-		console.log("onBrowserChange: " + Std.string(e));
 		var str = this.inMarkdown.innerText;
-		this.setWorkbench(str);
+		this.set_outMarkdownValue(str);
 	}
 	,set_inMarkdownValue: function(value) {
 		this.inMarkdown.innerText = value;
