@@ -1,0 +1,43 @@
+-lib markdown
+-lib electron
+-lib hxnodejs
+-cp src
+-dce full
+# -debug
+
+-resource src/assets/markdown00.md@markdown00
+-resource src/assets/markdown01.md@markdown01
+-resource src/assets/markdown02.md@markdown02
+
+--no-traces
+
+--each
+
+# copy `docs` folder to `bin` folder
+--next
+-cmd echo '[start] copy docs folder to bin folder'
+-cmd cp -R docs/ bin
+-cmd echo '[done] copy docs folder to bin folder'
+
+# electron starting point
+--next
+-js bin/main.js
+-main Main
+
+# starting point app in electron
+--next
+# Don't generate node.js version warning when -D hxnodejs-no-version-warning
+-D hxnodejs_no_version_warning
+-js bin/hxmarkdowneditor.js
+-main AppMain
+
+# browser version
+--next
+# Don't generate node.js version warning when -D hxnodejs-no-version-warning
+-D hxnodejs_no_version_warning
+-D browser
+-js docs/hxmarkdowneditor.js
+-main AppMain
+
+--next
+-cmd echo 'Haxe build [release] done'

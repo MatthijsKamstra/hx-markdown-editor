@@ -10,9 +10,10 @@ function $extend(from, fields) {
 var AppMain = function() {
 	this.markdowExample2 = haxe_Resource.getString("markdown02");
 	this.isElectron = false;
-	this.isElectron = false;
-	window.console.info("This project is a WIP-sideproject written in Haxe (www.haxe.org)");
-	window.console.info("For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor");
+	this.isElectron = true;
+	haxe_Log.trace("electron",{ fileName : "AppMain.hx", lineNumber : 47, className : "AppMain", methodName : "new", customParams : ["electron " + process.versions["electron"]]});
+	haxe_Log.trace("node",{ fileName : "AppMain.hx", lineNumber : 48, className : "AppMain", methodName : "new", customParams : ["node " + process.version]});
+	haxe_Log.trace("system",{ fileName : "AppMain.hx", lineNumber : 49, className : "AppMain", methodName : "new", customParams : [process.platform + " " + process.arch]});
 	this.init();
 };
 AppMain.__name__ = true;
@@ -29,8 +30,8 @@ AppMain.prototype = {
 			var md = _gthis.markdowExample2;
 			_gthis.set_inMarkdownValue(md);
 			_gthis.set_outMarkdownValue(md);
-			window.document.getElementById("btn-open").addEventListener("click",$bind(_gthis,_gthis.onBrowserFileOpenHandler),false);
-			window.document.getElementById("btn-save").addEventListener("click",$bind(_gthis,_gthis.onBrowserSaveHandler),false);
+			window.document.getElementById("btn-open").addEventListener("click",$bind(_gthis,_gthis.onFolderOpenHandler),false);
+			window.document.getElementById("btn-save").addEventListener("click",$bind(_gthis,_gthis.onSaveHandler),false);
 			window.document.addEventListener("keydown",$bind(_gthis,_gthis.onKeydownHandler),false);
 		});
 	}
@@ -39,50 +40,50 @@ AppMain.prototype = {
 			var _g = e.key.toLowerCase();
 			switch(_g) {
 			case "/":
-				console.log("change to comment");
+				haxe_Log.trace("change to comment",{ fileName : "AppMain.hx", lineNumber : 108, className : "AppMain", methodName : "onKeydownHandler"});
 				this.wrap("<!-- "," -->");
 				break;
 			case "1":
-				console.log("change to h1");
+				haxe_Log.trace("change to h1",{ fileName : "AppMain.hx", lineNumber : 91, className : "AppMain", methodName : "onKeydownHandler"});
 				this.keyboardShortCut(e,1);
 				break;
 			case "2":
-				console.log("change to h2");
+				haxe_Log.trace("change to h2",{ fileName : "AppMain.hx", lineNumber : 93, className : "AppMain", methodName : "onKeydownHandler"});
 				this.keyboardShortCut(e,2);
 				break;
 			case "3":
-				console.log("change to h3");
+				haxe_Log.trace("change to h3",{ fileName : "AppMain.hx", lineNumber : 94, className : "AppMain", methodName : "onKeydownHandler"});
 				this.keyboardShortCut(e,3);
 				break;
 			case "4":
-				console.log("change to h4");
+				haxe_Log.trace("change to h4",{ fileName : "AppMain.hx", lineNumber : 95, className : "AppMain", methodName : "onKeydownHandler"});
 				this.keyboardShortCut(e,4);
 				break;
 			case "5":
-				console.log("change to h5");
+				haxe_Log.trace("change to h5",{ fileName : "AppMain.hx", lineNumber : 96, className : "AppMain", methodName : "onKeydownHandler"});
 				this.keyboardShortCut(e,5);
 				break;
 			case "6":
-				console.log("change to h6");
+				haxe_Log.trace("change to h6",{ fileName : "AppMain.hx", lineNumber : 97, className : "AppMain", methodName : "onKeydownHandler"});
 				this.keyboardShortCut(e,6);
 				break;
 			case "b":
-				console.log("change to bold");
+				haxe_Log.trace("change to bold",{ fileName : "AppMain.hx", lineNumber : 99, className : "AppMain", methodName : "onKeydownHandler"});
 				this.wrap("**");
 				break;
 			case "i":
-				console.log("change to italic");
+				haxe_Log.trace("change to italic",{ fileName : "AppMain.hx", lineNumber : 102, className : "AppMain", methodName : "onKeydownHandler"});
 				this.wrap("_");
 				break;
 			case "k":
-				console.log("change to inline code (k)");
+				haxe_Log.trace("change to inline code (k)",{ fileName : "AppMain.hx", lineNumber : 105, className : "AppMain", methodName : "onKeydownHandler"});
 				this.wrap("`");
 				break;
 			case "o":
-				console.log("open");
+				haxe_Log.trace("open",{ fileName : "AppMain.hx", lineNumber : 111, className : "AppMain", methodName : "onKeydownHandler"});
 				break;
 			case "s":
-				console.log("save");
+				haxe_Log.trace("save",{ fileName : "AppMain.hx", lineNumber : 110, className : "AppMain", methodName : "onKeydownHandler"});
 				break;
 			}
 		}
@@ -127,7 +128,7 @@ AppMain.prototype = {
 			if(selection.rangeCount != null) {
 				range = selection.getRangeAt(0);
 				range.setStart(range.startContainer,range.startOffset - range.startOffset);
-				console.log(range.toString());
+				haxe_Log.trace(range.toString(),{ fileName : "AppMain.hx", lineNumber : 177, className : "AppMain", methodName : "getCaretPosition"});
 				range.insertNode(window.document.createTextNode("" + tag + " "));
 			}
 		}
@@ -137,30 +138,32 @@ AppMain.prototype = {
 		this.set_inMarkdownValue(content);
 		this.set_outMarkdownValue(content);
 	}
-	,onBrowserFileOpenHandler: function(e) {
+	,onFolderOpenHandler: function() {
 		var _gthis = this;
-		var file = e.target.files[0];
-		if(file == null) {
+		electron_renderer_IpcRenderer.send("OpenDialog",function() {
+			haxe_Log.trace("OpenDialog",{ fileName : "AppMain.hx", lineNumber : 203, className : "AppMain", methodName : "onFolderOpenHandler"});
+		});
+		electron_renderer_IpcRenderer.on("SEND_FILE_CONTENT",function(event,filepath,data) {
+			_gthis.currentFile = filepath;
+			_gthis.set_inMarkdownValue(data);
+		});
+	}
+	,onSaveHandler: function() {
+		if(this.currentFile == null) {
 			return;
 		}
-		var reader = new FileReader();
-		reader.onload = function(e1) {
-			var content = e1.target.result;
-			_gthis.setWorkbench(content);
-		};
-		reader.readAsText(file);
-	}
-	,onBrowserSaveHandler: function(e) {
-		e.preventDefault();
-		var text = this.inMarkdown.innerText;
-		var filename = "foo";
-		var blob = new Blob([text],{ type : "text/plain;charset=utf-8"});
-		saveAs(blob,filename + ".md");
+		electron_renderer_IpcRenderer.send("SAVE_FILE",this.currentFile,this.get_inMarkdownValue(),function() {
+			haxe_Log.trace("SAVE_FILE",{ fileName : "AppMain.hx", lineNumber : 215, className : "AppMain", methodName : "onSaveHandler"});
+		});
 	}
 	,onBrowserChange: function(e) {
-		console.log("onBrowserChange: " + Std.string(e));
+		haxe_Log.trace("onBrowserChange: " + Std.string(e),{ fileName : "AppMain.hx", lineNumber : 246, className : "AppMain", methodName : "onBrowserChange"});
 		var str = this.inMarkdown.innerText;
 		this.setWorkbench(str);
+	}
+	,get_inMarkdownValue: function() {
+		this.set_inMarkdownValue(this.inMarkdown.innerText);
+		return this.inMarkdownValue;
 	}
 	,set_inMarkdownValue: function(value) {
 		this.inMarkdown.innerText = value;
@@ -463,8 +466,14 @@ StringTools.trim = function(s) {
 StringTools.replace = function(s,sub,by) {
 	return s.split(sub).join(by);
 };
+var electron_renderer_IpcRenderer = require("electron").ipcRenderer;
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_Resource = function() { };
 haxe_Resource.__name__ = true;
 haxe_Resource.getString = function(name) {
@@ -695,6 +704,35 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg = i != null ? i.fileName + ":" + i.lineNumber + ": " : "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	var tmp;
+	if(typeof(document) != "undefined") {
+		d = document.getElementById("haxe:trace");
+		tmp = d != null;
+	} else {
+		tmp = false;
+	}
+	if(tmp) {
+		d.innerHTML += js_Boot.__unhtml(msg) + "<br/>";
+	} else if(typeof console != "undefined" && console.log != null) {
+		console.log(msg);
+	}
+};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) {
 		return Array;
@@ -881,6 +919,7 @@ js_Boot.__isNativeObj = function(o) {
 js_Boot.__resolveNativeClass = function(name) {
 	return $global[name];
 };
+var js_node_buffer_Buffer = require("buffer").Buffer;
 var markdown_Node = function() { };
 markdown_Node.__name__ = true;
 markdown_Node.prototype = {

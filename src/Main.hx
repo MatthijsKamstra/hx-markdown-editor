@@ -128,7 +128,7 @@ class Main {
 
 			IpcMain.on(Channel.SAVE_FILE, function (event, filepath, content){
 
-				trace(filepath,content);
+				// trace(filepath,content);
 
 				Fs.writeFile(filepath, content, function (err) {
 					if (err != null) {

@@ -6,11 +6,11 @@
 	"private": true,
 	"author": "Matthijs Kamstra aka [mck]",
 	"scripts": {
-		"prewatch": "haxe build.hxml",
-		"haxebuild": "haxe build.hxml",
-		"watch": "onchange 'src/*.hx' 'src/*/*.hx' 'src/*/*/*.hx' 'src/*/*/*/*.hx' 'src/assets/*/*.css' 'src/assets/*/*.html' 'src/assets/*/*.md' -v -- haxe build.hxml & livereload docs/ && electron docs/",
-		"electronbuild": "electron docs/",
-		"electron": "haxe build.hxml && electron docs/"
+		"prewatch": "haxe build_debug.hxml",
+		"haxebuild": "haxe build_debug.hxml",
+		"watch": "onchange 'src/*.hx' 'src/*/*.hx' 'src/*/*/*.hx' 'src/*/*/*/*.hx' 'src/assets/*/*.css' 'src/assets/*/*.html' 'src/assets/*/*.md' -v -- haxe build_debug.hxml & livereload docs/ && electron docs/",
+		"electronbuild": "electron bin/",
+		"electron": "haxe build_debug.hxml && electron bin/"
 	},
 	"dependencies": {
 	},

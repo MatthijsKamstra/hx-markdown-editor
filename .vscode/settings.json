@@ -1,5 +1,5 @@
 {
     "haxe.displayConfigurations": [
-        ["build_js.hxml"]
+        ["build_vscode.hxml"]
     ]
 }

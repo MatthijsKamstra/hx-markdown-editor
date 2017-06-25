@@ -6,82 +6,55 @@ import js.html.*;
 import js.html.KeyboardEvent;
 import js.html.Selection;
 
-import js.Browser.*;
 import js.Browser.console;
 import js.Browser.document;
 import js.Browser.window;
 
-
-import model.constant.Channel;
-
-
 import js.html.FileReader;
 import js.html.Blob;
 
-import Markdown;
-
-import js.Node;
+#if (!browser)
 import js.Node.process;
 import electron.renderer.IpcRenderer;
-import electron.renderer.Remote;
+#end
+
+import Markdown;
+import model.constant.Channel;
 
 class AppMain {
 
+	var isElectron = false;
+	var currentFile:String;
+
     var inMarkdown : DivElement;
 	var outMarkdown : DivElement;
+
+	@:isVar public var inMarkdownValue(get, set):String;
+	@:isVar public var outMarkdownValue(get, set):String;
 
 	var markdowExample0 : String = haxe.Resource.getString("markdown00");
 	var markdowExample1 : String = haxe.Resource.getString("markdown01");
 	var markdowExample2 : String = haxe.Resource.getString("markdown02");
 
-	var isElectron = false;
-
-	@:isVar public var inMarkdownValue(get, set):String;
-	@:isVar public var outMarkdownValue(get, set):String;
-
-
-	var currentFile:String;
-
-
     public function new(){
 
-		if(process.versions['electron'] != null) isElectron = true;
-
+		#if (browser)
+		isElectron = false;
+		console.info('This project is a WIP-sideproject written in Haxe (www.haxe.org)');
+		console.info('For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor');
+		#else
+		isElectron = true;
 		trace( 'electron', 'electron '+process.versions['electron'] );
 		trace( 'node', 'node '+process.version );
 		trace( 'system', process.platform +' '+ process.arch );
+		#end
 
 		init();
-
-
-		// IpcRenderer.send('show-dialog', {
-		// 	type: 'info'
-		// });
-
-		// IpcRenderer.on('doorBell', function(event, arg) {
-		// 	trace(arg); // prints "dong"
-		// 	// console.log(arg); // prints "dong"
-		// });
-		// IpcRenderer.send('doorBell', 'ding');
-
-
-		// console.log(IpcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
-
-		// IpcRenderer.on('asynchronous-reply', function(event, arg) {
-		// 	trace(arg); // prints "pong"
-		// 	// console.log(arg); // prints "pong"
-		// });
-		// IpcRenderer.send('asynchronous-message', 'ping');
-
-
 	}
 
 	function init(){
-		new JQuery( function():Void
-		{
+		new JQuery( function():Void {
 			// when document is ready
-			console.info('This project is a WIP-sideproject written in Haxe (www.haxe.org)');
-			console.info('For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor');
 
 			inMarkdown = cast document.getElementById('in_markdown');
 			outMarkdown = cast document.getElementById('out_markdown');
@@ -92,45 +65,24 @@ class AppMain {
 			// inMarkdown.onBrowserChange = onBrowserChange;
 
 			var md = markdowExample2;
-
 			inMarkdownValue = md;
 			outMarkdownValue = md;
 
 			// register the handler
-			// document.getElementById('file-upload').addEventListener('change', onFolderOpenHandler, false);
+			#if (browser)
+			document.getElementById('btn-open').addEventListener('click', onBrowserFileOpenHandler, false);
+			document.getElementById('btn-save').addEventListener('click', onBrowserSaveHandler, false);
+			#else
 			document.getElementById('btn-open').addEventListener('click', onFolderOpenHandler, false);
 			document.getElementById('btn-save').addEventListener('click', onSaveHandler, false);
+			#end
 			document.addEventListener('keydown', onKeydownHandler, false);
-
 		});
 	}
-
-
-
-	function onFolderOpenHandler(){
-		IpcRenderer.send(Channel.OPEN_DIALOG, function (){
-			trace('test');
-		});
-		IpcRenderer.on(Channel.SEND_FILE_CONTENT, function(event,filepath, data) {
-			trace(filepath);
-			currentFile = filepath;
-			inMarkdownValue = data;
-		});
-	}
-
-	function onSaveHandler(){
-		IpcRenderer.send(Channel.SAVE_FILE, currentFile, inMarkdownValue,  function (){
-			trace('test');
-		});
-	}
-
-
-
 
 	// define a handler
 	function onKeydownHandler(e:KeyboardEvent) {
 		// trace(e);
-
 
 		// CMD
 		if(e.metaKey){
@@ -164,8 +116,6 @@ class AppMain {
 			// call your function to do the thing
 			// pauseSound();
 		}
-
-
 	}
 
 	function keyboardShortCut(e:KeyboardEvent,cmdKey:Int){
@@ -244,6 +194,28 @@ class AppMain {
 		inMarkdownValue = content;
 		outMarkdownValue = content;
 	}
+
+	// ____________________________________ electron calls ____________________________________
+
+	#if !browser
+	function onFolderOpenHandler(){
+		IpcRenderer.send(Channel.OPEN_DIALOG, function (){
+			trace('${Channel.OPEN_DIALOG}');
+		});
+		IpcRenderer.on(Channel.SEND_FILE_CONTENT, function(event, filepath, data) {
+			// trace(filepath);
+			currentFile = filepath;
+			inMarkdownValue = data;
+		});
+	}
+
+	function onSaveHandler(){
+		if(currentFile == null) return;
+		IpcRenderer.send(Channel.SAVE_FILE, currentFile, inMarkdownValue,  function (){
+			trace('${Channel.SAVE_FILE}');
+		});
+	}
+	#end
 
 	// ____________________________________ handlers ____________________________________
 
