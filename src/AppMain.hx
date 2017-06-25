@@ -6,22 +6,26 @@ import js.html.*;
 import js.html.KeyboardEvent;
 import js.html.Selection;
 
-
-
-
-import js.Browser;
+import js.Browser.*;
 import js.Browser.console;
 import js.Browser.document;
 import js.Browser.window;
 
-// import js.Node.process;
+
+import model.constant.Channel;
+
 
 import js.html.FileReader;
 import js.html.Blob;
 
 import Markdown;
 
-class App {
+import js.Node;
+import js.Node.process;
+import electron.renderer.IpcRenderer;
+import electron.renderer.Remote;
+
+class AppMain {
 
     var inMarkdown : DivElement;
 	var outMarkdown : DivElement;
@@ -30,8 +34,49 @@ class App {
 	var markdowExample1 : String = haxe.Resource.getString("markdown01");
 	var markdowExample2 : String = haxe.Resource.getString("markdown02");
 
-    public function new()
-	{
+	var isElectron = false;
+
+	@:isVar public var inMarkdownValue(get, set):String;
+	@:isVar public var outMarkdownValue(get, set):String;
+
+
+	var currentFile:String;
+
+
+    public function new(){
+
+		if(process.versions['electron'] != null) isElectron = true;
+
+		trace( 'electron', 'electron '+process.versions['electron'] );
+		trace( 'node', 'node '+process.version );
+		trace( 'system', process.platform +' '+ process.arch );
+
+		init();
+
+
+		// IpcRenderer.send('show-dialog', {
+		// 	type: 'info'
+		// });
+
+		// IpcRenderer.on('doorBell', function(event, arg) {
+		// 	trace(arg); // prints "dong"
+		// 	// console.log(arg); // prints "dong"
+		// });
+		// IpcRenderer.send('doorBell', 'ding');
+
+
+		// console.log(IpcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
+
+		// IpcRenderer.on('asynchronous-reply', function(event, arg) {
+		// 	trace(arg); // prints "pong"
+		// 	// console.log(arg); // prints "pong"
+		// });
+		// IpcRenderer.send('asynchronous-message', 'ping');
+
+
+	}
+
+	function init(){
 		new JQuery( function():Void
 		{
 			// when document is ready
@@ -41,32 +86,45 @@ class App {
 			inMarkdown = cast document.getElementById('in_markdown');
 			outMarkdown = cast document.getElementById('out_markdown');
 
-			// inMarkdown.onkeydown = onChange;
-			// inMarkdown.onpaste = onChange;
-			inMarkdown.oninput = onChange;
-			// inMarkdown.onchange = onChange;
+			// inMarkdown.onkeydown = onBrowserChange;
+			// inMarkdown.onpaste = onBrowserChange;
+			inMarkdown.oninput = onBrowserChange;
+			// inMarkdown.onBrowserChange = onBrowserChange;
 
 			var md = markdowExample2;
 
-			inMarkdown.innerText = (md);
-			convert(md);
+			inMarkdownValue = md;
+			outMarkdownValue = md;
 
 			// register the handler
-			document.getElementById('file-upload').addEventListener('change', readSingleFile, false);
+			// document.getElementById('file-upload').addEventListener('change', onFolderOpenHandler, false);
+			document.getElementById('btn-open').addEventListener('click', onFolderOpenHandler, false);
 			document.getElementById('btn-save').addEventListener('click', onSaveHandler, false);
 			document.addEventListener('keydown', onKeydownHandler, false);
 
 		});
 	}
 
-	function onSaveHandler(e:Event){
-		e.preventDefault();
-		var text = inMarkdown.innerText;
-		// var filename = $("#input-fileName").val();
-		var filename = 'foo';
-		var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
-		untyped saveAs(blob, filename+".md");
+
+
+	function onFolderOpenHandler(){
+		IpcRenderer.send(Channel.OPEN_DIALOG, function (){
+			trace('test');
+		});
+		IpcRenderer.on(Channel.SEND_FILE_CONTENT, function(event,filepath, data) {
+			trace(filepath);
+			currentFile = filepath;
+			inMarkdownValue = data;
+		});
 	}
+
+	function onSaveHandler(){
+		IpcRenderer.send(Channel.SAVE_FILE, currentFile, inMarkdownValue,  function (){
+			trace('test');
+		});
+	}
+
+
 
 
 	// define a handler
@@ -147,7 +205,7 @@ class App {
 		// 	selectedText = document.selection.createRange().text + "";
 		// 	range.text = '[' + tag + ']' + selectedText + '[/' + tag + ']';
 		// }
-		onChange (null);
+		onBrowserChange (null);
 	}
 
 
@@ -176,10 +234,20 @@ class App {
 				range.insertNode(document.createTextNode('${tag} '));
 			}
 		}
-		onChange (null);
+		onBrowserChange (null);
 	}
 
-	function readSingleFile(e) {
+
+
+
+	function setWorkbench (content){
+		inMarkdownValue = content;
+		outMarkdownValue = content;
+	}
+
+	// ____________________________________ handlers ____________________________________
+
+	function onBrowserFileOpenHandler(e) {
 		// trace(e);
 		var file : Blob = e.target.files[0];
 		if (file == null) {
@@ -187,70 +255,72 @@ class App {
 		}
 		var reader = new FileReader();
 		reader.onload = function(e) {
-			var contents = e.target.result;
-			displayContents(contents);
+			var content = e.target.result;
+			setWorkbench(content);
 		};
 		reader.readAsText(file);
 	}
 
-	function displayContents(contents) {
-		// trace(contents);
-		inMarkdown.innerText = contents;
-		convert (contents);
+	function onBrowserSaveHandler(e:Event){
+		e.preventDefault();
+		var text = inMarkdown.innerText;
+		// var filename = $("#input-fileName").val();
+		var filename = 'foo';
+		var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+		untyped saveAs(blob, filename+".md");
 	}
 
-	function onChange (e:Event){
-		trace( 'onChange: ' + e );
+	function onBrowserChange (e:Event){
+		trace( 'onBrowserChange: ' + e );
 		var str = inMarkdown.innerText;
-
-		// trace(str);
-		convert (str);
+		setWorkbench (str);
 	}
 
-	function convert ( str )
-	{
-		// inMarkdown.innerText = (str);
-		// outMarkdown.innerText = (Markdown.markdownToHtml(str));
-		outMarkdown.innerHTML = (Markdown.markdownToHtml(str));
-
-		// previewArea.scrollTop = outTextArea.scrollHeight;
-		// previewArea.select();
-	}
-
-	// function selectAll():Void {
-	// 	previewArea.select();
-	// }
-
-	private function onClick (e:Dynamic) : Void
-	{
+	function onClick (e:Dynamic) {
 		var id = e.currentTarget.id;
 		switch (id) {
-			case "example1": convert(markdowExample1);
-			case "example2": convert(markdowExample2);
-			case "btn_convert": convert(inMarkdown.innerText);
+			case "example1": setWorkbench(markdowExample1);
+			case "example2": setWorkbench(markdowExample2);
+			case "btn_convert": setWorkbench(inMarkdown.innerText);
 			// case "btn_select": selectAll();
 		}
 		e.preventDefault();
 	}
 
-	static public function main(){
-		var app = new App();
+	// ____________________________________ getter/setter ____________________________________
+
+	/**
+	 *  the original markdown
+	 *
+	 *  @return String
+	 */
+	function get_inMarkdownValue():String {
+		inMarkdownValue = inMarkdown.innerText;
+		return inMarkdownValue;
+	}
+	function set_inMarkdownValue(value:String):String {
+		inMarkdown.innerText = value;
+		return inMarkdownValue = value;
 	}
 
-    // static inline function setText( id : String, text : String ) {
-    //     document.getElementById( id ).textContent = text;
-    // }
+	/**
+	 *  return the generated html from markdown
+	 *
+	 *  @return String
+	 */
+	function get_outMarkdownValue():String {
+		outMarkdownValue = Markdown.markdownToHtml(inMarkdownValue);
+		return outMarkdownValue;
+	}
+	function set_outMarkdownValue(value:String):String {
+		outMarkdown.innerHTML = (Markdown.markdownToHtml(value));
+		return outMarkdownValue = value;
+	}
 
-    // static function main() {
+	// ____________________________________ main ____________________________________
 
-    //     window.onload = function() {
-
-    //         document.getElementById( 'logo' ).style.opacity = '1';
-
-    //         setText( 'electron', 'electron '+process.versions['electron'] );
-    //         setText( 'node', 'node '+process.version );
-    //         setText( 'system', process.platform +' '+ process.arch );
-    //     }
-    // }
+	static public function main(){
+		var app = new AppMain();
+	}
 
 }

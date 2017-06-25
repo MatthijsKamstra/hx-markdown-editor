@@ -12,4 +12,4 @@
 # Don't generate node.js version warning when -D hxnodejs-no-version-warning
 -D hxnodejs_no_version_warning
 -js docs/hxmarkdowneditor.js
--main App
+-main AppMain

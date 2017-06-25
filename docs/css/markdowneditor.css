@@ -114,5 +114,13 @@ buttons
 .activitybar-btn:hover{
 	opacity: 1;
 }
-
+.activitybar-top{
+	top:0px;
+}
+.activitybar-bottom{
+	bottom:0px;
+	display: block;
+    position: absolute;
+    width: 50px;
+}
 
