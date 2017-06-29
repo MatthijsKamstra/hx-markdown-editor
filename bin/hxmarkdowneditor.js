@@ -154,7 +154,7 @@ AppMain.prototype = {
 	,onFolderOpenHandler: function() {
 		var _gthis = this;
 		electron_renderer_IpcRenderer.send("OpenDialog",function() {
-			haxe_Log.trace("OpenDialog",{ fileName : "AppMain.hx", lineNumber : 218, className : "AppMain", methodName : "onFolderOpenHandler"});
+			haxe_Log.trace("OpenDialog",{ fileName : "AppMain.hx", lineNumber : 216, className : "AppMain", methodName : "onFolderOpenHandler"});
 		});
 		electron_renderer_IpcRenderer.on("SEND_FILE_CONTENT",function(event,filepath,data) {
 			_gthis.currentFile = filepath;
@@ -166,7 +166,7 @@ AppMain.prototype = {
 			return;
 		}
 		electron_renderer_IpcRenderer.send("SAVE_FILE",this.currentFile,this.get_inMarkdownValue(),function() {
-			haxe_Log.trace("SAVE_FILE",{ fileName : "AppMain.hx", lineNumber : 230, className : "AppMain", methodName : "onSaveHandler"});
+			haxe_Log.trace("SAVE_FILE",{ fileName : "AppMain.hx", lineNumber : 228, className : "AppMain", methodName : "onSaveHandler"});
 		});
 	}
 	,onBrowserChange: function(e) {

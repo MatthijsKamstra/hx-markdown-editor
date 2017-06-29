@@ -190,14 +190,12 @@ class AppMain {
 				range.setStart(range.startContainer, range.startOffset - range.startOffset);
 				range.setEnd(range.endContainer, untyped range.endContainer.length);
 				var wholeText : String = untyped range.startContainer.wholeText;
-				// trace(wholeText.charAt(0));
 				range.deleteContents();
 				if(wholeText.charAt(0) == '#'){
 					while (wholeText.charAt(0) == '#') {
 						wholeText = wholeText.substring(1);
 					}
 				}
-
 				range.insertNode(document.createTextNode('${tag} ${wholeText.ltrim()}'));
 				range.collapse();
 			}
