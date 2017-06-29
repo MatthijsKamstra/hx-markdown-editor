@@ -1,4 +1,4 @@
-#out_markdown {
+.out-markdown {
   font-family: Helvetica, arial, sans-serif;
   font-size: 14px;
   line-height: 1.6;
@@ -8,9 +8,9 @@
   padding: 30px;
 }
 
-#out_markdown > *:first-child {
+.out-markdown > *:first-child {
   margin-top: 0 !important; }
-#out_markdown > *:last-child {
+.out-markdown > *:last-child {
   margin-bottom: 0 !important; }
 
 a {
@@ -90,16 +90,16 @@ hr {
   padding: 0;
 }
 
-#out_markdown > h2:first-child {
+.out-markdown > h2:first-child {
   margin-top: 0;
   padding-top: 0; }
-#out_markdown > h1:first-child {
+.out-markdown > h1:first-child {
   margin-top: 0;
   padding-top: 0; }
-  #out_markdown > h1:first-child + h2 {
+  .out-markdown > h1:first-child + h2 {
     margin-top: 0;
     padding-top: 0; }
-#out_markdown > h3:first-child, #out_markdown > h4:first-child, #out_markdown > h5:first-child, #out_markdown > h6:first-child {
+.out-markdown > h3:first-child, .out-markdown > h4:first-child, .out-markdown > h5:first-child, .out-markdown > h6:first-child {
   margin-top: 0;
   padding-top: 0; }
 
@@ -283,7 +283,7 @@ sup {
 	-webkit-print-color-adjust: exact;
 }
 @media screen and (min-width: 914px) {
-    #out_markdown {
+    .out-markdown {
         width: 854px;
         margin:0 auto;
     }
