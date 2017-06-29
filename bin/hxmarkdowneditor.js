@@ -10,10 +10,12 @@ function $extend(from, fields) {
 var AppMain = function() {
 	this.markdowExample2 = haxe_Resource.getString("markdown02");
 	this.isElectron = false;
+	window.console.info("This project is a WIP-sideproject written in Haxe (www.haxe.org)");
+	window.console.info("For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor");
 	this.isElectron = true;
-	haxe_Log.trace("electron",{ fileName : "AppMain.hx", lineNumber : 47, className : "AppMain", methodName : "new", customParams : ["electron " + process.versions["electron"]]});
-	haxe_Log.trace("node",{ fileName : "AppMain.hx", lineNumber : 48, className : "AppMain", methodName : "new", customParams : ["node " + process.version]});
-	haxe_Log.trace("system",{ fileName : "AppMain.hx", lineNumber : 49, className : "AppMain", methodName : "new", customParams : [process.platform + " " + process.arch]});
+	haxe_Log.trace("electron",{ fileName : "AppMain.hx", lineNumber : 49, className : "AppMain", methodName : "new", customParams : ["electron " + process.versions["electron"]]});
+	haxe_Log.trace("node",{ fileName : "AppMain.hx", lineNumber : 50, className : "AppMain", methodName : "new", customParams : ["node " + process.version]});
+	haxe_Log.trace("system",{ fileName : "AppMain.hx", lineNumber : 51, className : "AppMain", methodName : "new", customParams : [process.platform + " " + process.arch]});
 	this.init();
 };
 AppMain.__name__ = true;
@@ -24,8 +26,18 @@ AppMain.prototype = {
 	init: function() {
 		var _gthis = this;
 		$(function() {
-			_gthis.inMarkdown = window.document.getElementById("in_markdown");
-			_gthis.outMarkdown = window.document.getElementById("out_markdown");
+			var tmp = window.document.createElement("div");
+			_gthis.inMarkdown = tmp;
+			_gthis.inMarkdown.id = "in_markdown_default";
+			_gthis.inMarkdown.className = "in-markdown";
+			_gthis.inMarkdown.contentEditable = "true";
+			_gthis.inMarkdown.spellcheck = true;
+			window.document.getElementById("workbench_parts_editor_one").appendChild(_gthis.inMarkdown);
+			var tmp1 = window.document.createElement("div");
+			_gthis.outMarkdown = tmp1;
+			_gthis.outMarkdown.id = "out_markdown_default";
+			_gthis.outMarkdown.className = "out-markdown";
+			window.document.getElementById("workbench_parts_editor_two").appendChild(_gthis.outMarkdown);
 			_gthis.inMarkdown.oninput = $bind(_gthis,_gthis.onBrowserChange);
 			var md = _gthis.markdowExample2;
 			_gthis.set_inMarkdownValue(md);
@@ -40,50 +52,50 @@ AppMain.prototype = {
 			var _g = e.key.toLowerCase();
 			switch(_g) {
 			case "/":
-				haxe_Log.trace("change to comment",{ fileName : "AppMain.hx", lineNumber : 108, className : "AppMain", methodName : "onKeydownHandler"});
+				haxe_Log.trace("change to comment",{ fileName : "AppMain.hx", lineNumber : 126, className : "AppMain", methodName : "onKeydownHandler"});
 				this.wrap("<!-- "," -->");
 				break;
 			case "1":
-				haxe_Log.trace("change to h1",{ fileName : "AppMain.hx", lineNumber : 91, className : "AppMain", methodName : "onKeydownHandler"});
+				haxe_Log.trace("change to h1",{ fileName : "AppMain.hx", lineNumber : 109, className : "AppMain", methodName : "onKeydownHandler"});
 				this.prefixLine(e,1);
 				break;
 			case "2":
-				haxe_Log.trace("change to h2",{ fileName : "AppMain.hx", lineNumber : 93, className : "AppMain", methodName : "onKeydownHandler"});
+				haxe_Log.trace("change to h2",{ fileName : "AppMain.hx", lineNumber : 111, className : "AppMain", methodName : "onKeydownHandler"});
 				this.prefixLine(e,2);
 				break;
 			case "3":
-				haxe_Log.trace("change to h3",{ fileName : "AppMain.hx", lineNumber : 94, className : "AppMain", methodName : "onKeydownHandler"});
+				haxe_Log.trace("change to h3",{ fileName : "AppMain.hx", lineNumber : 112, className : "AppMain", methodName : "onKeydownHandler"});
 				this.prefixLine(e,3);
 				break;
 			case "4":
-				haxe_Log.trace("change to h4",{ fileName : "AppMain.hx", lineNumber : 95, className : "AppMain", methodName : "onKeydownHandler"});
+				haxe_Log.trace("change to h4",{ fileName : "AppMain.hx", lineNumber : 113, className : "AppMain", methodName : "onKeydownHandler"});
 				this.prefixLine(e,4);
 				break;
 			case "5":
-				haxe_Log.trace("change to h5",{ fileName : "AppMain.hx", lineNumber : 96, className : "AppMain", methodName : "onKeydownHandler"});
+				haxe_Log.trace("change to h5",{ fileName : "AppMain.hx", lineNumber : 114, className : "AppMain", methodName : "onKeydownHandler"});
 				this.prefixLine(e,5);
 				break;
 			case "6":
-				haxe_Log.trace("change to h6",{ fileName : "AppMain.hx", lineNumber : 97, className : "AppMain", methodName : "onKeydownHandler"});
+				haxe_Log.trace("change to h6",{ fileName : "AppMain.hx", lineNumber : 115, className : "AppMain", methodName : "onKeydownHandler"});
 				this.prefixLine(e,6);
 				break;
 			case "b":
-				haxe_Log.trace("change to bold",{ fileName : "AppMain.hx", lineNumber : 99, className : "AppMain", methodName : "onKeydownHandler"});
+				haxe_Log.trace("change to bold",{ fileName : "AppMain.hx", lineNumber : 117, className : "AppMain", methodName : "onKeydownHandler"});
 				this.wrap("**");
 				break;
 			case "i":
-				haxe_Log.trace("change to italic",{ fileName : "AppMain.hx", lineNumber : 102, className : "AppMain", methodName : "onKeydownHandler"});
+				haxe_Log.trace("change to italic",{ fileName : "AppMain.hx", lineNumber : 120, className : "AppMain", methodName : "onKeydownHandler"});
 				this.wrap("_");
 				break;
 			case "k":
-				haxe_Log.trace("change to inline code (k)",{ fileName : "AppMain.hx", lineNumber : 105, className : "AppMain", methodName : "onKeydownHandler"});
+				haxe_Log.trace("change to inline code (k)",{ fileName : "AppMain.hx", lineNumber : 123, className : "AppMain", methodName : "onKeydownHandler"});
 				this.wrap("`");
 				break;
 			case "o":
-				haxe_Log.trace("open",{ fileName : "AppMain.hx", lineNumber : 111, className : "AppMain", methodName : "onKeydownHandler"});
+				haxe_Log.trace("open",{ fileName : "AppMain.hx", lineNumber : 129, className : "AppMain", methodName : "onKeydownHandler"});
 				break;
 			case "s":
-				haxe_Log.trace("save",{ fileName : "AppMain.hx", lineNumber : 110, className : "AppMain", methodName : "onKeydownHandler"});
+				haxe_Log.trace("save",{ fileName : "AppMain.hx", lineNumber : 128, className : "AppMain", methodName : "onKeydownHandler"});
 				break;
 			}
 		}
@@ -92,13 +104,13 @@ AppMain.prototype = {
 	,prefixLine: function(e,cmdKey) {
 		e.preventDefault();
 		e.stopPropagation();
-		var str = "";
+		var tag = "";
 		var counter = 0;
 		while(counter < cmdKey) {
-			str += "#";
+			tag += "#";
 			++counter;
 		}
-		this.getCaretPosition(str);
+		this.prefix(tag);
 	}
 	,wrap: function(tag,endtag) {
 		var sel;
@@ -119,8 +131,7 @@ AppMain.prototype = {
 		}
 		this.onBrowserChange(null);
 	}
-	,getCaretPosition: function(tag) {
-		var caretPos = 0;
+	,prefix: function(tag) {
 		var range;
 		var selection;
 		if(($_=window,$bind($_,$_.getSelection)) != null) {
@@ -128,7 +139,14 @@ AppMain.prototype = {
 			if(selection.rangeCount != null) {
 				range = selection.getRangeAt(0);
 				range.setStart(range.startContainer,range.startOffset - range.startOffset);
-				range.insertNode(window.document.createTextNode("" + tag + " "));
+				range.setEnd(range.endContainer,range.endContainer.length);
+				var wholeText = range.startContainer.wholeText;
+				range.deleteContents();
+				if(wholeText.charAt(0) == "#") {
+					while(wholeText.charAt(0) == "#") wholeText = wholeText.substring(1);
+				}
+				range.insertNode(window.document.createTextNode("" + tag + " " + StringTools.ltrim(wholeText)));
+				range.collapse();
 			}
 		}
 		this.onBrowserChange(null);
@@ -136,7 +154,7 @@ AppMain.prototype = {
 	,onFolderOpenHandler: function() {
 		var _gthis = this;
 		electron_renderer_IpcRenderer.send("OpenDialog",function() {
-			haxe_Log.trace("OpenDialog",{ fileName : "AppMain.hx", lineNumber : 217, className : "AppMain", methodName : "onFolderOpenHandler"});
+			haxe_Log.trace("OpenDialog",{ fileName : "AppMain.hx", lineNumber : 218, className : "AppMain", methodName : "onFolderOpenHandler"});
 		});
 		electron_renderer_IpcRenderer.on("SEND_FILE_CONTENT",function(event,filepath,data) {
 			_gthis.currentFile = filepath;
@@ -148,7 +166,7 @@ AppMain.prototype = {
 			return;
 		}
 		electron_renderer_IpcRenderer.send("SAVE_FILE",this.currentFile,this.get_inMarkdownValue(),function() {
-			haxe_Log.trace("SAVE_FILE",{ fileName : "AppMain.hx", lineNumber : 229, className : "AppMain", methodName : "onSaveHandler"});
+			haxe_Log.trace("SAVE_FILE",{ fileName : "AppMain.hx", lineNumber : 230, className : "AppMain", methodName : "onSaveHandler"});
 		});
 	}
 	,onBrowserChange: function(e) {

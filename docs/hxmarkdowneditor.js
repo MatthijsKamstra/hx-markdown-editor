@@ -10,9 +10,9 @@ function $extend(from, fields) {
 var AppMain = function() {
 	this.markdowExample2 = haxe_Resource.getString("markdown02");
 	this.isElectron = false;
-	this.isElectron = false;
 	window.console.info("This project is a WIP-sideproject written in Haxe (www.haxe.org)");
 	window.console.info("For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor");
+	this.isElectron = false;
 	this.init();
 };
 AppMain.__name__ = true;
@@ -23,8 +23,18 @@ AppMain.prototype = {
 	init: function() {
 		var _gthis = this;
 		$(function() {
-			_gthis.inMarkdown = window.document.getElementById("in_markdown");
-			_gthis.outMarkdown = window.document.getElementById("out_markdown");
+			var tmp = window.document.createElement("div");
+			_gthis.inMarkdown = tmp;
+			_gthis.inMarkdown.id = "in_markdown_default";
+			_gthis.inMarkdown.className = "in-markdown";
+			_gthis.inMarkdown.contentEditable = "true";
+			_gthis.inMarkdown.spellcheck = true;
+			window.document.getElementById("workbench_parts_editor_one").appendChild(_gthis.inMarkdown);
+			var tmp1 = window.document.createElement("div");
+			_gthis.outMarkdown = tmp1;
+			_gthis.outMarkdown.id = "out_markdown_default";
+			_gthis.outMarkdown.className = "out-markdown";
+			window.document.getElementById("workbench_parts_editor_two").appendChild(_gthis.outMarkdown);
 			_gthis.inMarkdown.oninput = $bind(_gthis,_gthis.onBrowserChange);
 			var md = _gthis.markdowExample2;
 			_gthis.set_inMarkdownValue(md);
@@ -91,13 +101,13 @@ AppMain.prototype = {
 	,prefixLine: function(e,cmdKey) {
 		e.preventDefault();
 		e.stopPropagation();
-		var str = "";
+		var tag = "";
 		var counter = 0;
 		while(counter < cmdKey) {
-			str += "#";
+			tag += "#";
 			++counter;
 		}
-		this.getCaretPosition(str);
+		this.prefix(tag);
 	}
 	,wrap: function(tag,endtag) {
 		var sel;
@@ -118,8 +128,7 @@ AppMain.prototype = {
 		}
 		this.onBrowserChange(null);
 	}
-	,getCaretPosition: function(tag) {
-		var caretPos = 0;
+	,prefix: function(tag) {
 		var range;
 		var selection;
 		if(($_=window,$bind($_,$_.getSelection)) != null) {
@@ -127,7 +136,14 @@ AppMain.prototype = {
 			if(selection.rangeCount != null) {
 				range = selection.getRangeAt(0);
 				range.setStart(range.startContainer,range.startOffset - range.startOffset);
-				range.insertNode(window.document.createTextNode("" + tag + " "));
+				range.setEnd(range.endContainer,range.endContainer.length);
+				var wholeText = range.startContainer.wholeText;
+				range.deleteContents();
+				if(wholeText.charAt(0) == "#") {
+					while(wholeText.charAt(0) == "#") wholeText = wholeText.substring(1);
+				}
+				range.insertNode(window.document.createTextNode("" + tag + " " + StringTools.ltrim(wholeText)));
+				range.collapse();
 			}
 		}
 		this.onBrowserChange(null);

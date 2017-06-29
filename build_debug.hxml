@@ -13,6 +13,7 @@
 
 # copy `docs` folder to `bin` folder
 --next
+-cmd echo ''
 -cmd echo 'copy [start] : docs folder to bin folder'
 -cmd cp -R docs/ bin
 -cmd echo 'copy [done] : docs folder to bin folder'

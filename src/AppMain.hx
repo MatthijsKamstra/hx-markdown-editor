@@ -18,6 +18,8 @@ import js.Node.process;
 import electron.renderer.IpcRenderer;
 #end
 
+using StringTools;
+
 import Markdown;
 import model.constant.Channel;
 
@@ -37,11 +39,11 @@ class AppMain {
 	var markdowExample2 : String = haxe.Resource.getString("markdown02");
 
     public function new(){
+		console.info('This project is a WIP-sideproject written in Haxe (www.haxe.org)');
+		console.info('For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor');
 
 		#if (browser)
 		isElectron = false;
-		console.info('This project is a WIP-sideproject written in Haxe (www.haxe.org)');
-		console.info('For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor');
 		#else
 		isElectron = true;
 		trace( 'electron', 'electron '+process.versions['electron'] );
@@ -56,8 +58,24 @@ class AppMain {
 		new JQuery( function():Void {
 			// when document is ready
 
-			inMarkdown = cast document.getElementById('in_markdown');
-			outMarkdown = cast document.getElementById('out_markdown');
+			// <div id="in_markdown" contenteditable="true" spellcheck="true"></div>
+			// <div id="out_markdown" ></div>
+
+			inMarkdown = document.createDivElement();
+			inMarkdown.id = 'in_markdown_default';
+			inMarkdown.className = 'in-markdown';
+			inMarkdown.contentEditable = 'true';
+			inMarkdown.spellcheck = true;
+			document.getElementById('workbench_parts_editor_one').appendChild(inMarkdown);
+
+			outMarkdown = document.createDivElement();
+			outMarkdown.id = 'out_markdown_default';
+			outMarkdown.className = 'out-markdown';
+			document.getElementById('workbench_parts_editor_two').appendChild(outMarkdown);
+
+
+			// inMarkdown = cast document.getElementById('in_markdown');
+			// outMarkdown = cast document.getElementById('out_markdown');
 
 			// inMarkdown.onkeydown = onBrowserChange;
 			// inMarkdown.onpaste = onBrowserChange;
@@ -128,16 +146,13 @@ class AppMain {
 	function prefixLine(e:KeyboardEvent,cmdKey:Int){
 		e.preventDefault();
 		e.stopPropagation();
-		// trace('vv '+getCaretPosition(inMarkdown));
-		// replaceSelectedText('**');
-		var str = '';
+		var tag = '';
 		var counter = 0;
 		while (counter<cmdKey){
-			str += '#';
+			tag += '#';
 			counter++;
 		}
-		// wrap(str, '');
-		getCaretPosition(str);
+		prefix(tag);
 	}
 
 	function wrap(tag:String,?endtag:String) {
@@ -165,40 +180,26 @@ class AppMain {
 	}
 
 
-	function getCaretPosition(tag:String) {
-		var caretPos = 0;
-		var range;
+	function prefix(tag:String) {
+		var range : Range;
 		var selection : Selection;
 		if (window.getSelection != null) {
 			selection = window.getSelection();
 			if (selection.rangeCount != null) {
 				range = selection.getRangeAt(0);
 				range.setStart(range.startContainer, range.startOffset - range.startOffset);
-				// range.collapse(true);
-				// caretPos = range.endOffset;
+				range.setEnd(range.endContainer, untyped range.endContainer.length);
+				var wholeText : String = untyped range.startContainer.wholeText;
+				// trace(wholeText.charAt(0));
+				range.deleteContents();
+				if(wholeText.charAt(0) == '#'){
+					while (wholeText.charAt(0) == '#') {
+						wholeText = wholeText.substring(1);
+					}
+				}
 
-				// range.setStart(range.startContainer, range.startOffset - 1);
-				// range.setEnd(range.endContainer, range.endOffset + 1);
-
-				// trace(untyped range.toString());
-
-				// trace(range.startContainer.textContent.indexOf('#'));
-				// var temp = range.startContainer.textContent;
-
-				// trace(temp.indexOf('e'));
-
-				// if (range.startContainer.textContent.indexOf('#') != -1){
-				// 	trace('hash');
-				// }
-
-
-				// var selectedContent = range.extractContents().textContent;
-				// trace(selectedContent);
-				// if (range.commonAncestorContainer.parentNode == editableDiv) {
-				// 	caretPos = range.endOffset;
-				// }
-
-				range.insertNode(document.createTextNode('${tag} '));
+				range.insertNode(document.createTextNode('${tag} ${wholeText.ltrim()}'));
+				range.collapse();
 			}
 		}
 		onBrowserChange (null);
@@ -281,10 +282,12 @@ class AppMain {
 	 *  @return String
 	 */
 	function get_inMarkdownValue():String {
+		// inMarkdownValue = inMarkdown.value;
 		inMarkdownValue = inMarkdown.innerText;
 		return inMarkdownValue;
 	}
 	function set_inMarkdownValue(value:String):String {
+		// inMarkdown.value = value;
 		inMarkdown.innerText = value;
 		return inMarkdownValue = value;
 	}
