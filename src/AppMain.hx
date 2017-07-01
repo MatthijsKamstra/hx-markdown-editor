@@ -34,6 +34,8 @@ class AppMain {
 	var isElectron = false;
 	var currentFile:String;
 
+	var editor : CodeMirror;
+
     // var inMarkdown : DivElement;
     var inMarkdown : TextAreaElement;
 	var outMarkdown : DivElement;
@@ -45,19 +47,7 @@ class AppMain {
 	var markdowExample1 : String = haxe.Resource.getString("markdown01");
 	var markdowExample2 : String = haxe.Resource.getString("markdown02");
 
-	var editor : CodeMirror;
-
-	// var keyMaps = {
-    //         "Cmd-B": 'bold',
-    //         "Cmd-I": 'italicize',
-    //         "Cmd-'": 'blockquote',
-    //         "Cmd-Alt-L": 'orderedList',
-    //         "Cmd-L": 'unorderedList',
-    //         "Cmd-Alt-I": 'image',
-    //         "Cmd-H": 'hr',
-    //         "Cmd-K": 'link'
-    //     };
-
+	var keysArray : Array<KeyBindings> = haxe.Json.parse(haxe.Resource.getString("key"));
 
     public function new(){
 		console.info('This project is a WIP-sideproject written in Haxe (www.haxe.org)');
@@ -79,6 +69,7 @@ class AppMain {
 		new JQuery( function():Void {
 			// when document is ready
 
+			// trace(keysArray);
 
 
 			// <div id="in_markdown" contenteditable="true" spellcheck="true"></div>
@@ -147,51 +138,13 @@ class AppMain {
 	}
 
 	function mapKeys (?keys : {}){
-		var keyMaps  = [
-			'Cmd-1' => 'header1',
-			'Cmd-2' => 'header2',
-			'Cmd-3' => 'header3',
-			'Cmd-4' => 'header4',
-			'Cmd-5' => 'header5',
-			'Cmd-6' => 'header6',
-			'Cmd-0' => 'header0',
-
-			'Cmd-B' => 'bold',
-			'Cmd-I' => 'italic',
-			'Cmd-K' => 'inlinecode',
-			'Cmd-\'' => 'inlinecode',
-			'Cmd-/' => 'comment',
-
-			'Cmd-H' => 'hr',
-
-			'Cmd-S' => 'save',
-			'Cmd-O' => 'open',
-
-			'Shift-Cmd-O' => 'orderedlist',
-			'Cmd-Alt-L' => 'orderedlist',
-			'Shift-Cmd-U' => 'unorderedlist',
-            'Cmd-L' => 'unorderedlist',
-
-			'Cmd-.' => 'blockquote',
-			'Shift-Cmd-B' => 'blockquote',
-
-            // 'Cmd-Alt-I' => 'image',
-            // 'Cmd-K' => 'link',
-            'Shift-Cmd-I' => 'image',
-            'Shift-Cmd-L' => 'link',
-
-		];
 		var map = {
 			"Alt-Space" : function (cm) { onKeyMappedHandler ('boo'); }
 		};
-
-
-		for(key in keyMaps.keys()){
-			// trace('key: $key , ${keyMaps.get(key)}');
-			map.setField(key, function(cm){onKeyMappedHandler(keyMaps.get(key));} );
+		for (i in 0...keysArray.length){
+			var item = keysArray[i];
+			map.setField(item.key, function(cm){ onKeyMappedHandler(item.action); } );
 		}
-
-		// map.setField(keyMaps[0], this.onKeyMappedHandler(key))
 		editor.addKeyMap(map);
 	}
 
@@ -538,4 +491,9 @@ class AppMain {
 		var app = new AppMain();
 	}
 
+}
+
+typedef KeyBindings = {
+	var key : String;
+	var action : String;
 }

@@ -1,71 +1,72 @@
 [
 	{
-		"Cmd-1" : "header1"
-	},
-	{
-		"Cmd-2" : "header2"
-	},
-	{
-		"Cmd-3" : "header3"
-	},
-	{
-		"Cmd-4" : "header4"
-	},
-	{
-		"Cmd-5" : "header5"
-	},
-	{
-		"Cmd-6" : "header6"
-	},
-	{
-		"Cmd-0" : "header0"
-	},
-	{
-		"Cmd-B" : "bold"
-	},
-	{
-		"Cmd-I" : "italic"
-	},
-	{
-		"Cmd-K" : "inlinecode"
-	},
-	{
-		"Cmd-/" : "comment"
-	},
-	{
-		"Cmd-H" : "hr"
-	},
-	{
-		"Cmd-S" : "save"
-	},
-	{
-		"Cmd-O" : "open"
-	},
-	{
-		"Shift-Cmd-O" : "orderedlist"
-	},
-	{
-		"Cmd-Alt-L" : "orderedList"
-	},
-	{
-		"Shift-Cmd-U" : "unorderedList"
-	},
-	{
-            "Cmd-L" : "unorderedList"
-	},
-	{
-		"Cmd-'" : "blockquote"
-	},
-	{
-		"Shift-Cmd-B" : "blockquote"
-	},
-	{
-		"Shift-Cmd-C" : "blockquote"
-	},
-	{
-            "Shift-Cmd-I" : "image"
-	},
-	{
-            "Shift-Cmd-L" : "link"
+		"key" : "Cmd-1",
+		"action" : "header1"
+	},{
+		"key" : "Cmd-2",
+		"action" : "header2"
+	},{
+		"key" : "Cmd-3",
+		"action" : "header3"
+	},{
+		"key" : "Cmd-4",
+		"action" : "header4"
+	},{
+		"key" : "Cmd-5",
+		"action" : "header5"
+	},{
+		"key" : "Cmd-6",
+		"action" : "header6"
+	},{
+		"key" : "Cmd-0",
+		"action" : "header0"
+	},{
+		"key" : "Cmd-B",
+		"action" : "bold"
+	},{
+		"key" : "Cmd-I",
+		"action" : "italic"
+	},{
+		"key" : "Cmd-K",
+		"action" : "inlinecode"
+	},{
+		"key" : "Cmd-/",
+		"action" :  "comment"
+	},{
+		"key" : "Cmd-H",
+		"action" : "hr"
+	},{
+		"key" : "Cmd-S",
+		"action" : "save"
+	},{
+		"key" : "Cmd-O",
+		"action" : "open"
+	},{
+		"key" : "Shift-Cmd-O",
+		"action" : "orderedlist"
+	},{
+		"key" : "Cmd-Alt-L",
+		"action" : "orderedlist"
+	},{
+		"key" : "Shift-Cmd-U",
+		"action" : "unorderedlist"
+	},{
+		"key" : "Cmd-L",
+		"action" : "unorderedlist"
+	},{
+		"key" : "Cmd-'",
+		"action" : "blockquote"
+	},{
+		"key" : "Shift-Cmd-B",
+		"action" : "blockquote"
+	},{
+		"key" : "Shift-Cmd-C",
+		"action" : "blockquote"
+	},{
+		"key" : "Shift-Cmd-I",
+		"action" : "image"
+	},{
+		"key" : "Shift-Cmd-L",
+		"action" : "link"
 	}
 ]

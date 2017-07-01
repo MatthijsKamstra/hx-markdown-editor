@@ -9,6 +9,7 @@
 -resource src/assets/markdown00.md@markdown00
 -resource src/assets/markdown01.md@markdown01
 -resource src/assets/markdown02.md@markdown02
+-resource src/assets/keys.json@key
 
 --each
 
