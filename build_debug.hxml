@@ -1,7 +1,8 @@
--lib markdown
+# -lib markdown
 -lib electron
 -lib hxnodejs
 -cp src
+-cp externs
 -dce full
 -debug
 

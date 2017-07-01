@@ -12,20 +12,22 @@
 
 		<title>Markdown Editor</title>
 
-		<!-- font -->
+
 		<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
 
-		<!-- font-asesome -->
+		<!-- Latest compiled and minified CSS -->
+		<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
+
 		<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
-		<!-- normalize everything -->
+
+		<!-- custom-code -->
 		<link rel="stylesheet" href="css/normalize.css" >
 		<!-- sizes etc -->
 		<link rel="stylesheet" href="css/markdowneditor.css" >
-		<!-- #ouy_markdown -->
+		<!-- #in_markdown -->
 		<link rel="stylesheet" href="css/styles/github2.css" >
-		<!-- #in_markdow -->
+		<!-- #out_markdow -->
 		<link rel="stylesheet" href="css/theme/default.css" >
-		<link rel="stylesheet" href="css/theme/monk.css" >
 
 		</style>
 
@@ -45,6 +47,10 @@
 				<div id="workbench_parts_activitybar">
 
 					<div class-"activitybar-top">
+						<!--<label for="file-upload" class="custom-file-upload activitybar-btn" title="open">
+							<i class="fa fa-folder-open-o" aria-hidden="true"></i>
+						</label>
+						<input id="file-upload" type="file" accept=".txt,.text,.md"/>-->
 						<a class="activitybar-btn" href="#" role="button" id="btn-open" title="open">
 							<!--<i class="fa fa-folder-open-o" aria-hidden="true"></i>-->
 							<i class="fa fa-file-text-o" aria-hidden="true"></i>
@@ -70,21 +76,18 @@
 				<div id="workbench_parts_sidebar">sidebar</div>
 				<div id="workbench_parts_editor">
 					<div id="workbench_parts_editor_one">
+						<!--<div id="in_markdown" contenteditable="true" spellcheck="true"></div>-->
+					</div>
+					<div id="workbench_parts_editor_two">
+						<!--<div id="out_markdown" ></div>-->
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<link rel="stylesheet" href="lib/codemirror/codemirror.css">
-		<!--<link rel="stylesheet" href="lib/codemirror/monokai.css">-->
-		<!--<link rel="stylesheet" href="lib/codemirror/monokai.css">-->
-		<!--<script src="lib/codemirror/codemirror.js"></script>-->
-
-
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/codemirror.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/addon/edit/continuelist.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/mode/markdown/markdown.min.js"></script>
-
+		<link rel="stylesheet" href="lib/codemirror/monokai.css">
+		<script src="lib/codemirror/codemirror.js"></script>
 
 		<!-- https://github.com/eligrey/FileSaver.js/ -->
 		<script type="text/javascript" src="js/FileSaver.js"></script>

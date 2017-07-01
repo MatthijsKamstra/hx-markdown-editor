@@ -1,3 +1,25 @@
+
+line one
+line two
+line three
+line four
+
+
+# lists
+
+unordered list: `shift` + `cmd` + `u`
+
+ordered list: `shift` + `cmd` + `o`
+
+
+just because we can
+
+line one
+line two
+line three
+line four
+
+
 # heading
 
 Test the keyboard shortcuts for headings: `cmd` + `1` (1,2,3,4,5,6)
@@ -21,19 +43,38 @@ Test the keyboard shortcuts
 - bold (strong): `cmd` + `b`
 - italic (emphasis): `cmd` + `i`
 - inline code: `cmd` + `k`
-- comment: `cmd` + `\`
+- comment: `cmd` + `/`
 
-this is bold aka strong
+# lists
 
-and this is italic aka emphasis
+unordered list: `shift` + `cmd` + `u`
 
-maybe try some inline code
-
-or a comment that fails
-
+ordered list: `shift` + `cmd` + `o`
 
 
 just because we can
-- one
-- two
+
+line one
+line two
+line three
+line four
+
+# block quote
+
+block quote: `shift` + `cmd` + `b`
+
+this is a quote
+
+# link
+
+create a link: `shift` + `cmd` + `l`
+
+http://www.matthijskamstra.nl
+
+# image
+
+create a image: `shift` + `cmd` + `i`
+
+http://matthijskamstra.nl/photos/bots/640/10_IMG_4165.jpg
+
 

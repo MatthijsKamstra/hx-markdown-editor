@@ -1,0 +1,71 @@
+[
+	{
+		"Cmd-1" : "header1"
+	},
+	{
+		"Cmd-2" : "header2"
+	},
+	{
+		"Cmd-3" : "header3"
+	},
+	{
+		"Cmd-4" : "header4"
+	},
+	{
+		"Cmd-5" : "header5"
+	},
+	{
+		"Cmd-6" : "header6"
+	},
+	{
+		"Cmd-0" : "header0"
+	},
+	{
+		"Cmd-B" : "bold"
+	},
+	{
+		"Cmd-I" : "italic"
+	},
+	{
+		"Cmd-K" : "inlinecode"
+	},
+	{
+		"Cmd-/" : "comment"
+	},
+	{
+		"Cmd-H" : "hr"
+	},
+	{
+		"Cmd-S" : "save"
+	},
+	{
+		"Cmd-O" : "open"
+	},
+	{
+		"Shift-Cmd-O" : "orderedlist"
+	},
+	{
+		"Cmd-Alt-L" : "orderedList"
+	},
+	{
+		"Shift-Cmd-U" : "unorderedList"
+	},
+	{
+            "Cmd-L" : "unorderedList"
+	},
+	{
+		"Cmd-'" : "blockquote"
+	},
+	{
+		"Shift-Cmd-B" : "blockquote"
+	},
+	{
+		"Shift-Cmd-C" : "blockquote"
+	},
+	{
+            "Shift-Cmd-I" : "image"
+	},
+	{
+            "Shift-Cmd-L" : "link"
+	}
+]

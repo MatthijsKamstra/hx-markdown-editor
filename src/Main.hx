@@ -4,6 +4,9 @@ import electron.CrashReporter;
 
 import electron.main.IpcMain;
 import electron.main.Dialog;
+import electron.main.Menu;
+import electron.main.MenuItem;
+import electron.main.GlobalShortcut;
 
 // import js.Browser.*;
 
@@ -23,6 +26,8 @@ class Main {
 			companyName : "hxelectron (not a company)",
 			submitURL : "https://github.com/fponticelli/hxelectron/issues"
 		});
+
+
 
 		// Keep a global reference of the window object, if you don't, the window will
 		// be closed automatically when the JavaScript object is garbage collected.
@@ -66,8 +71,14 @@ class Main {
 			// mainWindow.loadURL( 'file://' + js.Node.__dirname + '/app.html' );
 			// mainWindow.loadURL('http://localhost:3000');
 
-
 			// win.loadURL( 'file://' + js.Node.__dirname + '/index.html' );
+
+
+			// GlobalShortcut.register('CommandOrControl+X', function (){
+			// 	trace('CommandOrControl+X is pressed');
+			// });
+			// // Check whether a shortcut is registered.
+			// console.log(GlobalShortcut.isRegistered('CommandOrControl+X'));
 
 			// IpcMain.on('show-dialog', function (event, type:Dynamic) {
 			// 	Dialog.showMessageBox(mainWindow, {
@@ -76,6 +87,7 @@ class Main {
 			// 	});
 			// });
 
+			// new MainMenu();
 
 			IpcMain.on('test', function (event, test) {
 				var content = "Some text to save into the file";
@@ -162,6 +174,8 @@ class Main {
 				// trace(event);
 				event.returnValue = 'dong';
 			});
+
+
 
 		});
 

@@ -1,7 +1,8 @@
--lib markdown
+# -lib markdown
 -lib electron
 -lib hxnodejs
 -cp src
+-cp externs
 -dce full
 # -debug
 
@@ -15,6 +16,7 @@
 
 # copy `docs` folder to `bin` folder
 --next
+-cmd echo ''
 -cmd echo '[start] copy docs folder to bin folder'
 -cmd cp -R docs/ bin
 -cmd echo '[done] copy docs folder to bin folder'

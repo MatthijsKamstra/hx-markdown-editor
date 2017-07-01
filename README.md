@@ -34,6 +34,8 @@ And want to take the good parts and intergrate them:
 - export to different files (html/pdf/rich text/etc)
 - editor short cuts
 - snippets
+- toggle markdown, with styline / and without (plain markdown)
+- toggle preview
 
 
 
@@ -47,13 +49,15 @@ This is a [Haxe](http://www.haxe.org) project, read more about it in the [README
 I use [Haxe](https://haxe.org/) type definitions for [Electron](http://electron.atom.io/) from <https://github.com/fponticelli/hxelectron>
 
 
-For the conversion of markdown to html I use haxe-markdown:  <https://github.com/dpeek/haxe-markdown>
 
-but there are some differences with other convertes
+<https://codemirror.net/>
 
-- double space (`  `) doesn't create a next line
-- nested list don't work
-- comments (`<!-- xxx -->`) are generated in html
+Haxe externs for Codemirror: <https://github.com/clemos/try-haxe/tree/master/src/js/codemirror>
+
+
+~~For the conversion of markdown to html I use haxe-markdown:  <https://github.com/dpeek/haxe-markdown>~~
+
+markdown-it.js
 
 default preview css from macdown (like github.css)
 
