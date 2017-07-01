@@ -8,7 +8,46 @@ But wouldn't it be awesome to have that all in one?
 
 That's the itch and this is how I scratch that!
 
+## Screenshot
+
 ![](wip.png)
+
+
+## Features
+
+- [ ] GitHub Flavored Markdown
+- [ ] Code highlight in preview
+- [ ] Read/Write/Preview mode
+- [ ] Code highlight themes (powered by highlight.js)
+- [ ] Auto reload
+- [ ] Localization
+- [ ] Focus mode
+- [ ] Live preview
+- [ ] GitHub Flavored Markdown support
+- [ ] Search in Markdown
+- [ ] Syntax highlighting
+- [ ] Emoji Support
+- [ ] Words count
+- [ ] Resizable panels
+- [ ] Finder integration (OS X)
+- [ ] Shortcuts (ctrl-S, Ctrl-O) save and open
+- [ ] Dialog for image
+- [ ] Dialog for videos (mp4)
+- [ ] Dialog for tables
+- [ ] Multiple documents
+- [ ] Allow drag’n’drop files onto app icon (Finder or Dock)
+- [ ] GitHub Flavored Markdown support
+- [ ] Markdown & code block highlighting
+- [ ] Find & replace
+- [ ] Emoji support in preview 🎉
+- [ ] Day & Night themes
+- [ ] Copy HTML to clipboard
+- [ ] Preview HTML
+- [ ] Export HTML
+- [ ] Export PDF
+- [ ] Printing
+- [ ] App will stay alive in tray for quick usage
+- [ ] Fullscreen (distraction-free) mode
 
 
 ## WIP
@@ -16,7 +55,6 @@ That's the itch and this is how I scratch that!
 Almost everything is `wip` but this one is more.
 
 Contribute if you like, I will update when I feel more itches.
-
 
 ## Improvement
 
@@ -28,15 +66,37 @@ I have looked at the editors that I use (for coding and writing)
 
 And want to take the good parts and intergrate them:
 
-- folder stucture ()
-- edit more then one file (tabs)
-- distraction free edit
-- export to different files (html/pdf/rich text/etc)
-- editor short cuts
-- snippets
-- toggle markdown, with styline / and without (plain markdown)
-- toggle preview
+- [ ] folder stucture ()
+- [ ] edit more then one file (tabs)
+- [ ] distraction free edit
+- [ ] export to different files (html/pdf/rich text/etc)
+- [ ] editor short cuts
+- [ ] snippets
+- [ ] toggle markdown, with styline / and without (plain markdown)
+- [ ] toggle preview
+- [ ] Spell check
+- [ ] Windows support for Keymaps
+- [ ] Fullscreen editing
+- [ ] Preview mode
+- [ ] Status bar
 
+
+
+
+
+## Technologies used
+
+I use [Haxe](https://haxe.org/) type definitions for [Electron](http://electron.atom.io/) from <https://github.com/fponticelli/hxelectron>
+
+- electron
+- <https://codemirror.net/>
+- Haxe externs for Codemirror: <https://github.com/clemos/try-haxe/tree/master/src/js/codemirror>
+- ~~For the conversion of markdown to html I use haxe-markdown:  <https://github.com/dpeek/haxe-markdown>~~
+- markdown-it.js
+- default preview css from macdown (like github.css)
+- Font-awesome
+- normalize.css
+- FileSaver.js
 
 
 ## Haxe
@@ -44,28 +104,6 @@ And want to take the good parts and intergrate them:
 This is a [Haxe](http://www.haxe.org) project, read more about it in the [README_HAXE.MD](README_HAXE.MD)!
 
 
-## Sources
-
-I use [Haxe](https://haxe.org/) type definitions for [Electron](http://electron.atom.io/) from <https://github.com/fponticelli/hxelectron>
-
-
-
-<https://codemirror.net/>
-
-Haxe externs for Codemirror: <https://github.com/clemos/try-haxe/tree/master/src/js/codemirror>
-
-
-~~For the conversion of markdown to html I use haxe-markdown:  <https://github.com/dpeek/haxe-markdown>~~
-
-markdown-it.js
-
-default preview css from macdown (like github.css)
-
-Font-awesome
-
-normalize.css
-
-FileSaver.js
 
 <!--
 
