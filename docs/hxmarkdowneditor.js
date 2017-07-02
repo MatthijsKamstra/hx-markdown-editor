@@ -116,7 +116,7 @@ AppMain.prototype = {
 			this.insertBefore("###### ",7);
 			break;
 		case "hr":
-			this.insert("---");
+			this.insert("\n\n----\n\n");
 			break;
 		case "image":
 			this.insertBefore("![](http://)",2);
@@ -226,6 +226,7 @@ AppMain.prototype = {
 			}
 			doc.setCursor({ line : pos[0], ch : cursorOffset != null ? cursorOffset : 0});
 		} else {
+			console.log("check hier");
 			doc.replaceRange(insertion,{ line : cursor.line, ch : 0});
 			doc.setCursor({ line : cursor.line, ch : cursorOffset != null ? cursorOffset : 0});
 		}

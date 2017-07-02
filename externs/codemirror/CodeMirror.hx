@@ -70,6 +70,10 @@ typedef DocHistory = {
 {
 	public function new(body: Dynamic, mode: String, ?firstLineNumber:Int);
 	function getValue():String;
+	/**
+	 *  Return true if any text is selected.
+	 *  @return Bool
+	 */
 	function somethingSelected():Bool;
 	function setValue(value:String):Void;
 	function getSelection(?lineSep:String):String;
@@ -82,10 +86,27 @@ typedef DocHistory = {
 	function lineCount():Int;
 	function getAllMarks():Array<Dynamic>;
 	function getRange(from: Pos, to: Pos, ?separator: String):String;
+
+	/**
+	 *  start is a an optional string indicating which end of the selection to return.
+	 *  It may be "start", "end", "head" (the side of the selection that moves when you press shift+arrow),
+	 *  or "anchor" (the fixed side of the selection).
+	 *  Omitting the argument is the same as passing "head". A {line, ch} object will be returned.
+	 *  @param start -
+	 *  @return Pos
+	 */
 	function getCursor( ?start : Bool ) : Pos;
 	function setCursor(pos: Pos, ?ch: Int, ?options: Dynamic):Void;
 	function listSelections():Array<{anchor:Pos, head:Pos}>;
 	function setSelection(anchor: Pos, ?head: Pos, ?options: Dynamic):Void;
+	/**
+	 *  Replace the selection with the given string.
+	 *  By default, the new selection will span the inserted text.
+	 *  The optional collapse argument can be used to change this—passing "start" or "end" will collapse
+	 *  the selection to the start or end of the inserted text.
+	 *  @param replacement -
+	 *  @param select -
+	 */
 	function replaceSelection(replacement: String, ?select: String):Void;
 	function getLine(line:Int):String;
 	var history:DocHistory;
@@ -140,6 +161,17 @@ typedef DocHistory = {
 				match: String, forward: Bool};
 
 	function execCommand(command:String):Void;
+
+	/**
+	 *  Replace the part of the document between from and to with the given string.
+	 *  from and to must be {line, ch} objects.
+	 *  to can be left off to simply insert the string at position from.
+	 *
+	 *  @param replacement - string to replace
+	 *  @param from - {line, ch} Pos-objects
+	 *  @param to - (optional)
+	 *  @param origin - (optional)
+	 */
 	function replaceRange(replacement: String, from: Pos, ?to: Pos, ?origin: String):Void;
 
 	function markText(from : Pos, to : Pos, options:{className : String} ) : MarkedText;

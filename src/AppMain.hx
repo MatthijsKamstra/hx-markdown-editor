@@ -204,7 +204,7 @@ class AppMain {
 			case 'inlinecode': this.insertAround('`', '`');
 			case 'codeblock': this.insertAround('```\r\n', '\r\n```');
 
-			case 'hr': this.insert('---');
+			case 'hr': this.insert('\n\n----\n\n');
 
 			case 'orderedlist': this.insertBefore('1. ', 3);
             case 'unorderedlist': this.insertBefore('* ', 3);
@@ -307,13 +307,12 @@ class AppMain {
 	 * Insert a string before a selection
 	 * @param  {String} insertion
 	 */
-
 	function insertBefore(insertion:String, ?cursorOffset:Int) {
 		var doc = this.editor.getDoc();
 		var cursor = doc.getCursor();
-
 		if (doc.somethingSelected()) {
 			var selections = doc.listSelections();
+			// [mck] TODO this is an array, so use it!
 			trace(selections);
 			var pos = [selections[0].head.line , selections[0].anchor.line];
 			pos.sort(function(a, b):Int {
@@ -326,6 +325,7 @@ class AppMain {
 			}
 			doc.setCursor({ line: pos[0], ch: (cursorOffset!=null) ? cursorOffset : 0 });
 		} else {
+			trace('check hier');
 			doc.replaceRange(insertion, { line: cursor.line, ch: 0 });
 			doc.setCursor({ line: cursor.line, ch: (cursorOffset!=null) ? cursorOffset : 0 });
 		}
@@ -516,17 +516,6 @@ class AppMain {
 		// trace( 'onBrowserChange: ' + e );
 		var str = inMarkdown.innerText;
 		outMarkdownValue = str;
-	}
-
-	function onClick (e:Dynamic) {
-		var id = e.currentTarget.id;
-		switch (id) {
-			case "example1": setWorkbench(markdowExample1);
-			case "example2": setWorkbench(markdowExample2);
-			case "btn_convert": setWorkbench(inMarkdown.innerText);
-			// case "btn_select": selectAll();
-		}
-		e.preventDefault();
 	}
 
 	// ____________________________________ getter/setter ____________________________________

@@ -119,7 +119,7 @@ AppMain.prototype = {
 			this.insertBefore("###### ",7);
 			break;
 		case "hr":
-			this.insert("---");
+			this.insert("\n\n----\n\n");
 			break;
 		case "image":
 			this.insertBefore("![](http://)",2);
@@ -211,7 +211,7 @@ AppMain.prototype = {
 		var cursor = doc.getCursor();
 		if(doc.somethingSelected()) {
 			var selections = doc.listSelections();
-			haxe_Log.trace(selections,{ fileName : "AppMain.hx", lineNumber : 317, className : "AppMain", methodName : "insertBefore"});
+			haxe_Log.trace(selections,{ fileName : "AppMain.hx", lineNumber : 316, className : "AppMain", methodName : "insertBefore"});
 			var pos = [selections[0].head.line,selections[0].anchor.line];
 			pos.sort(function(a,b) {
 				if(a < b) {
@@ -229,6 +229,7 @@ AppMain.prototype = {
 			}
 			doc.setCursor({ line : pos[0], ch : cursorOffset != null ? cursorOffset : 0});
 		} else {
+			haxe_Log.trace("check hier",{ fileName : "AppMain.hx", lineNumber : 328, className : "AppMain", methodName : "insertBefore"});
 			doc.replaceRange(insertion,{ line : cursor.line, ch : 0});
 			doc.setCursor({ line : cursor.line, ch : cursorOffset != null ? cursorOffset : 0});
 		}
