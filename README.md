@@ -30,7 +30,7 @@ That's the itch and this is how I scratch that!
 - [ ] Words count
 - [ ] Resizable panels
 - [ ] Finder integration (OS X)
-- [ ] Shortcuts (ctrl-S, Ctrl-O) save and open
+- [x] Shortcuts (ctrl-S, Ctrl-O, etc) read the [shortcut list](/src/assets/shortcut.md)
 - [ ] Dialog for image
 - [ ] Dialog for videos (mp4)
 - [ ] Dialog for tables
@@ -47,7 +47,7 @@ That's the itch and this is how I scratch that!
 - [ ] Export PDF
 - [ ] Printing
 - [ ] App will stay alive in tray for quick usage
-- [ ] Fullscreen (distraction-free) mode
+- [x] Fullscreen (distraction-free) mode
 
 
 ## WIP

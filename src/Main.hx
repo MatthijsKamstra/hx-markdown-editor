@@ -46,8 +46,8 @@ class Main {
 		App.on( 'ready', function(e) {
 			// Create the browser window.
 			mainWindow = new BrowserWindow({
-				width: 800,
-				height: 600,
+				width: 1200,
+        		height: 800,
 				backgroundColor: '#2e2c29',
 				// frame: false,
 				// titleBarStyle: 'hidden'

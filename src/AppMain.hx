@@ -47,11 +47,18 @@ class AppMain {
 	var markdowExample1 : String = haxe.Resource.getString("markdown01");
 	var markdowExample2 : String = haxe.Resource.getString("markdown02");
 
-	var keysArray : Array<KeyBindings> = haxe.Json.parse(haxe.Resource.getString("key"));
+	var keyMarkdown : String;
+
+	var isMac : Bool = true;
+
+	var shortCuts : Array<KeyBindings> = haxe.Json.parse(haxe.Resource.getString("key"));
 
     public function new(){
 		console.info('This project is a WIP-sideproject written in Haxe (www.haxe.org)');
 		console.info('For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor');
+
+		// Some variables
+		// var isMac = /Mac/.test(navigator.platform);
 
 		#if (browser)
 		isElectron = false;
@@ -69,83 +76,107 @@ class AppMain {
 		new JQuery( function():Void {
 			// when document is ready
 
-			// trace(keysArray);
-
-
-			// <div id="in_markdown" contenteditable="true" spellcheck="true"></div>
-			// <div id="out_markdown" ></div>
-
-			inMarkdown = document.createTextAreaElement();
-			inMarkdown.id = 'in_markdown_default';
-			inMarkdown.className = 'in-markdown';
-			inMarkdown.cols = 30;
-			inMarkdown.rows = 10;
-			document.getElementById('workbench_parts_editor_one').appendChild(inMarkdown);
-			// inMarkdown = document.createDivElement();
-			// inMarkdown.id = 'in_markdown_default';
-			// inMarkdown.className = 'in-markdown';
-			// inMarkdown.contentEditable = 'true';
-			// inMarkdown.spellcheck = true;
-			// document.getElementById('workbench_parts_editor_one').appendChild(inMarkdown);
-
-			outMarkdown = document.createDivElement();
-			outMarkdown.id = 'out_markdown_default';
-			outMarkdown.className = 'out-markdown';
-			if(document.getElementById('workbench_parts_editor_two') != null) document.getElementById('workbench_parts_editor_two').appendChild(outMarkdown);
-
-
-			// inMarkdown = cast document.getElementById('in_markdown');
-			// outMarkdown = cast document.getElementById('out_markdown');
-
-			// inMarkdown.onkeydown = onBrowserChange;
-			// inMarkdown.onpaste = onBrowserChange;
-			// inMarkdown.oninput = onBrowserChange;
-			// inMarkdown.onBrowserChange = onBrowserChange;
-
-			var md = markdowExample2;
-			inMarkdownValue = md;
-			outMarkdownValue = md;
-
-			editor = CodeMirror.fromTextArea(inMarkdown, {
-				tabSize: '2',
-				indentWithTabs: true,
-				lineWrapping: true,
-				extraKeys: {
-					"Enter": 'newlineAndIndentContinueMarkdownList'
-				},
-				mode: 'markdown',
-				tabMode: 'indent',
-				theme: 'monk',
-				// lineNumbers: true,
-				// lineWrapping: true,
-				// viewportMargin: 'Infinity'
-			});
-
+			// setup editors
+			initEditors();
 			// more maps
-			mapKeys();
+			initShortcuts();
 
 
 			// register the handler
-			#if (browser)
-			document.getElementById('btn-open').addEventListener('click', onBrowserFileOpenHandler, false);
-			document.getElementById('btn-save').addEventListener('click', onBrowserSaveHandler, false);
-			#else
-			document.getElementById('btn-open').addEventListener('click', onFolderOpenHandler, false);
-			document.getElementById('btn-save').addEventListener('click', onSaveHandler, false);
-			#end
+			document.getElementById('btn-open').addEventListener('click', saveHandler, false);
+			document.getElementById('btn-save').addEventListener('click', openHandler, false);
+			document.getElementById('btn-fullscreen').addEventListener('click', fullscreenHandler, false);
+			document.getElementById('btn-preview').addEventListener('click', previewHandler, false);
+
+
 			// document.addEventListener('keydown', onKeydownHandler, false);
 		});
 	}
 
-	function mapKeys (?keys : {}){
+
+	function initEditors()
+	{
+		// <div id="in_markdown" contenteditable="true" spellcheck="true"></div>
+		// <div id="out_markdown" ></div>
+
+		inMarkdown = document.createTextAreaElement();
+		inMarkdown.id = 'in_markdown_default';
+		inMarkdown.className = 'in-markdown';
+		inMarkdown.cols = 30;
+		inMarkdown.rows = 10;
+		document.getElementById('workbench_parts_editor_one').appendChild(inMarkdown);
+
+		outMarkdown = document.createDivElement();
+		outMarkdown.id = 'out_markdown_default';
+		outMarkdown.className = 'out-markdown';
+		if(document.getElementById('workbench_parts_editor_two') != null) document.getElementById('workbench_parts_editor_two').appendChild(outMarkdown);
+
+		// inMarkdown.onkeydown = onBrowserChange;
+		// inMarkdown.onpaste = onBrowserChange;
+		// inMarkdown.oninput = onBrowserChange;
+		// inMarkdown.onBrowserChange = onBrowserChange;
+
+		var md = markdowExample2;
+		inMarkdownValue = md;
+		outMarkdownValue = md;
+
+		editor = CodeMirror.fromTextArea(inMarkdown, {
+			tabSize: '2',
+			indentWithTabs: true,
+			lineWrapping: true,
+			extraKeys: {
+				"Enter": 'newlineAndIndentContinueMarkdownList'
+			},
+			mode: 'markdown',
+			tabMode: 'indent',
+			theme: 'monk',
+			// lineNumbers: true,
+			// lineWrapping: true,
+			// viewportMargin: 'Infinity'
+		});
+	}
+
+	/**
+	 *  create shortcut list (and render the `shortcut.md` file)
+	 *  @param keys -  WIP
+	 */
+	function initShortcuts (?keys : {}){
+		keyMarkdown = 'Keyboard Shortcuts\n\n';
+		keyMarkdown += '| Command | Keybinding | Shortcut OsX | Electron | CodeMirror |\n';
+		keyMarkdown += '| ------- | ---------- | :----------: | :------: | :--------: |\n';
 		var map = {
 			"Alt-Space" : function (cm) { onKeyMappedHandler ('boo'); }
 		};
-		for (i in 0...keysArray.length){
-			var item = keysArray[i];
+		for (i in 0...shortCuts.length){
+			var item = shortCuts[i];
 			map.setField(item.key, function(cm){ onKeyMappedHandler(item.action); } );
+			keyMarkdown += '| ${item.action} | ${item.key} | ${replaceString2Symbols (item.key)} | x | ${item.key} |\n';
 		}
 		editor.addKeyMap(map);
+		console.info(keyMarkdown);
+	}
+
+	// Symbol	Meaning
+	// ⌘	Command
+	// ⌥	ALT
+	// ⌃	Control
+	// ⇧	Shift
+	function replaceString2Symbols (keybinding:String):String{
+		var str = '`' + keybinding.replace('Cmd', '⌘').replace('Alt','⌥').replace('Ctrl','⌃').replace('Shift','⇧').replace('-','` `') + '`';
+		return str.replace('``' , '`');
+	}
+
+
+	/**
+	 * Fix shortcut. Mac use Command, others use Ctrl.
+	 */
+	function fixShortcut(name:String) {
+		if(isMac) {
+			name = name.replace("Ctrl", "Cmd");
+		} else {
+			name = name.replace("Cmd", "Ctrl");
+		}
+		return name;
 	}
 
 
@@ -155,6 +186,8 @@ class AppMain {
 
 			case 'save': trace(value);
 			case 'open': trace(value);
+			case 'fullscreen': this.fullscreenHandler();
+			case 'preview': trace(value);
 
 			case 'header1': this.insertBefore('# ', 2);
 			case 'header2': this.insertBefore('## ', 3);
@@ -166,8 +199,10 @@ class AppMain {
 
 			case 'bold': this.insertAround('**', '**');
 			case 'italic': this.insertAround('_', '_');
-			case 'inlinecode': this.insertAround('`', '`');
 			case 'comment': this.insertAround('<!-- ', ' -->');
+
+			case 'inlinecode': this.insertAround('`', '`');
+			case 'codeblock': this.insertAround('```\r\n', '\r\n```');
 
 			case 'hr': this.insert('---');
 
@@ -179,12 +214,64 @@ class AppMain {
             case 'image': this.insertBefore('![](http://)', 2);
             case 'link': this.insertAround('[', '](http://)');
 
+            case 'table': this.insert('| colum 1 | colum 2 |\n| :--: | :--: |\n| a | b |\n| c | d |\n');
+
+
 			default:
 				trace('not sure what you want: $value');
 		}
 	}
 
+	function saveHandler(e){
+		#if (browser)
+			onBrowserSaveHandler(e);
+		#else
+			onSaveHandler();
+		#end
+	}
 
+	function openHandler(e){
+		#if (browser)
+			onBrowserFileOpenHandler(e);
+		#else
+			onFolderOpenHandler();
+		#end
+	}
+
+	function previewHandler(){
+		trace('previewHandler');
+	}
+
+	public static var IS_FULL_SCREEN : Bool = false;
+
+	function fullscreenHandler(){
+		trace('fullscreenHandler');
+		// https://developer.mozilla.org/en-US/docs/DOM/Using_fullscreen_mode
+		var doc = document;
+		// var el = this.editor.getWrapperElement();
+		var el = document.documentElement;
+		if (!IS_FULL_SCREEN) {
+			if (el.requestFullscreen != null) {
+				el.requestFullscreen();
+			} else if (untyped el.webkitRequestFullscreen) {
+				untyped el.webkitRequestFullscreen();
+			} else if (untyped el.mozRequestFullScreen) {
+				untyped el.mozRequestFullScreen();
+			} else if (untyped el.msRequestFullscreen) {
+				untyped el.msRequestFullscreen();
+			}
+			IS_FULL_SCREEN = true;
+		} else {
+			if (untyped doc.cancelFullScreen) {
+				untyped doc.cancelFullScreen();
+			} else if (untyped doc.mozCancelFullScreen) {
+				untyped doc.mozCancelFullScreen();
+			} else if (untyped doc.webkitCancelFullScreen) {
+				untyped doc.webkitCancelFullScreen();
+			}
+			IS_FULL_SCREEN = false;
+		}
+	}
 
 
 
@@ -402,7 +489,7 @@ class AppMain {
 
 	// ____________________________________ handlers ____________________________________
 
-	function onBrowserFileOpenHandler(e) {
+	function onBrowserFileOpenHandler(?e) {
 		// trace(e);
 		var file : Blob = e.target.files[0];
 		if (file == null) {
@@ -416,7 +503,7 @@ class AppMain {
 		reader.readAsText(file);
 	}
 
-	function onBrowserSaveHandler(e:Event){
+	function onBrowserSaveHandler(?e:Event){
 		e.preventDefault();
 		var text = inMarkdown.innerText;
 		// var filename = $("#input-fileName").val();
@@ -425,7 +512,7 @@ class AppMain {
 		untyped saveAs(blob, filename+".md");
 	}
 
-	function onBrowserChange (e:Event){
+	function onBrowserChange (?e:Event){
 		// trace( 'onBrowserChange: ' + e );
 		var str = inMarkdown.innerText;
 		outMarkdownValue = str;

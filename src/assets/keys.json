@@ -1,4 +1,24 @@
 [
+
+	{
+		"key" : "Cmd-S",
+		"action" : "save",
+		"icon" : "fa fa-floppy-o"
+	},{
+		"key" : "Cmd-O",
+		"action" : "open",
+		"icon" : "fa fa-file-text-o"
+	},{
+		"key" : "Cmd-F",
+		"action" : "fullscreen",
+		"icon" : "fa-arrows-alt"
+	},{
+		"key" : "Cmd-E",
+		"action" : "preview",
+		"icon" : "fa-eye"
+	},
+
+
 	{
 		"key" : "Cmd-1",
 		"action" : "header1"
@@ -30,17 +50,17 @@
 		"key" : "Cmd-K",
 		"action" : "inlinecode"
 	},{
+		"key" : "Shift-Cmd-K",
+		"action" : "codeblock"
+	},{
 		"key" : "Cmd-/",
 		"action" :  "comment"
 	},{
 		"key" : "Cmd-H",
 		"action" : "hr"
 	},{
-		"key" : "Cmd-S",
-		"action" : "save"
-	},{
-		"key" : "Cmd-O",
-		"action" : "open"
+		"key" : "Cmd-L",
+		"action" : "unorderedlist"
 	},{
 		"key" : "Shift-Cmd-O",
 		"action" : "orderedlist"
@@ -49,9 +69,6 @@
 		"action" : "orderedlist"
 	},{
 		"key" : "Shift-Cmd-U",
-		"action" : "unorderedlist"
-	},{
-		"key" : "Cmd-L",
 		"action" : "unorderedlist"
 	},{
 		"key" : "Cmd-'",
@@ -68,5 +85,8 @@
 	},{
 		"key" : "Shift-Cmd-L",
 		"action" : "link"
+	},{
+		"key" : "Shift-Cmd-T",
+		"action" : "table"
 	}
 ]
