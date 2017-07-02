@@ -227,8 +227,9 @@ AppMain.prototype = {
 			doc.setCursor({ line : pos[0], ch : cursorOffset != null ? cursorOffset : 0});
 		} else {
 			console.log("check hier");
-			doc.replaceRange(insertion,{ line : cursor.line, ch : 0});
-			doc.setCursor({ line : cursor.line, ch : cursorOffset != null ? cursorOffset : 0});
+			doc.setSelection({ line : cursor.line, ch : cursor.ch},{ line : cursor.line, ch : 0});
+			var selection = doc.getSelection();
+			doc.replaceSelection(insertion + StringTools.trim(StringTools.replace(selection,"#","")));
 		}
 	}
 	,setWorkbench: function(content) {
@@ -292,6 +293,37 @@ HxOverrides.substr = function(s,pos,len) {
 Math.__name__ = true;
 var StringTools = function() { };
 StringTools.__name__ = true;
+StringTools.isSpace = function(s,pos) {
+	var c = HxOverrides.cca(s,pos);
+	if(!(c > 8 && c < 14)) {
+		return c == 32;
+	} else {
+		return true;
+	}
+};
+StringTools.ltrim = function(s) {
+	var l = s.length;
+	var r = 0;
+	while(r < l && StringTools.isSpace(s,r)) ++r;
+	if(r > 0) {
+		return HxOverrides.substr(s,r,l - r);
+	} else {
+		return s;
+	}
+};
+StringTools.rtrim = function(s) {
+	var l = s.length;
+	var r = 0;
+	while(r < l && StringTools.isSpace(s,l - r - 1)) ++r;
+	if(r > 0) {
+		return HxOverrides.substr(s,0,l - r);
+	} else {
+		return s;
+	}
+};
+StringTools.trim = function(s) {
+	return StringTools.ltrim(StringTools.rtrim(s));
+};
 StringTools.replace = function(s,sub,by) {
 	return s.split(sub).join(by);
 };

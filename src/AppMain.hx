@@ -326,8 +326,11 @@ class AppMain {
 			doc.setCursor({ line: pos[0], ch: (cursorOffset!=null) ? cursorOffset : 0 });
 		} else {
 			trace('check hier');
-			doc.replaceRange(insertion, { line: cursor.line, ch: 0 });
-			doc.setCursor({ line: cursor.line, ch: (cursorOffset!=null) ? cursorOffset : 0 });
+			doc.setSelection({line:cursor.line, ch:cursor.ch},{line:cursor.line, ch:0});
+			var selection = doc.getSelection();
+			doc.replaceSelection(insertion + selection.replace("#",'').trim());
+			// doc.replaceRange(insertion, { line: cursor.line, ch: 0 });
+			// doc.setCursor({ line: cursor.line, ch: (cursorOffset!=null) ? cursorOffset : 0 });
 		}
 	}
 

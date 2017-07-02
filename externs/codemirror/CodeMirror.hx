@@ -76,6 +76,11 @@ typedef DocHistory = {
 	 */
 	function somethingSelected():Bool;
 	function setValue(value:String):Void;
+	/**
+	 *  Get the currently selected code.
+	 *  @param lineSep -
+	 *  @return String
+	 */
 	function getSelection(?lineSep:String):String;
 	function markClean():Void;
 	function changeGeneration(?closeEvent:Bool):Int;
@@ -98,6 +103,13 @@ typedef DocHistory = {
 	function getCursor( ?start : Bool ) : Pos;
 	function setCursor(pos: Pos, ?ch: Int, ?options: Dynamic):Void;
 	function listSelections():Array<{anchor:Pos, head:Pos}>;
+	/**
+	 *  Set the selection range. anchor and head should be {line, ch} objects.
+	 *  head defaults to anchor when not given.
+	 *  @param anchor -
+	 *  @param head -
+	 *  @param options -
+	 */
 	function setSelection(anchor: Pos, ?head: Pos, ?options: Dynamic):Void;
 	/**
 	 *  Replace the selection with the given string.
