@@ -229,7 +229,7 @@ AppMain.prototype = {
 			console.log("check hier");
 			doc.setSelection({ line : cursor.line, ch : cursor.ch},{ line : cursor.line, ch : 0});
 			var selection = doc.getSelection();
-			doc.replaceSelection(insertion + StringTools.trim(StringTools.replace(selection,"#","")));
+			doc.replaceSelection(insertion + StringTools.trim(StringTools.replace(StringTools.replace(selection,"#",""),insertion,"")));
 		}
 	}
 	,setWorkbench: function(content) {

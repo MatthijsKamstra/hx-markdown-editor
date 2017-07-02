@@ -328,7 +328,7 @@ class AppMain {
 			trace('check hier');
 			doc.setSelection({line:cursor.line, ch:cursor.ch},{line:cursor.line, ch:0});
 			var selection = doc.getSelection();
-			doc.replaceSelection(insertion + selection.replace("#",'').trim());
+			doc.replaceSelection(insertion + selection.replace("#",'').replace(insertion,'').trim());
 			// doc.replaceRange(insertion, { line: cursor.line, ch: 0 });
 			// doc.setCursor({ line: cursor.line, ch: (cursorOffset!=null) ? cursorOffset : 0 });
 		}

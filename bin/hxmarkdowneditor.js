@@ -232,7 +232,7 @@ AppMain.prototype = {
 			haxe_Log.trace("check hier",{ fileName : "AppMain.hx", lineNumber : 328, className : "AppMain", methodName : "insertBefore"});
 			doc.setSelection({ line : cursor.line, ch : cursor.ch},{ line : cursor.line, ch : 0});
 			var selection = doc.getSelection();
-			doc.replaceSelection(insertion + StringTools.trim(StringTools.replace(selection,"#","")));
+			doc.replaceSelection(insertion + StringTools.trim(StringTools.replace(StringTools.replace(selection,"#",""),insertion,"")));
 		}
 	}
 	,onFolderOpenHandler: function() {
