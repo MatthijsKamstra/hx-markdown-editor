@@ -24,6 +24,8 @@ AppMain.prototype = {
 	init: function() {
 		var _gthis = this;
 		$(function() {
+			window.addEventListener("resize",$bind(_gthis,_gthis.resizeHandler));
+			_gthis.resizeHandler(null);
 			_gthis.initEditors();
 			_gthis.initShortcuts();
 			window.document.getElementById("btn-open").addEventListener("click",$bind(_gthis,_gthis.saveHandler),false);
@@ -31,6 +33,16 @@ AppMain.prototype = {
 			window.document.getElementById("btn-fullscreen").addEventListener("click",$bind(_gthis,_gthis.fullscreenHandler),false);
 			window.document.getElementById("btn-preview").addEventListener("click",$bind(_gthis,_gthis.previewHandler),false);
 		});
+	}
+	,resizeHandler: function(e) {
+		var myWidth = window.innerWidth;
+		var myHeight = window.innerHeight;
+		var offset = 23;
+		window.document.getElementById("hx-markdown-container").setAttribute("data-comment","w:" + myWidth + "px, h:" + myHeight + "px");
+		window.document.getElementById("workbench_parts_title");
+		window.document.getElementById("workbench_parts_editor_container").setAttribute("style","width:100%; height:" + (myHeight - offset) + "px;");
+		window.document.getElementById("workbench_parts_editor_container").setAttribute("data-comment","w:" + myWidth + "px, h:" + (myHeight - offset) + "px");
+		console.log("width: " + myWidth + ", height: " + myHeight);
 	}
 	,initEditors: function() {
 		this.inMarkdown = window.document.createElement("textarea");
@@ -71,7 +83,6 @@ AppMain.prototype = {
 			this.keyMarkdown += "| " + item[0].action + " | " + item[0].key + " | " + this.replaceString2Symbols(item[0].key) + " | x | " + item[0].key + " |\n";
 		}
 		this.editor.addKeyMap(map);
-		window.console.info(this.keyMarkdown);
 	}
 	,replaceString2Symbols: function(keybinding) {
 		var str = "`" + StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(keybinding,"Cmd","⌘"),"Alt","⌥"),"Ctrl","⌃"),"Shift","⇧"),"-","` `") + "`";

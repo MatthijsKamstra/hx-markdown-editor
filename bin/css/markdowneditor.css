@@ -35,7 +35,13 @@ containers / workbench
 }
 
 #workbench_parts_title{
-	display: none;
+	background-color: #505050;
+	height: 23px;
+	text-align: center
+}
+.window-title{
+	color: #C9C9C9;
+	line-height: 22px;
 }
 
 #workbench_parts_editor_container{

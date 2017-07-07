@@ -19,21 +19,48 @@
 		<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
 		<!-- normalize everything -->
 		<link rel="stylesheet" href="css/normalize.css" >
-		<!-- sizes etc -->
-		<link rel="stylesheet" href="css/markdowneditor.css" >
-		<!-- #ouy_markdown -->
-		<link rel="stylesheet" href="css/styles/github2.css" >
-		<!-- #in_markdow -->
-		<link rel="stylesheet" href="css/theme/default.css" >
-		<link rel="stylesheet" href="css/theme/monk.css" >
 
-		<!-- Electron specific code -->
-		<!-- Insert this line above script imports  -->
-		<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+		<style>
+
+			#hx-markdown-container{
+				background-color: red;
+				width: 100vw;
+				height: 100vh;
+				position: relative;
+			}
+			#workbench_parts_title{
+				background-color: #505050;
+				height: 20px;
+				text-align: center
+			}
+			.window-title{
+				color: #C9C9C9;
+			}
+
+			#workbench_parts_editor_container{
+				background-color: green;
+			}
+			#workbench_parts_activitybar{
+				background-color: yellow;
+				width: 40px;
+			}
+
+			#workbench_parts_sidebar{
+				background-color: silver;
+			}
+			#workbench_parts_editor{
+				background-color: pink;
+			}
+			#workbench_parts_editor_one{
+				background-color: blue;
+
+			}
+
+		</style>
 
 	</head>
 	<body>
-
 
 		<div id="hx-markdown-container">
 			<div id="workbench_parts_title">
@@ -79,31 +106,5 @@
 			</div>
 		</div>
 
-		<link rel="stylesheet" href="lib/codemirror/codemirror.css">
-		<!--<link rel="stylesheet" href="lib/codemirror/monokai.css">-->
-		<!--<link rel="stylesheet" href="lib/codemirror/monokai.css">-->
-		<!--<script src="lib/codemirror/codemirror.js"></script>-->
-
-
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/codemirror.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/addon/edit/continuelist.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/mode/markdown/markdown.min.js"></script>
-
-
-		<!-- https://github.com/eligrey/FileSaver.js/ -->
-		<script type="text/javascript" src="lib/filesaver/FileSaver.js"></script>
-		<!-- https://github.com/markdown-it/markdown-it -->
-		<script type="text/javascript" src="lib/markdown-it/markdown-it.min.js"></script>
-		<script type="text/javascript" src="lib/marked/marked.min.js"></script>
-		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<!-- Latest compiled and minified JavaScript -->
-		<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
-		<!-- Code generated using Haxe -->
-		<script type="text/javascript" src="hxmarkdowneditor.js"></script>
-
-		<!-- Insert this line after script imports -->
-		<script>if (window.module) module = window.module;</script>
 	</body>
 </html>

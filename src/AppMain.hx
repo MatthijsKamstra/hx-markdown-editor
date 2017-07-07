@@ -76,6 +76,10 @@ class AppMain {
 		new JQuery( function():Void {
 			// when document is ready
 
+			// setup up resizer
+			window.addEventListener("resize", resizeHandler);
+			resizeHandler(null);
+
 			// setup editors
 			initEditors();
 			// more maps
@@ -93,6 +97,22 @@ class AppMain {
 		});
 	}
 
+
+	function resizeHandler(e){
+		var myWidth : Int = window.innerWidth;
+    	var myHeight : Int = window.innerHeight;
+ 		/**
+ 		 * var style = window.getComputedStyle(document.getElementById("Example"), null);
+		 * style.getPropertyValue("height");
+ 		 */
+
+		var offset = 23;
+ 		document.getElementById('hx-markdown-container').setAttribute("data-comment", 'w:${myWidth}px, h:${myHeight}px');
+ 		document.getElementById('workbench_parts_title'); // 20px height
+ 		document.getElementById('workbench_parts_editor_container').setAttribute("style", 'width:100%; height:${myHeight-offset}px;');
+ 		document.getElementById('workbench_parts_editor_container').setAttribute("data-comment", 'w:${myWidth}px, h:${myHeight-offset}px');
+		trace('width: $myWidth, height: $myHeight');
+	}
 
 	function initEditors()
 	{
@@ -153,7 +173,7 @@ class AppMain {
 			keyMarkdown += '| ${item.action} | ${item.key} | ${replaceString2Symbols (item.key)} | x | ${item.key} |\n';
 		}
 		editor.addKeyMap(map);
-		console.info(keyMarkdown);
+		// console.info(keyMarkdown);
 	}
 
 	// Symbol	Meaning

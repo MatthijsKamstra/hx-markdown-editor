@@ -1,21 +1,22 @@
 {
-	"license": "MIT",
-	"name": "hx-markdown-editor",
-	"version": "0.0.1",
-	"description": "",
-	"private": true,
-	"author": "Matthijs Kamstra aka [mck]",
-	"scripts": {
-		"prewatch": "haxe build_debug.hxml",
-		"haxebuild": "haxe build_debug.hxml",
-		"watch": "onchange 'src/*.hx' 'src/*/*.hx' 'src/*/*/*.hx' 'src/*/*/*/*.hx' 'src/assets/*/*.css' 'src/assets/*/*.html' 'src/assets/*/*.md' -v -- haxe build_debug.hxml & livereload docs/ && electron docs/",
-		"electronbuild": "electron bin/",
-		"electron": "haxe build_debug.hxml && electron bin/"
-	},
-	"dependencies": {
-	},
-	"devDependencies": {
-		"livereload": "0.6.0",
-		"onchange": "3.0.2"
-	}
+  "license": "MIT",
+  "name": "hx-markdown-editor",
+  "version": "0.0.1",
+  "description": "",
+  "private": true,
+  "author": "Matthijs Kamstra aka [mck]",
+  "scripts": {
+    "prewatch": "haxe build_debug.hxml",
+    "haxebuild": "haxe build_debug.hxml",
+    "watch": "onchange 'src/*.hx' 'src/*/*.hx' 'src/*/*/*.hx' 'src/*/*/*/*.hx' 'src/assets/*/*.css' 'src/assets/*/*.html' 'src/assets/*/*.md' -v -- haxe build_debug.hxml & livereload docs/ && electron docs/",
+    "electronbuild": "electron bin/",
+    "electron": "haxe build_debug.hxml && electron bin/"
+  },
+  "dependencies": {
+    "marked": "^0.3.6"
+  },
+  "devDependencies": {
+    "livereload": "0.6.0",
+    "onchange": "3.0.2"
+  }
 }

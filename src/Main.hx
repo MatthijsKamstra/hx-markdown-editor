@@ -50,7 +50,7 @@ class Main {
         		height: 800,
 				backgroundColor: '#2e2c29',
 				// frame: false,
-				// titleBarStyle: 'hidden'
+				titleBarStyle: 'hidden'
 			});
 
 			// Emitted when the window is closed.

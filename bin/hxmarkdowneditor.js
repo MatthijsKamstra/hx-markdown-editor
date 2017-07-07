@@ -27,6 +27,8 @@ AppMain.prototype = {
 	init: function() {
 		var _gthis = this;
 		$(function() {
+			window.addEventListener("resize",$bind(_gthis,_gthis.resizeHandler));
+			_gthis.resizeHandler(null);
 			_gthis.initEditors();
 			_gthis.initShortcuts();
 			window.document.getElementById("btn-open").addEventListener("click",$bind(_gthis,_gthis.saveHandler),false);
@@ -34,6 +36,16 @@ AppMain.prototype = {
 			window.document.getElementById("btn-fullscreen").addEventListener("click",$bind(_gthis,_gthis.fullscreenHandler),false);
 			window.document.getElementById("btn-preview").addEventListener("click",$bind(_gthis,_gthis.previewHandler),false);
 		});
+	}
+	,resizeHandler: function(e) {
+		var myWidth = window.innerWidth;
+		var myHeight = window.innerHeight;
+		var offset = 23;
+		window.document.getElementById("hx-markdown-container").setAttribute("data-comment","w:" + myWidth + "px, h:" + myHeight + "px");
+		window.document.getElementById("workbench_parts_title");
+		window.document.getElementById("workbench_parts_editor_container").setAttribute("style","width:100%; height:" + (myHeight - offset) + "px;");
+		window.document.getElementById("workbench_parts_editor_container").setAttribute("data-comment","w:" + myWidth + "px, h:" + (myHeight - offset) + "px");
+		haxe_Log.trace("width: " + myWidth + ", height: " + myHeight,{ fileName : "AppMain.hx", lineNumber : 114, className : "AppMain", methodName : "resizeHandler"});
 	}
 	,initEditors: function() {
 		this.inMarkdown = window.document.createElement("textarea");
@@ -74,7 +86,6 @@ AppMain.prototype = {
 			this.keyMarkdown += "| " + item[0].action + " | " + item[0].key + " | " + this.replaceString2Symbols(item[0].key) + " | x | " + item[0].key + " |\n";
 		}
 		this.editor.addKeyMap(map);
-		window.console.info(this.keyMarkdown);
 	}
 	,replaceString2Symbols: function(keybinding) {
 		var str = "`" + StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(keybinding,"Cmd","⌘"),"Alt","⌥"),"Ctrl","⌃"),"Shift","⇧"),"-","` `") + "`";
@@ -134,16 +145,16 @@ AppMain.prototype = {
 			this.insertAround("[","](http://)");
 			break;
 		case "open":
-			haxe_Log.trace(value,{ fileName : "AppMain.hx", lineNumber : 188, className : "AppMain", methodName : "onKeyMappedHandler"});
+			haxe_Log.trace(value,{ fileName : "AppMain.hx", lineNumber : 208, className : "AppMain", methodName : "onKeyMappedHandler"});
 			break;
 		case "orderedlist":
 			this.insertBefore("1. ",3);
 			break;
 		case "preview":
-			haxe_Log.trace(value,{ fileName : "AppMain.hx", lineNumber : 190, className : "AppMain", methodName : "onKeyMappedHandler"});
+			haxe_Log.trace(value,{ fileName : "AppMain.hx", lineNumber : 210, className : "AppMain", methodName : "onKeyMappedHandler"});
 			break;
 		case "save":
-			haxe_Log.trace(value,{ fileName : "AppMain.hx", lineNumber : 187, className : "AppMain", methodName : "onKeyMappedHandler"});
+			haxe_Log.trace(value,{ fileName : "AppMain.hx", lineNumber : 207, className : "AppMain", methodName : "onKeyMappedHandler"});
 			break;
 		case "table":
 			this.insert("| colum 1 | colum 2 |\n| :--: | :--: |\n| a | b |\n| c | d |\n");
@@ -152,7 +163,7 @@ AppMain.prototype = {
 			this.insertBefore("* ",3);
 			break;
 		default:
-			haxe_Log.trace("not sure what you want: " + value,{ fileName : "AppMain.hx", lineNumber : 221, className : "AppMain", methodName : "onKeyMappedHandler"});
+			haxe_Log.trace("not sure what you want: " + value,{ fileName : "AppMain.hx", lineNumber : 241, className : "AppMain", methodName : "onKeyMappedHandler"});
 		}
 	}
 	,saveHandler: function(e) {
@@ -162,10 +173,10 @@ AppMain.prototype = {
 		this.onFolderOpenHandler();
 	}
 	,previewHandler: function() {
-		haxe_Log.trace("previewHandler",{ fileName : "AppMain.hx", lineNumber : 242, className : "AppMain", methodName : "previewHandler"});
+		haxe_Log.trace("previewHandler",{ fileName : "AppMain.hx", lineNumber : 262, className : "AppMain", methodName : "previewHandler"});
 	}
 	,fullscreenHandler: function() {
-		haxe_Log.trace("fullscreenHandler",{ fileName : "AppMain.hx", lineNumber : 248, className : "AppMain", methodName : "fullscreenHandler"});
+		haxe_Log.trace("fullscreenHandler",{ fileName : "AppMain.hx", lineNumber : 268, className : "AppMain", methodName : "fullscreenHandler"});
 		var doc = window.document;
 		var el = window.document.documentElement;
 		if(!AppMain.IS_FULL_SCREEN) {
@@ -211,7 +222,7 @@ AppMain.prototype = {
 		var cursor = doc.getCursor();
 		if(doc.somethingSelected()) {
 			var selections = doc.listSelections();
-			haxe_Log.trace(selections,{ fileName : "AppMain.hx", lineNumber : 316, className : "AppMain", methodName : "insertBefore"});
+			haxe_Log.trace(selections,{ fileName : "AppMain.hx", lineNumber : 336, className : "AppMain", methodName : "insertBefore"});
 			var pos = [selections[0].head.line,selections[0].anchor.line];
 			pos.sort(function(a,b) {
 				if(a < b) {
@@ -229,7 +240,7 @@ AppMain.prototype = {
 			}
 			doc.setCursor({ line : pos[0], ch : cursorOffset != null ? cursorOffset : 0});
 		} else {
-			haxe_Log.trace("check hier",{ fileName : "AppMain.hx", lineNumber : 328, className : "AppMain", methodName : "insertBefore"});
+			haxe_Log.trace("check hier",{ fileName : "AppMain.hx", lineNumber : 348, className : "AppMain", methodName : "insertBefore"});
 			doc.setSelection({ line : cursor.line, ch : cursor.ch},{ line : cursor.line, ch : 0});
 			var selection = doc.getSelection();
 			doc.replaceSelection(insertion + StringTools.trim(StringTools.replace(StringTools.replace(selection,"#",""),insertion,"")));
@@ -238,7 +249,7 @@ AppMain.prototype = {
 	,onFolderOpenHandler: function() {
 		var _gthis = this;
 		electron_renderer_IpcRenderer.send("OpenDialog",function() {
-			haxe_Log.trace("OpenDialog",{ fileName : "AppMain.hx", lineNumber : 476, className : "AppMain", methodName : "onFolderOpenHandler"});
+			haxe_Log.trace("OpenDialog",{ fileName : "AppMain.hx", lineNumber : 496, className : "AppMain", methodName : "onFolderOpenHandler"});
 		});
 		electron_renderer_IpcRenderer.on("SEND_FILE_CONTENT",function(event,filepath,data) {
 			_gthis.currentFile = filepath;
@@ -250,7 +261,7 @@ AppMain.prototype = {
 			return;
 		}
 		electron_renderer_IpcRenderer.send("SAVE_FILE",this.currentFile,this.get_inMarkdownValue(),function() {
-			haxe_Log.trace("SAVE_FILE",{ fileName : "AppMain.hx", lineNumber : 488, className : "AppMain", methodName : "onSaveHandler"});
+			haxe_Log.trace("SAVE_FILE",{ fileName : "AppMain.hx", lineNumber : 508, className : "AppMain", methodName : "onSaveHandler"});
 		});
 	}
 	,get_inMarkdownValue: function() {

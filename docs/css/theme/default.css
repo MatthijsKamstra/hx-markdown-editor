@@ -1,3 +1,12 @@
+html,body {
+	font-family: 'Inconsolata', monospace;
+}
+
+#workbench_parts_title {
+	-webkit-user-select: none;
+	-webkit-app-region: drag;
+}
+
 .in-markdown {
 	padding: 20px;
 	background-color: #28282A;

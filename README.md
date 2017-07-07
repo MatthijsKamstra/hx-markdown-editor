@@ -10,7 +10,7 @@ That's the itch and this is how I scratch that!
 
 ## Screenshot
 
-![](wip.png)
+![](wip01.png)
 
 
 ## Features
@@ -36,7 +36,6 @@ That's the itch and this is how I scratch that!
 - [ ] Dialog for tables
 - [ ] Multiple documents
 - [ ] Allow drag’n’drop files onto app icon (Finder or Dock)
-- [ ] GitHub Flavored Markdown support
 - [ ] Markdown & code block highlighting
 - [ ] Find & replace
 - [ ] Emoji support in preview 🎉
@@ -88,15 +87,20 @@ And want to take the good parts and intergrate them:
 
 I use [Haxe](https://haxe.org/) type definitions for [Electron](http://electron.atom.io/) from <https://github.com/fponticelli/hxelectron>
 
-- electron
+- [Electron](http://electron.atom.io/)
 - <https://codemirror.net/>
 - Haxe externs for Codemirror: <https://github.com/clemos/try-haxe/tree/master/src/js/codemirror>
-- ~~For the conversion of markdown to html I use haxe-markdown:  <https://github.com/dpeek/haxe-markdown>~~
-- markdown-it.js
+
 - default preview css from macdown (like github.css)
 - Font-awesome
 - normalize.css
 - FileSaver.js
+
+**markdown**
+
+- ~~For the conversion of markdown to html I use haxe-markdown:  <https://github.com/dpeek/haxe-markdown>~~
+- https://github.com/markdown-it/markdown-it
+- https://github.com/chjj/marked
 
 
 ## Haxe

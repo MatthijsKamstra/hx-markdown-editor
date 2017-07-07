@@ -11,7 +11,7 @@ Main.main = function() {
 		}
 	});
 	electron_main_App.on("ready",function(e1) {
-		mainWindow = new electron_main_BrowserWindow({ width : 1200, height : 800, backgroundColor : "#2e2c29"});
+		mainWindow = new electron_main_BrowserWindow({ width : 1200, height : 800, backgroundColor : "#2e2c29", titleBarStyle : "hidden"});
 		mainWindow.on("closed",function() {
 			if(process.platform != "darwin") {
 				electron_main_App.quit();
