@@ -85,6 +85,7 @@ class AppMain {
 			initShortcuts();
 
 			// register the handler
+			document.getElementById('btn-new').addEventListener('click', newHandler, false);
 			document.getElementById('btn-open').addEventListener('click', openHandler, false);
 			document.getElementById('file-upload').addEventListener('change', openHandler);
 			document.getElementById('btn-save').addEventListener('click', saveHandler, false);
@@ -133,7 +134,7 @@ class AppMain {
  		document.getElementById('workbench_parts_title'); // 20px height
  		document.getElementById('workbench_parts_editor_container').setAttribute("style", 'width:100%; height:${myHeight-offset}px;');
  		document.getElementById('workbench_parts_editor_container').setAttribute("data-comment", 'w:${myWidth}px, h:${myHeight-offset}px');
-		trace('width: $myWidth, height: $myHeight');
+		// trace('width: $myWidth, height: $myHeight');
 	}
 
 	function initEditors()
@@ -227,6 +228,7 @@ class AppMain {
 	function onKeyMappedHandler (value){
 		switch (value) {
 
+			case 'new': trace('new'); newHandler(null);
 			case 'save': saveHandler(null);
 			case 'open': openHandler(null);
 			case 'fullscreen': this.fullscreenHandler();
@@ -263,6 +265,14 @@ class AppMain {
 			default:
 				trace('not sure what you want: $value');
 		}
+	}
+
+
+
+	function newHandler(e){
+		currentFileName = 'new_document';
+		editor.setValue('# New document\n\nmonk');
+		editor.focus();
 	}
 
 	function saveHandler(e){

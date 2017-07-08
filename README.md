@@ -69,13 +69,13 @@ And want to take the good parts and intergrate them:
 - [ ] edit more then one file (tabs)
 - [ ] distraction free edit
 - [ ] export to different files (html/pdf/rich text/etc)
-- [ ] editor short cuts
+- [X] editor short cuts
 - [ ] snippets
 - [ ] toggle markdown, with styline / and without (plain markdown)
 - [ ] toggle preview
 - [ ] Spell check
 - [ ] Windows support for Keymaps
-- [ ] Fullscreen editing
+- [X] Fullscreen editing
 - [ ] Preview mode
 - [ ] Status bar
 
@@ -92,7 +92,7 @@ I use [Haxe](https://haxe.org/) type definitions for [Electron](http://electron.
 - Haxe externs for Codemirror: <https://github.com/clemos/try-haxe/tree/master/src/js/codemirror>
 
 - default preview css from macdown (like github.css)
-- Font-awesome
+- <http://fontawesome.io/>
 - normalize.css
 - FileSaver.js
 

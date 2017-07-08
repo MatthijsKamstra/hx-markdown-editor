@@ -7,7 +7,7 @@
 	},{
 		"key" : "Cmd-O",
 		"action" : "open",
-		"icon" : "fa fa-file-text-o"
+		"icon" : "fa fa-folder-open-o"
 	},{
 		"key" : "Cmd-Ctrl-F",
 		"action" : "fullscreen",
@@ -15,7 +15,12 @@
 	},{
 		"key" : "Cmd-E",
 		"action" : "preview",
-		"icon" : "fa-eye"
+		"icon" : "fa-eye",
+		"icon-toggle" : "fa-eye-slash"
+	},{
+		"key" : "Cmd-N",
+		"action" : "new",
+		"icon" : "fa fa-file-text-o"
 	},
 
 
