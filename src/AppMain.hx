@@ -24,6 +24,7 @@ import electron.renderer.IpcRenderer;
 #end
 
 using StringTools;
+using DateTools;
 using Reflect;
 
 // import Markdown;
@@ -33,6 +34,7 @@ class AppMain {
 
 	var isElectron = false;
 	var currentFile:String;
+	var currentFileName:String = 'monk';
 
 	var editor : CodeMirror;
 
@@ -50,6 +52,7 @@ class AppMain {
 	var keyMarkdown : String;
 
 	var isMac : Bool = true;
+	public static var IS_FULL_SCREEN : Bool = false;
 
 	var shortCuts : Array<KeyBindings> = haxe.Json.parse(haxe.Resource.getString("key"));
 
@@ -76,27 +79,46 @@ class AppMain {
 		new JQuery( function():Void {
 			// when document is ready
 
-			// setup up resizer
-			window.addEventListener("resize", resizeHandler);
-			resizeHandler(null);
-
 			// setup editors
 			initEditors();
 			// more maps
 			initShortcuts();
 
-
 			// register the handler
-			document.getElementById('btn-open').addEventListener('click', saveHandler, false);
-			document.getElementById('btn-save').addEventListener('click', openHandler, false);
+			document.getElementById('btn-open').addEventListener('click', openHandler, false);
+			document.getElementById('file-upload').addEventListener('change', openHandler);
+			document.getElementById('btn-save').addEventListener('click', saveHandler, false);
 			document.getElementById('btn-fullscreen').addEventListener('click', fullscreenHandler, false);
 			document.getElementById('btn-preview').addEventListener('click', previewHandler, false);
 
+			toggleOpenBtn();
+
+			// setup up resizer
+			window.addEventListener("resize", resizeHandler);
+			resizeHandler(null);
+
+			setMonkDocumentTitle('Monk Markdown Editor');
 
 			// document.addEventListener('keydown', onKeydownHandler, false);
 		});
 	}
 
+	function setMonkDocumentTitle(title:String){
+		var widowtitle : Element = document.getElementsByClassName('window-title')[0];
+		widowtitle.innerText = title;
+	}
+
+	function toggleOpenBtn (){
+		var electronContainer : Element = document.getElementById('container-btn-open-electron');
+		var browserContainer : Element = document.getElementById('container-btn-open-browser');
+		#if (browser)
+			electronContainer.style.display = 'none';
+			browserContainer.style.display = 'initial';
+		#else
+			electronContainer.style.display = 'initial';
+			browserContainer.style.display = 'none';
+		#end
+	}
 
 	function resizeHandler(e){
 		var myWidth : Int = window.innerWidth;
@@ -107,7 +129,7 @@ class AppMain {
  		 */
 
 		var offset = 23;
- 		document.getElementById('hx-markdown-container').setAttribute("data-comment", 'w:${myWidth}px, h:${myHeight}px');
+ 		document.getElementById('monk_markdown_container').setAttribute("data-comment", 'w:${myWidth}px, h:${myHeight}px');
  		document.getElementById('workbench_parts_title'); // 20px height
  		document.getElementById('workbench_parts_editor_container').setAttribute("style", 'width:100%; height:${myHeight-offset}px;');
  		document.getElementById('workbench_parts_editor_container').setAttribute("data-comment", 'w:${myWidth}px, h:${myHeight-offset}px');
@@ -204,7 +226,8 @@ class AppMain {
 	function onKeyMappedHandler (value){
 		switch (value) {
 
-			case 'save': trace(value);
+			case 'save':
+			saveHandler(null);
 			case 'open': trace(value);
 			case 'fullscreen': this.fullscreenHandler();
 			case 'preview': trace(value);
@@ -262,7 +285,7 @@ class AppMain {
 		trace('previewHandler');
 	}
 
-	public static var IS_FULL_SCREEN : Bool = false;
+
 
 	function fullscreenHandler(){
 		trace('fullscreenHandler');
@@ -368,53 +391,53 @@ class AppMain {
 
 
 	// define a handler
-	function onKeydownHandler(e:KeyboardEvent) {
-		// trace(e);
-		if (e.shiftKey && e.metaKey){
-			e.preventDefault();
-			e.stopPropagation();
-			// trace(e.key);
-			switch(e.key.toLowerCase()){
-				// [mck] very weird ... shift + cmd + u doesn't register in the browser
-				case 'u', 'i': trace('unorder list'); prefix('*');
-				case 'o': trace('order list'); prefix('1.');
-			}
-		} else {
-			if (e.metaKey){
-				switch(e.key.toLowerCase()){
-					case '1':
-						trace('change to h1');
-						prefixLine(e,1);
-					case '2': trace('change to h2'); prefixLine(e,2);
-					case '3': trace('change to h3'); prefixLine(e,3);
-					case '4': trace('change to h4'); prefixLine(e,4);
-					case '5': trace('change to h5'); prefixLine(e,5);
-					case '6': trace('change to h6'); prefixLine(e,6);
-					case 'b':
-						trace('change to bold');
-						wrap('**');
-					case 'i':
-						trace('change to italic');
-						wrap('_');
-					case 'k':
-						trace('change to inline code (k)');
-						wrap('`');
-					case '/':
-						trace('change to comment');
-						wrap('<!-- ', ' -->');
-					case 's': trace('save');
-					case 'o': trace('open');
-					default:
-						trace(e.key);
-				}
-			}
-			// this would test for whichever key is 40 and the ctrl key at the same time
-			if (e.ctrlKey && e.keyCode == 40) {
-				// call your function to do the thing
-				// pauseSound();
-		}
-		}
-	}
+	// function onKeydownHandler(e:KeyboardEvent) {
+	// 	// trace(e);
+	// 	if (e.shiftKey && e.metaKey){
+	// 		e.preventDefault();
+	// 		e.stopPropagation();
+	// 		// trace(e.key);
+	// 		switch(e.key.toLowerCase()){
+	// 			// [mck] very weird ... shift + cmd + u doesn't register in the browser
+	// 			case 'u', 'i': trace('unorder list'); prefix('*');
+	// 			case 'o': trace('order list'); prefix('1.');
+	// 		}
+	// 	} else {
+	// 		if (e.metaKey){
+	// 			switch(e.key.toLowerCase()){
+	// 				case '1':
+	// 					trace('change to h1');
+	// 					prefixLine(e,1);
+	// 				case '2': trace('change to h2'); prefixLine(e,2);
+	// 				case '3': trace('change to h3'); prefixLine(e,3);
+	// 				case '4': trace('change to h4'); prefixLine(e,4);
+	// 				case '5': trace('change to h5'); prefixLine(e,5);
+	// 				case '6': trace('change to h6'); prefixLine(e,6);
+	// 				case 'b':
+	// 					trace('change to bold');
+	// 					wrap('**');
+	// 				case 'i':
+	// 					trace('change to italic');
+	// 					wrap('_');
+	// 				case 'k':
+	// 					trace('change to inline code (k)');
+	// 					wrap('`');
+	// 				case '/':
+	// 					trace('change to comment');
+	// 					wrap('<!-- ', ' -->');
+	// 				case 's': trace('save');
+	// 				case 'o': trace('open');
+	// 				default:
+	// 					trace(e.key);
+	// 			}
+	// 		}
+	// 		// this would test for whichever key is 40 and the ctrl key at the same time
+	// 		if (e.ctrlKey && e.keyCode == 40) {
+	// 			// call your function to do the thing
+	// 			// pauseSound();
+	// 	}
+	// 	}
+	// }
 
 	/**
 	 *  add a tag at the beginning of the line
@@ -423,69 +446,71 @@ class AppMain {
 	 *  @param e -
 	 *  @param cmdKey -
 	 */
-	function prefixLine(e:KeyboardEvent,cmdKey:Int){
-		e.preventDefault();
-		e.stopPropagation();
-		var tag = '';
-		var counter = 0;
-		while (counter<cmdKey){
-			tag += '#';
-			counter++;
-		}
-		prefix(tag);
-	}
+	// function prefixLine(e:KeyboardEvent,cmdKey:Int){
+	// 	e.preventDefault();
+	// 	e.stopPropagation();
+	// 	var tag = '';
+	// 	var counter = 0;
+	// 	while (counter<cmdKey){
+	// 		tag += '#';
+	// 		counter++;
+	// 	}
+	// 	prefix(tag);
+	// }
 
-	function wrap(tag:String,?endtag:String) {
-		var sel, range;
-		var selectedText:String;
-		if (window.getSelection != null) {
-			sel = window.getSelection();
-			if (sel.rangeCount != null) {
-				range = sel.getRangeAt(0);
-				selectedText = Std.string(range);
-				range.deleteContents();
-				if(endtag != null){
-					range.insertNode(document.createTextNode(tag + selectedText + endtag));
-				} else {
-					range.insertNode(document.createTextNode(tag + selectedText + tag));
-				}
-			}
-		}
-		// else if (document.selection && document.selection.createRange) {
-		// 	range = document.selection.createRange();
-		// 	selectedText = document.selection.createRange().text + "";
-		// 	range.text = '[' + tag + ']' + selectedText + '[/' + tag + ']';
-		// }
-		onBrowserChange (null);
-	}
+	// function wrap(tag:String,?endtag:String) {
+	// 	var sel, range;
+	// 	var selectedText:String;
+	// 	if (window.getSelection != null) {
+	// 		sel = window.getSelection();
+	// 		if (sel.rangeCount != null) {
+	// 			range = sel.getRangeAt(0);
+	// 			selectedText = Std.string(range);
+	// 			range.deleteContents();
+	// 			if(endtag != null){
+	// 				range.insertNode(document.createTextNode(tag + selectedText + endtag));
+	// 			} else {
+	// 				range.insertNode(document.createTextNode(tag + selectedText + tag));
+	// 			}
+	// 		}
+	// 	}
+	// 	// else if (document.selection && document.selection.createRange) {
+	// 	// 	range = document.selection.createRange();
+	// 	// 	selectedText = document.selection.createRange().text + "";
+	// 	// 	range.text = '[' + tag + ']' + selectedText + '[/' + tag + ']';
+	// 	// }
+	// 	onBrowserChange (null);
+	// }
 
 
-	function prefix(tag:String) {
-		var range : Range;
-		var selection : Selection;
-		if (window.getSelection != null) {
-			selection = window.getSelection();
-			if (selection.rangeCount != null) {
-				range = selection.getRangeAt(0);
-				range.setStart(range.startContainer, range.startOffset - range.startOffset);
-				range.setEnd(range.endContainer, untyped range.endContainer.length);
-				var wholeText : String = untyped range.startContainer.wholeText;
-				range.deleteContents();
-				if(wholeText.charAt(0) == tag.charAt(0)){
-					while (wholeText.charAt(0) == tag.charAt(0)) {
-						wholeText = wholeText.substring(1);
-					}
-				}
-				range.insertNode(document.createTextNode('${tag} ${wholeText.ltrim()}'));
-				range.collapse();
-			}
-		}
-		onBrowserChange (null);
-	}
+	// function prefix(tag:String) {
+	// 	var range : Range;
+	// 	var selection : Selection;
+	// 	if (window.getSelection != null) {
+	// 		selection = window.getSelection();
+	// 		if (selection.rangeCount != null) {
+	// 			range = selection.getRangeAt(0);
+	// 			range.setStart(range.startContainer, range.startOffset - range.startOffset);
+	// 			range.setEnd(range.endContainer, untyped range.endContainer.length);
+	// 			var wholeText : String = untyped range.startContainer.wholeText;
+	// 			range.deleteContents();
+	// 			if(wholeText.charAt(0) == tag.charAt(0)){
+	// 				while (wholeText.charAt(0) == tag.charAt(0)) {
+	// 					wholeText = wholeText.substring(1);
+	// 				}
+	// 			}
+	// 			range.insertNode(document.createTextNode('${tag} ${wholeText.ltrim()}'));
+	// 			range.collapse();
+	// 		}
+	// 	}
+	// 	onBrowserChange (null);
+	// }
 
 	function setWorkbench (content){
 		inMarkdownValue = content;
 		outMarkdownValue = content;
+		editor.setValue(content);
+		editor.focus();
 	}
 
 	// ____________________________________ electron calls ____________________________________
@@ -512,12 +537,15 @@ class AppMain {
 
 	// ____________________________________ handlers ____________________________________
 
-	function onBrowserFileOpenHandler(?e) {
+	function onBrowserFileOpenHandler(e) {
 		// trace(e);
-		var file : Blob = e.target.files[0];
+		var file : File = e.target.files[0];
 		if (file == null) {
 			return;
 		}
+		currentFileName = file.name;
+		setMonkDocumentTitle(currentFileName);
+
 		var reader = new FileReader();
 		reader.onload = function(e) {
 			var content = e.target.result;
@@ -527,12 +555,15 @@ class AppMain {
 	}
 
 	function onBrowserSaveHandler(?e:Event){
-		e.preventDefault();
-		var text = inMarkdown.innerText;
+		if(e != null) e.preventDefault();
+		if(e != null) e.stopPropagation();
+		// inMarkdownValue
+		// var text = inMarkdown.innerText;
+		var text = editor.getValue();
 		// var filename = $("#input-fileName").val();
-		var filename = 'foo';
+		var date = DateTools.format(Date.now(), "%Y-%m-%d_%H:%M:%S");
 		var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
-		untyped saveAs(blob, filename+".md");
+		untyped saveAs(blob, '${currentFileName}_${date}.md');
 	}
 
 	function onBrowserChange (?e:Event){
@@ -551,14 +582,16 @@ class AppMain {
 	function get_inMarkdownValue():String {
 		// trace(Type.typeof(inMarkdownValue));
 		// inMarkdownValue = inMarkdown.value;
-		inMarkdownValue = inMarkdown.innerHTML;
-		// inMarkdownValue = inMarkdown.innerText;
+		// inMarkdownValue = inMarkdown.innerHTML;
+		inMarkdownValue = inMarkdown.innerText;
+		// inMarkdownValue = editor.getValue();
 		return inMarkdownValue;
 	}
 	function set_inMarkdownValue(value:String):String {
 		// trace(Type.typeof(inMarkdownValue));
 		// inMarkdown.value = value;
 		inMarkdown.innerHTML = value;
+		// editor.setValue(value);
 		// inMarkdown.innerText = value;
 		return inMarkdownValue = value;
 	}

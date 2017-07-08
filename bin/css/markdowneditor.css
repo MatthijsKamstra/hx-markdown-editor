@@ -18,6 +18,10 @@ input[type="file"] {
 	display: none;
 }
 
+#container-btn-open-electron {
+	display: none;
+}
+
 /*remember to define focus styles!*/
 :focus {
 	outline: 0;
@@ -26,7 +30,7 @@ input[type="file"] {
 /*
 containers / workbench
 */
-#hx-markdown-container{
+#monk_markdown_container{
 	height: 100%;
 	width: 100%;
 	margin: 0;
@@ -77,6 +81,7 @@ containers / workbench
 }
 #workbench_parts_editor_one{
 	width: 50%;
+	min-width: 500px;
 	height: 100%;
 	display: inline-flex;
 }

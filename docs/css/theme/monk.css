@@ -7,6 +7,7 @@
     font-family: 'Inconsolata', monospace;
     width: 100%;
     height: 100%;
+    font-weight: 100;
 }
 
 
@@ -37,12 +38,12 @@
 .cm-s-monk span.cm-header { color: #ae81ff; }
 .cm-s-monk span.cm-link { color: #ae81ff; }
 
-.cm-s-monk span.cm-header-1 { font-size: 2.5rem; }
-.cm-s-monk span.cm-header-2 { font-size: 2.0rem; }
-.cm-s-monk span.cm-header-3 { font-size: 1.75rem; }
-.cm-s-monk span.cm-header-4 { font-size: 1.5rem; }
-.cm-s-monk span.cm-header-5 { font-size: 1.25rem; }
-.cm-s-monk span.cm-header-6 { font-size: 1rem; }
+.cm-s-monk span.cm-header-1 { font-size: 1.5rem; font-weight: 700; }
+.cm-s-monk span.cm-header-2 { font-size: 1.4rem; font-weight: 700; }
+.cm-s-monk span.cm-header-3 { font-size: 1.3rem; }
+.cm-s-monk span.cm-header-4 { font-size: 1.2rem; }
+.cm-s-monk span.cm-header-5 { font-size: 1.1rem; }
+.cm-s-monk span.cm-header-6 { font-size: 1.0rem; }
 
 .cm-s-monk span.cm-header-1,
 .cm-s-monk span.cm-header-2,
@@ -53,7 +54,7 @@
     font-family: inherit;
     font-weight: 500;
     line-height: 1.1;
-    color: inherit;
+    color: #6ACCCB;
  }
 
 

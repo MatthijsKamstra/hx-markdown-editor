@@ -1,3 +1,4 @@
+# Monk Markdown Editor
 
 line one
 line two
@@ -6,6 +7,8 @@ line four
 
 
 # lists
+
+quick (unordered) list: `cmd` + `l`
 
 unordered list: `shift` + `cmd` + `u`
 
@@ -46,6 +49,8 @@ Test the keyboard shortcuts
 - comment: `cmd` + `/`
 
 # lists
+
+quick (unordered) list: `cmd` + `l`
 
 unordered list: `shift` + `cmd` + `u`
 
