@@ -77,6 +77,7 @@ AppMain.prototype = {
 		this.set_inMarkdownValue(md);
 		this.set_outMarkdownValue(md);
 		this.editor = CodeMirror.fromTextArea(this.inMarkdown,{ tabSize : "2", indentWithTabs : true, lineWrapping : true, extraKeys : { "Enter" : "newlineAndIndentContinueMarkdownList"}, mode : "markdown", tabMode : "indent", theme : "monk"});
+		this.editor.focus();
 	}
 	,initShortcuts: function(keys) {
 		var _gthis = this;
@@ -158,7 +159,7 @@ AppMain.prototype = {
 			this.insertAround("[","](http://)");
 			break;
 		case "open":
-			haxe_Log.trace(value,{ fileName : "AppMain.hx", lineNumber : 231, className : "AppMain", methodName : "onKeyMappedHandler"});
+			this.openHandler(null);
 			break;
 		case "orderedlist":
 			this.insertBefore("1. ",3);

@@ -75,6 +75,7 @@ AppMain.prototype = {
 		this.set_inMarkdownValue(md);
 		this.set_outMarkdownValue(md);
 		this.editor = CodeMirror.fromTextArea(this.inMarkdown,{ tabSize : "2", indentWithTabs : true, lineWrapping : true, extraKeys : { "Enter" : "newlineAndIndentContinueMarkdownList"}, mode : "markdown", tabMode : "indent", theme : "monk"});
+		this.editor.focus();
 	}
 	,initShortcuts: function(keys) {
 		var _gthis = this;
@@ -156,7 +157,7 @@ AppMain.prototype = {
 			this.insertAround("[","](http://)");
 			break;
 		case "open":
-			console.log(value);
+			this.openHandler(null);
 			break;
 		case "orderedlist":
 			this.insertBefore("1. ",3);

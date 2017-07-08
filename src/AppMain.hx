@@ -176,6 +176,7 @@ class AppMain {
 			// lineWrapping: true,
 			// viewportMargin: 'Infinity'
 		});
+		editor.focus();
 	}
 
 	/**
@@ -226,9 +227,8 @@ class AppMain {
 	function onKeyMappedHandler (value){
 		switch (value) {
 
-			case 'save':
-			saveHandler(null);
-			case 'open': trace(value);
+			case 'save': saveHandler(null);
+			case 'open': openHandler(null);
 			case 'fullscreen': this.fullscreenHandler();
 			case 'preview': trace(value);
 
