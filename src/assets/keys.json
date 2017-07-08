@@ -9,7 +9,7 @@
 		"action" : "open",
 		"icon" : "fa fa-file-text-o"
 	},{
-		"key" : "Cmd-F",
+		"key" : "Cmd-Ctrl-F",
 		"action" : "fullscreen",
 		"icon" : "fa-arrows-alt"
 	},{
