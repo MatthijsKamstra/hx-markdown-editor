@@ -13,42 +13,6 @@ That's the itch and this is how I scratch that!
 ![](wip01.png)
 
 
-## Features
-
-- [ ] GitHub Flavored Markdown
-- [ ] Code highlight in preview
-- [ ] Read/Write/Preview mode
-- [ ] Code highlight themes (powered by highlight.js)
-- [ ] Auto reload
-- [ ] Localization
-- [ ] Focus mode
-- [ ] Live preview
-- [ ] GitHub Flavored Markdown support
-- [ ] Search in Markdown
-- [ ] Syntax highlighting
-- [ ] Emoji Support
-- [ ] Words count
-- [ ] Resizable panels
-- [ ] Finder integration (OS X)
-- [x] Shortcuts (ctrl-S, Ctrl-O, etc) read the [shortcut list](/src/assets/shortcut.md)
-- [ ] Dialog for image
-- [ ] Dialog for videos (mp4)
-- [ ] Dialog for tables
-- [ ] Multiple documents
-- [ ] Allow drag’n’drop files onto app icon (Finder or Dock)
-- [ ] Markdown & code block highlighting
-- [ ] Find & replace
-- [ ] Emoji support in preview 🎉
-- [ ] Day & Night themes
-- [ ] Copy HTML to clipboard
-- [ ] Preview HTML
-- [ ] Export HTML
-- [ ] Export PDF
-- [ ] Printing
-- [ ] App will stay alive in tray for quick usage
-- [x] Fullscreen (distraction-free) mode
-
-
 ## WIP
 
 Almost everything is `wip` but this one is more.
@@ -65,21 +29,59 @@ I have looked at the editors that I use (for coding and writing)
 
 And want to take the good parts and intergrate them:
 
-- [ ] folder stucture ()
-- [ ] edit more then one file (tabs)
-- [ ] distraction free edit
-- [ ] export to different files (html/pdf/rich text/etc)
 - [X] editor short cuts
-- [ ] snippets
-- [ ] toggle markdown, with styline / and without (plain markdown)
-- [ ] toggle preview
-- [ ] Spell check
-- [ ] Windows support for Keymaps
 - [X] Fullscreen editing
-- [ ] Preview mode
-- [ ] Status bar
+- [X] Status bar
+- [X] Preview mode
+- [X] distraction free edit
+- [X] toggle preview
+- [ ] subtle markdown styling (preview is full styling)
+- [ ] edit more then one file (tabs)
+- [ ] export to different files (html/pdf/rich text/etc)
+- [ ] snippets
+- [ ] Spell check
+- [ ] folder stucture (might be usefull with a lot of files in one folder...)
+- [ ] Windows support for Keymaps (can't test this, but might be usefull for others)
 
 
+
+## Features
+
+I stole this features from other (Markdown) editors, I think they make sence to have as well.
+They are not as important as the previously mentioned
+
+- [X] Read/Write/Preview mode
+- [X] Focus mode
+- [X] Live preview
+- [x] Shortcuts (ctrl-S, Ctrl-O, etc) read the [shortcut list](/src/assets/shortcut.md)
+- [x] Fullscreen (distraction-free) mode
+- [X] Preview HTML
+- [ ] GitHub Flavored Markdown
+- [ ] Code highlight in preview
+- [ ] Code highlight themes (powered by highlight.js)
+- [ ] Auto reload
+- [ ] Localization
+- [ ] GitHub Flavored Markdown support
+- [ ] Search in Markdown
+- [ ] Syntax highlighting
+- [ ] Emoji Support
+- [ ] Words count
+- [ ] Resizable panels
+- [ ] Finder integration (OS X)
+- [ ] Dialog for image
+- [ ] Dialog for videos (mp4)
+- [ ] Dialog for tables
+- [ ] Multiple documents
+- [ ] Allow drag’n’drop files onto app icon (Finder or Dock)
+- [ ] Markdown & code block highlighting
+- [ ] Find & replace
+- [ ] Emoji support in preview 🎉
+- [ ] Day & Night themes
+- [ ] Copy HTML to clipboard
+- [ ] Export HTML
+- [ ] Export PDF
+- [ ] Printing
+- [ ] App will stay alive in tray for quick usage
 
 
 
