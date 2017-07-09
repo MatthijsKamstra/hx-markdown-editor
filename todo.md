@@ -1,9 +1,14 @@
 # todo
 
-- nice font
-- split screen
-- keyboard shortcuts
-- basic styling in markdown editor part
+
+- toggle fullscreen icon
+- shortcut for distraction free
+  - word count etc
+
+
+
+
+
 
 ### split screen
 
@@ -54,7 +59,10 @@ http://www.javascriptspellcheck.com/
 todo items that are done
 
 
-
+- nice font
+- split screen
+- keyboard shortcuts
+- basic styling in markdown editor part
 
 ### Keyboard shortcuts
 

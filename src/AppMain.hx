@@ -81,7 +81,8 @@ class AppMain {
 
 			// setup editors
 			initEditors();
-			// more maps
+
+			// keymaps
 			initShortcuts();
 
 			// register the handler
@@ -89,14 +90,15 @@ class AppMain {
 			document.getElementById('btn-open').addEventListener('click', openHandler, false);
 			document.getElementById('file-upload').addEventListener('change', openHandler);
 			document.getElementById('btn-save').addEventListener('click', saveHandler, false);
-			document.getElementById('btn-fullscreen').addEventListener('click', fullscreenHandler, false);
-			document.getElementById('btn-preview').addEventListener('click', previewHandler, false);
+			document.getElementById('btn-fullscreen').addEventListener('click', fullscreenToggleHandler, false);
+			document.getElementById('btn-preview').addEventListener('click', previewToggleHandler, false);
+			document.getElementById('btn-headphone').addEventListener('click', toggleDistractionFreeHandler, false);
 
 			toggleOpenBtn();
 
 			// setup up resizer
-			window.addEventListener("resize", resizeHandler);
-			resizeHandler(null);
+			window.addEventListener("resize", onResizeHandler);
+			onResizeHandler(null);
 
 			setMonkDocumentTitle('Monk Markdown Editor');
 
@@ -104,44 +106,11 @@ class AppMain {
 		});
 	}
 
-	function setMonkDocumentTitle(title:String){
-		var widowtitle : Element = document.getElementsByClassName('window-title')[0];
-		widowtitle.innerText = title;
-	}
+	// ____________________________________ init ____________________________________
 
-	function toggleOpenBtn (){
-		var electronContainer : Element = document.getElementById('container-btn-open-electron');
-		var browserContainer : Element = document.getElementById('container-btn-open-browser');
-		#if (browser)
-			electronContainer.style.display = 'none';
-			browserContainer.style.display = 'initial';
-		#else
-			electronContainer.style.display = 'initial';
-			browserContainer.style.display = 'none';
-		#end
-	}
 
-	function resizeHandler(e){
-		var myWidth : Int = window.innerWidth;
-    	var myHeight : Int = window.innerHeight;
- 		/**
- 		 * var style = window.getComputedStyle(document.getElementById("Example"), null);
-		 * style.getPropertyValue("height");
- 		 */
-
-		var offset = 23;
- 		document.getElementById('monk_markdown_container').setAttribute("data-comment", 'w:${myWidth}px, h:${myHeight}px');
- 		document.getElementById('workbench_parts_title'); // 20px height
- 		document.getElementById('workbench_parts_editor_container').setAttribute("style", 'width:100%; height:${myHeight-offset}px;');
- 		document.getElementById('workbench_parts_editor_container').setAttribute("data-comment", 'w:${myWidth}px, h:${myHeight-offset}px');
-		// trace('width: $myWidth, height: $myHeight');
-	}
-
-	function initEditors()
-	{
-		// <div id="in_markdown" contenteditable="true" spellcheck="true"></div>
-		// <div id="out_markdown" ></div>
-
+	function initEditors() {
+		// setup markdown area
 		inMarkdown = document.createTextAreaElement();
 		inMarkdown.id = 'in_markdown_default';
 		inMarkdown.className = 'in-markdown';
@@ -149,20 +118,18 @@ class AppMain {
 		inMarkdown.rows = 10;
 		document.getElementById('workbench_parts_editor_one').appendChild(inMarkdown);
 
+		// setup preview area
 		outMarkdown = document.createDivElement();
 		outMarkdown.id = 'out_markdown_default';
 		outMarkdown.className = 'out-markdown';
 		if(document.getElementById('workbench_parts_editor_two') != null) document.getElementById('workbench_parts_editor_two').appendChild(outMarkdown);
 
-		// inMarkdown.onkeydown = onBrowserChange;
-		// inMarkdown.onpaste = onBrowserChange;
-		// inMarkdown.oninput = onBrowserChange;
-		// inMarkdown.onBrowserChange = onBrowserChange;
-
+		// set the default markdown file (this needs to change in the future)
 		var md = markdowExample2;
 		inMarkdownValue = md;
 		outMarkdownValue = md;
 
+		// setup codemirror
 		editor = CodeMirror.fromTextArea(inMarkdown, {
 			tabSize: '2',
 			indentWithTabs: true,
@@ -177,7 +144,7 @@ class AppMain {
 			// lineWrapping: true,
 			// viewportMargin: 'Infinity'
 		});
-		editor.focus();
+		editor.focus(); // make sure the shortcuts work asap by focussing on the editor
 	}
 
 	/**
@@ -200,6 +167,8 @@ class AppMain {
 		// console.info(keyMarkdown);
 	}
 
+	// ____________________________________ misc ____________________________________
+
 	// Symbol	Meaning
 	// ⌘	Command
 	// ⌥	ALT
@@ -209,7 +178,6 @@ class AppMain {
 		var str = '`' + keybinding.replace('Cmd', '⌘').replace('Alt','⌥').replace('Ctrl','⌃').replace('Shift','⇧').replace('-','` `') + '`';
 		return str.replace('``' , '`');
 	}
-
 
 	/**
 	 * Fix shortcut. Mac use Command, others use Ctrl.
@@ -223,110 +191,38 @@ class AppMain {
 		return name;
 	}
 
-
-
-	function onKeyMappedHandler (value){
-		switch (value) {
-
-			case 'new': trace('new'); newHandler(null);
-			case 'save': saveHandler(null);
-			case 'open': openHandler(null);
-			case 'fullscreen': this.fullscreenHandler();
-			case 'preview': trace(value);
-
-			case 'header1': this.insertBefore('# ', 2);
-			case 'header2': this.insertBefore('## ', 3);
-			case 'header3': this.insertBefore('### ', 4);
-			case 'header4': this.insertBefore('#### ', 5);
-			case 'header5': this.insertBefore('##### ', 6);
-			case 'header6': this.insertBefore('###### ', 7);
-			case 'header0': this.insertBefore('', 2);
-
-			case 'bold': this.insertAround('**', '**');
-			case 'italic': this.insertAround('_', '_');
-			case 'comment': this.insertAround('<!-- ', ' -->');
-
-			case 'inlinecode': this.insertAround('`', '`');
-			case 'codeblock': this.insertAround('```\r\n', '\r\n```');
-
-			case 'hr': this.insert('\n\n----\n\n');
-
-			case 'orderedlist': this.insertBefore('1. ', 3);
-            case 'unorderedlist': this.insertBefore('* ', 3);
-
-			case 'blockquote': this.insertBefore('> ', 3);
-
-            case 'image': this.insertBefore('![](http://)', 2);
-            case 'link': this.insertAround('[', '](http://)');
-
-            case 'table': this.insert('| colum 1 | colum 2 |\n| :--: | :--: |\n| a | b |\n| c | d |\n');
-
-
-			default:
-				trace('not sure what you want: $value');
-		}
+	/**
+	 *  set the document title (draggable part in electron)
+	 *  @param title -  String
+	 */
+	function setMonkDocumentTitle(title:String){
+		var widowtitle : Element = document.getElementsByClassName('window-title')[0];
+		widowtitle.innerText = title;
 	}
 
+	/**
+	 *  open files work diferently for electron and browser, so they are grouped and hidden when not they don't apply
+	 */
+	function toggleOpenBtn (){
+		var electronContainer : Element = document.getElementById('container-btn-open-electron');
+		var browserContainer : Element = document.getElementById('container-btn-open-browser');
+		#if (browser)
+			electronContainer.style.display = 'none';
+			browserContainer.style.display = 'initial';
+		#else
+			electronContainer.style.display = 'initial';
+			browserContainer.style.display = 'none';
+		#end
+	}
 
-
-	function newHandler(e){
-		currentFileName = 'new_document';
-		editor.setValue('# New document\n\nmonk');
+	function setWorkbench (content){
+		inMarkdownValue = content;
+		outMarkdownValue = content;
+		editor.setValue(content);
 		editor.focus();
 	}
 
-	function saveHandler(e){
-		#if (browser)
-			onBrowserSaveHandler(e);
-		#else
-			onSaveHandler();
-		#end
-	}
-
-	function openHandler(e){
-		#if (browser)
-			onBrowserFileOpenHandler(e);
-		#else
-			onFolderOpenHandler();
-		#end
-	}
-
-	function previewHandler(){
-		trace('previewHandler');
-	}
-
-
-
-	function fullscreenHandler(){
-		trace('fullscreenHandler');
-		// https://developer.mozilla.org/en-US/docs/DOM/Using_fullscreen_mode
-		var doc = document;
-		// var el = this.editor.getWrapperElement();
-		var el = document.documentElement;
-		if (!IS_FULL_SCREEN) {
-			if (el.requestFullscreen != null) {
-				el.requestFullscreen();
-			} else if (untyped el.webkitRequestFullscreen) {
-				untyped el.webkitRequestFullscreen();
-			} else if (untyped el.mozRequestFullScreen) {
-				untyped el.mozRequestFullScreen();
-			} else if (untyped el.msRequestFullscreen) {
-				untyped el.msRequestFullscreen();
-			}
-			IS_FULL_SCREEN = true;
-		} else {
-			if (untyped doc.cancelFullScreen) {
-				untyped doc.cancelFullScreen();
-			} else if (untyped doc.mozCancelFullScreen) {
-				untyped doc.mozCancelFullScreen();
-			} else if (untyped doc.webkitCancelFullScreen) {
-				untyped doc.webkitCancelFullScreen();
-			}
-			IS_FULL_SCREEN = false;
-		}
-	}
-
-
+	// ____________________________________ change/manipulate lines in codemirror ____________________________________
 
 	/**
 	 * Insert a string at cursor position
@@ -391,139 +287,118 @@ class AppMain {
 
 
 
+	// ____________________________________ handlers for electron and browser ____________________________________
 
 
-
-
-
-
-
-
-
-	// define a handler
-	// function onKeydownHandler(e:KeyboardEvent) {
-	// 	// trace(e);
-	// 	if (e.shiftKey && e.metaKey){
-	// 		e.preventDefault();
-	// 		e.stopPropagation();
-	// 		// trace(e.key);
-	// 		switch(e.key.toLowerCase()){
-	// 			// [mck] very weird ... shift + cmd + u doesn't register in the browser
-	// 			case 'u', 'i': trace('unorder list'); prefix('*');
-	// 			case 'o': trace('order list'); prefix('1.');
-	// 		}
-	// 	} else {
-	// 		if (e.metaKey){
-	// 			switch(e.key.toLowerCase()){
-	// 				case '1':
-	// 					trace('change to h1');
-	// 					prefixLine(e,1);
-	// 				case '2': trace('change to h2'); prefixLine(e,2);
-	// 				case '3': trace('change to h3'); prefixLine(e,3);
-	// 				case '4': trace('change to h4'); prefixLine(e,4);
-	// 				case '5': trace('change to h5'); prefixLine(e,5);
-	// 				case '6': trace('change to h6'); prefixLine(e,6);
-	// 				case 'b':
-	// 					trace('change to bold');
-	// 					wrap('**');
-	// 				case 'i':
-	// 					trace('change to italic');
-	// 					wrap('_');
-	// 				case 'k':
-	// 					trace('change to inline code (k)');
-	// 					wrap('`');
-	// 				case '/':
-	// 					trace('change to comment');
-	// 					wrap('<!-- ', ' -->');
-	// 				case 's': trace('save');
-	// 				case 'o': trace('open');
-	// 				default:
-	// 					trace(e.key);
-	// 			}
-	// 		}
-	// 		// this would test for whichever key is 40 and the ctrl key at the same time
-	// 		if (e.ctrlKey && e.keyCode == 40) {
-	// 			// call your function to do the thing
-	// 			// pauseSound();
-	// 	}
-	// 	}
-	// }
-
-	/**
-	 *  add a tag at the beginning of the line
-	 *  like <h1>
-	 *
-	 *  @param e -
-	 *  @param cmdKey -
-	 */
-	// function prefixLine(e:KeyboardEvent,cmdKey:Int){
-	// 	e.preventDefault();
-	// 	e.stopPropagation();
-	// 	var tag = '';
-	// 	var counter = 0;
-	// 	while (counter<cmdKey){
-	// 		tag += '#';
-	// 		counter++;
-	// 	}
-	// 	prefix(tag);
-	// }
-
-	// function wrap(tag:String,?endtag:String) {
-	// 	var sel, range;
-	// 	var selectedText:String;
-	// 	if (window.getSelection != null) {
-	// 		sel = window.getSelection();
-	// 		if (sel.rangeCount != null) {
-	// 			range = sel.getRangeAt(0);
-	// 			selectedText = Std.string(range);
-	// 			range.deleteContents();
-	// 			if(endtag != null){
-	// 				range.insertNode(document.createTextNode(tag + selectedText + endtag));
-	// 			} else {
-	// 				range.insertNode(document.createTextNode(tag + selectedText + tag));
-	// 			}
-	// 		}
-	// 	}
-	// 	// else if (document.selection && document.selection.createRange) {
-	// 	// 	range = document.selection.createRange();
-	// 	// 	selectedText = document.selection.createRange().text + "";
-	// 	// 	range.text = '[' + tag + ']' + selectedText + '[/' + tag + ']';
-	// 	// }
-	// 	onBrowserChange (null);
-	// }
-
-
-	// function prefix(tag:String) {
-	// 	var range : Range;
-	// 	var selection : Selection;
-	// 	if (window.getSelection != null) {
-	// 		selection = window.getSelection();
-	// 		if (selection.rangeCount != null) {
-	// 			range = selection.getRangeAt(0);
-	// 			range.setStart(range.startContainer, range.startOffset - range.startOffset);
-	// 			range.setEnd(range.endContainer, untyped range.endContainer.length);
-	// 			var wholeText : String = untyped range.startContainer.wholeText;
-	// 			range.deleteContents();
-	// 			if(wholeText.charAt(0) == tag.charAt(0)){
-	// 				while (wholeText.charAt(0) == tag.charAt(0)) {
-	// 					wholeText = wholeText.substring(1);
-	// 				}
-	// 			}
-	// 			range.insertNode(document.createTextNode('${tag} ${wholeText.ltrim()}'));
-	// 			range.collapse();
-	// 		}
-	// 	}
-	// 	onBrowserChange (null);
-	// }
-
-	function setWorkbench (content){
-		inMarkdownValue = content;
-		outMarkdownValue = content;
-		editor.setValue(content);
+	function newHandler(e){
+		currentFileName = 'new_document';
+		editor.setValue('# New document\n\nmonk');
 		editor.focus();
 	}
 
-	// ____________________________________ electron calls ____________________________________
+	function saveHandler(e){
+		#if (browser)
+			onBrowserSaveHandler(e);
+		#else
+			onSaveHandler();
+		#end
+	}
+
+	function openHandler(e){
+		#if (browser)
+			onBrowserFileOpenHandler(e);
+		#else
+			onFolderOpenHandler();
+		#end
+	}
+
+	/**
+	 *  set fullscreen and hide preview
+	 */
+	function toggleDistractionFreeHandler(){
+		var isToggle = true;
+		if(IS_FULL_SCREEN){
+			isToggle = false;
+		}
+		fullscreenToggleHandler(isToggle);
+		previewToggleHandler(isToggle);
+	}
+
+	/**
+	 *
+	 *  @param isFocus - force the issue!
+	 */
+	function previewToggleHandler(?isFocus:Bool = false){
+		var toggle = document.getElementById('workbench_parts_editor_two');
+		var button = document.getElementById('btn-preview').firstElementChild;
+		// trace(button);
+		if(isFocus){
+			toggle.style.display = "none";
+			button.setAttribute('class', 'fa fa-eye-slash');
+			return;
+		}
+		if(toggle.style.display == 'none'){
+			toggle.style.display = "initial";
+			button.setAttribute('class', 'fa fa-eye');
+		} else {
+			toggle.style.display = "none";
+			button.setAttribute('class', 'fa fa-eye-slash');
+		}
+	}
+
+
+	/**
+	 *
+function requestFullScreen(element) {
+    // Supports most browsers and their versions.
+    var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
+
+    if (requestMethod) { // Native full screen.
+        requestMethod.call(element);
+    } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
+        var wscript = new ActiveXObject("WScript.Shell");
+        if (wscript !== null) {
+            wscript.SendKeys("{F11}");
+        }
+    }
+}
+
+var elem = document.body; // Make the body go full screen.
+requestFullScreen(elem);
+	 */
+	function fullscreenToggleHandler(?isFocus:Bool=false){
+		trace('fullscreenToggleHandler');
+		// https://developer.mozilla.org/en-US/docs/DOM/Using_fullscreen_mode
+		var doc = document;
+		// var el = this.editor.getWrapperElement();
+		var el = document.documentElement;
+		if(isFocus) IS_FULL_SCREEN = false;
+		if (!IS_FULL_SCREEN) {
+			if (el.requestFullscreen != null) {
+				el.requestFullscreen();
+			} else if (untyped el.webkitRequestFullscreen) {
+				untyped el.webkitRequestFullscreen();
+			} else if (untyped el.mozRequestFullScreen) {
+				untyped el.mozRequestFullScreen();
+			} else if (untyped el.msRequestFullscreen) {
+				untyped el.msRequestFullscreen();
+			}
+			IS_FULL_SCREEN = true;
+		} else {
+			if (untyped doc.cancelFullScreen) {
+				untyped doc.cancelFullScreen();
+			} else if (untyped doc.mozCancelFullScreen) {
+				untyped doc.mozCancelFullScreen();
+			} else if (untyped doc.webkitCancelFullScreen) {
+				untyped doc.webkitCancelFullScreen();
+			}
+			IS_FULL_SCREEN = false;
+		}
+
+		// trace('document.fullscreenElement: ${document.fullscreenElement}');
+	}
+
+	// ____________________________________ electron calls / handlers ____________________________________
 
 	#if !browser
 	function onFolderOpenHandler(){
@@ -545,7 +420,66 @@ class AppMain {
 	}
 	#end
 
-	// ____________________________________ handlers ____________________________________
+	// ____________________________________ handlers (for browser and electron) ____________________________________
+
+
+	function onKeyMappedHandler (value){
+		switch (value) {
+
+			case 'new': newHandler(null);
+			case 'save': saveHandler(null);
+			case 'open': openHandler(null);
+			case 'fullscreen': fullscreenToggleHandler();
+			case 'preview': previewToggleHandler();
+
+			case 'header1': this.insertBefore('# ', 2);
+			case 'header2': this.insertBefore('## ', 3);
+			case 'header3': this.insertBefore('### ', 4);
+			case 'header4': this.insertBefore('#### ', 5);
+			case 'header5': this.insertBefore('##### ', 6);
+			case 'header6': this.insertBefore('###### ', 7);
+			case 'header0': this.insertBefore('', 2);
+
+			case 'bold': this.insertAround('**', '**');
+			case 'italic': this.insertAround('_', '_');
+			case 'comment': this.insertAround('<!-- ', ' -->');
+
+			case 'inlinecode': this.insertAround('`', '`');
+			case 'codeblock': this.insertAround('```\r\n', '\r\n```');
+
+			case 'hr': this.insert('\n\n----\n\n');
+
+			case 'orderedlist': this.insertBefore('1. ', 3);
+            case 'unorderedlist': this.insertBefore('* ', 3);
+
+			case 'blockquote': this.insertBefore('> ', 3);
+
+            case 'image': this.insertBefore('![](http://)', 2);
+            case 'link': this.insertAround('[', '](http://)');
+
+            case 'table': this.insert('| colum 1 | colum 2 |\n| :--: | :--: |\n| a | b |\n| c | d |\n');
+
+
+			default:
+				trace('not sure what you want: $value');
+		}
+	}
+
+	function onResizeHandler(e){
+		var myWidth : Int = window.innerWidth;
+    	var myHeight : Int = window.innerHeight;
+ 		/**
+ 		 * var style = window.getComputedStyle(document.getElementById("Example"), null);
+		 * style.getPropertyValue("height");
+ 		 */
+
+		var offset = 23;
+ 		document.getElementById('monk_markdown_container').setAttribute("data-comment", 'w:${myWidth}px, h:${myHeight}px');
+ 		document.getElementById('workbench_parts_title'); // 20px height
+ 		document.getElementById('workbench_parts_editor_container').setAttribute("style", 'width:100%; height:${myHeight-offset}px;');
+ 		document.getElementById('workbench_parts_editor_container').setAttribute("data-comment", 'w:${myWidth}px, h:${myHeight-offset}px');
+		// trace('width: $myWidth, height: $myHeight');
+	}
 
 	function onBrowserFileOpenHandler(e) {
 		// trace(e);

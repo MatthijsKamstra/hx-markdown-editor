@@ -10,6 +10,13 @@
     font-weight: 100;
 }
 
+@media screen and (min-width: 914px){
+	.cm-s-monk.CodeMirror {
+		width: 854px;
+		margin: 0 auto;
+	}
+}
+
 
 .cm-s-monk div.CodeMirror-selected { background: #49483E; }
 .cm-s-monk .CodeMirror-line::selection, .cm-s-monk .CodeMirror-line > span::selection, .cm-s-monk .CodeMirror-line > span > span::selection { background: rgba(73, 72, 62, .99); }

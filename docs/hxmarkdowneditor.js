@@ -31,32 +31,14 @@ AppMain.prototype = {
 			window.document.getElementById("btn-open").addEventListener("click",$bind(_gthis,_gthis.openHandler),false);
 			window.document.getElementById("file-upload").addEventListener("change",$bind(_gthis,_gthis.openHandler));
 			window.document.getElementById("btn-save").addEventListener("click",$bind(_gthis,_gthis.saveHandler),false);
-			window.document.getElementById("btn-fullscreen").addEventListener("click",$bind(_gthis,_gthis.fullscreenHandler),false);
-			window.document.getElementById("btn-preview").addEventListener("click",$bind(_gthis,_gthis.previewHandler),false);
+			window.document.getElementById("btn-fullscreen").addEventListener("click",$bind(_gthis,_gthis.fullscreenToggleHandler),false);
+			window.document.getElementById("btn-preview").addEventListener("click",$bind(_gthis,_gthis.previewToggleHandler),false);
+			window.document.getElementById("btn-headphone").addEventListener("click",$bind(_gthis,_gthis.toggleDistractionFreeHandler),false);
 			_gthis.toggleOpenBtn();
-			window.addEventListener("resize",$bind(_gthis,_gthis.resizeHandler));
-			_gthis.resizeHandler(null);
+			window.addEventListener("resize",$bind(_gthis,_gthis.onResizeHandler));
+			_gthis.onResizeHandler(null);
 			_gthis.setMonkDocumentTitle("Monk Markdown Editor");
 		});
-	}
-	,setMonkDocumentTitle: function(title) {
-		var widowtitle = window.document.getElementsByClassName("window-title")[0];
-		widowtitle.innerText = title;
-	}
-	,toggleOpenBtn: function() {
-		var electronContainer = window.document.getElementById("container-btn-open-electron");
-		var browserContainer = window.document.getElementById("container-btn-open-browser");
-		electronContainer.style.display = "none";
-		browserContainer.style.display = "initial";
-	}
-	,resizeHandler: function(e) {
-		var myWidth = window.innerWidth;
-		var myHeight = window.innerHeight;
-		var offset = 23;
-		window.document.getElementById("monk_markdown_container").setAttribute("data-comment","w:" + myWidth + "px, h:" + myHeight + "px");
-		window.document.getElementById("workbench_parts_title");
-		window.document.getElementById("workbench_parts_editor_container").setAttribute("style","width:100%; height:" + (myHeight - offset) + "px;");
-		window.document.getElementById("workbench_parts_editor_container").setAttribute("data-comment","w:" + myWidth + "px, h:" + (myHeight - offset) + "px");
 	}
 	,initEditors: function() {
 		this.inMarkdown = window.document.createElement("textarea");
@@ -103,124 +85,21 @@ AppMain.prototype = {
 		var str = "`" + StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(keybinding,"Cmd","⌘"),"Alt","⌥"),"Ctrl","⌃"),"Shift","⇧"),"-","` `") + "`";
 		return StringTools.replace(str,"``","`");
 	}
-	,onKeyMappedHandler: function(value) {
-		switch(value) {
-		case "blockquote":
-			this.insertBefore("> ",3);
-			break;
-		case "bold":
-			this.insertAround("**","**");
-			break;
-		case "codeblock":
-			this.insertAround("```\r\n","\r\n```");
-			break;
-		case "comment":
-			this.insertAround("<!-- "," -->");
-			break;
-		case "fullscreen":
-			this.fullscreenHandler();
-			break;
-		case "header0":
-			this.insertBefore("",2);
-			break;
-		case "header1":
-			this.insertBefore("# ",2);
-			break;
-		case "header2":
-			this.insertBefore("## ",3);
-			break;
-		case "header3":
-			this.insertBefore("### ",4);
-			break;
-		case "header4":
-			this.insertBefore("#### ",5);
-			break;
-		case "header5":
-			this.insertBefore("##### ",6);
-			break;
-		case "header6":
-			this.insertBefore("###### ",7);
-			break;
-		case "hr":
-			this.insert("\n\n----\n\n");
-			break;
-		case "image":
-			this.insertBefore("![](http://)",2);
-			break;
-		case "inlinecode":
-			this.insertAround("`","`");
-			break;
-		case "italic":
-			this.insertAround("_","_");
-			break;
-		case "link":
-			this.insertAround("[","](http://)");
-			break;
-		case "new":
-			console.log("new");
-			this.newHandler(null);
-			break;
-		case "open":
-			this.openHandler(null);
-			break;
-		case "orderedlist":
-			this.insertBefore("1. ",3);
-			break;
-		case "preview":
-			console.log(value);
-			break;
-		case "save":
-			this.saveHandler(null);
-			break;
-		case "table":
-			this.insert("| colum 1 | colum 2 |\n| :--: | :--: |\n| a | b |\n| c | d |\n");
-			break;
-		case "unorderedlist":
-			this.insertBefore("* ",3);
-			break;
-		default:
-			console.log("not sure what you want: " + value);
-		}
+	,setMonkDocumentTitle: function(title) {
+		var widowtitle = window.document.getElementsByClassName("window-title")[0];
+		widowtitle.innerText = title;
 	}
-	,newHandler: function(e) {
-		this.currentFileName = "new_document";
-		this.editor.setValue("# New document\n\nmonk");
+	,toggleOpenBtn: function() {
+		var electronContainer = window.document.getElementById("container-btn-open-electron");
+		var browserContainer = window.document.getElementById("container-btn-open-browser");
+		electronContainer.style.display = "none";
+		browserContainer.style.display = "initial";
+	}
+	,setWorkbench: function(content) {
+		this.set_inMarkdownValue(content);
+		this.set_outMarkdownValue(content);
+		this.editor.setValue(content);
 		this.editor.focus();
-	}
-	,saveHandler: function(e) {
-		this.onBrowserSaveHandler(e);
-	}
-	,openHandler: function(e) {
-		this.onBrowserFileOpenHandler(e);
-	}
-	,previewHandler: function() {
-		console.log("previewHandler");
-	}
-	,fullscreenHandler: function() {
-		console.log("fullscreenHandler");
-		var doc = window.document;
-		var el = window.document.documentElement;
-		if(!AppMain.IS_FULL_SCREEN) {
-			if($bind(el,el.requestFullscreen) != null) {
-				el.requestFullscreen();
-			} else if(el.webkitRequestFullscreen) {
-				el.webkitRequestFullscreen();
-			} else if(el.mozRequestFullScreen) {
-				el.mozRequestFullScreen();
-			} else if(el.msRequestFullscreen) {
-				el.msRequestFullscreen();
-			}
-			AppMain.IS_FULL_SCREEN = true;
-		} else {
-			if(doc.cancelFullScreen) {
-				doc.cancelFullScreen();
-			} else if(doc.mozCancelFullScreen) {
-				doc.mozCancelFullScreen();
-			} else if(doc.webkitCancelFullScreen) {
-				doc.webkitCancelFullScreen();
-			}
-			AppMain.IS_FULL_SCREEN = false;
-		}
 	}
 	,insert: function(insertion) {
 		var doc = this.editor.getDoc();
@@ -267,11 +146,162 @@ AppMain.prototype = {
 			doc.replaceSelection(insertion + StringTools.trim(StringTools.replace(StringTools.replace(selection,"#",""),insertion,"")));
 		}
 	}
-	,setWorkbench: function(content) {
-		this.set_inMarkdownValue(content);
-		this.set_outMarkdownValue(content);
-		this.editor.setValue(content);
+	,newHandler: function(e) {
+		this.currentFileName = "new_document";
+		this.editor.setValue("# New document\n\nmonk");
 		this.editor.focus();
+	}
+	,saveHandler: function(e) {
+		this.onBrowserSaveHandler(e);
+	}
+	,openHandler: function(e) {
+		this.onBrowserFileOpenHandler(e);
+	}
+	,toggleDistractionFreeHandler: function() {
+		var isToggle = true;
+		if(AppMain.IS_FULL_SCREEN) {
+			isToggle = false;
+		}
+		this.fullscreenToggleHandler(isToggle);
+		this.previewToggleHandler(isToggle);
+	}
+	,previewToggleHandler: function(isFocus) {
+		if(isFocus == null) {
+			isFocus = false;
+		}
+		var toggle = window.document.getElementById("workbench_parts_editor_two");
+		var button = window.document.getElementById("btn-preview").firstElementChild;
+		if(isFocus) {
+			toggle.style.display = "none";
+			button.setAttribute("class","fa fa-eye-slash");
+			return;
+		}
+		if(toggle.style.display == "none") {
+			toggle.style.display = "initial";
+			button.setAttribute("class","fa fa-eye");
+		} else {
+			toggle.style.display = "none";
+			button.setAttribute("class","fa fa-eye-slash");
+		}
+	}
+	,fullscreenToggleHandler: function(isFocus) {
+		if(isFocus == null) {
+			isFocus = false;
+		}
+		console.log("fullscreenToggleHandler");
+		var doc = window.document;
+		var el = window.document.documentElement;
+		if(isFocus) {
+			AppMain.IS_FULL_SCREEN = false;
+		}
+		if(!AppMain.IS_FULL_SCREEN) {
+			if($bind(el,el.requestFullscreen) != null) {
+				el.requestFullscreen();
+			} else if(el.webkitRequestFullscreen) {
+				el.webkitRequestFullscreen();
+			} else if(el.mozRequestFullScreen) {
+				el.mozRequestFullScreen();
+			} else if(el.msRequestFullscreen) {
+				el.msRequestFullscreen();
+			}
+			AppMain.IS_FULL_SCREEN = true;
+		} else {
+			if(doc.cancelFullScreen) {
+				doc.cancelFullScreen();
+			} else if(doc.mozCancelFullScreen) {
+				doc.mozCancelFullScreen();
+			} else if(doc.webkitCancelFullScreen) {
+				doc.webkitCancelFullScreen();
+			}
+			AppMain.IS_FULL_SCREEN = false;
+		}
+	}
+	,onKeyMappedHandler: function(value) {
+		switch(value) {
+		case "blockquote":
+			this.insertBefore("> ",3);
+			break;
+		case "bold":
+			this.insertAround("**","**");
+			break;
+		case "codeblock":
+			this.insertAround("```\r\n","\r\n```");
+			break;
+		case "comment":
+			this.insertAround("<!-- "," -->");
+			break;
+		case "fullscreen":
+			this.fullscreenToggleHandler();
+			break;
+		case "header0":
+			this.insertBefore("",2);
+			break;
+		case "header1":
+			this.insertBefore("# ",2);
+			break;
+		case "header2":
+			this.insertBefore("## ",3);
+			break;
+		case "header3":
+			this.insertBefore("### ",4);
+			break;
+		case "header4":
+			this.insertBefore("#### ",5);
+			break;
+		case "header5":
+			this.insertBefore("##### ",6);
+			break;
+		case "header6":
+			this.insertBefore("###### ",7);
+			break;
+		case "hr":
+			this.insert("\n\n----\n\n");
+			break;
+		case "image":
+			this.insertBefore("![](http://)",2);
+			break;
+		case "inlinecode":
+			this.insertAround("`","`");
+			break;
+		case "italic":
+			this.insertAround("_","_");
+			break;
+		case "link":
+			this.insertAround("[","](http://)");
+			break;
+		case "new":
+			this.newHandler(null);
+			break;
+		case "open":
+			this.openHandler(null);
+			break;
+		case "orderedlist":
+			this.insertBefore("1. ",3);
+			break;
+		case "preview":
+			this.previewToggleHandler();
+			break;
+		case "save":
+			this.saveHandler(null);
+			break;
+		case "table":
+			this.insert("| colum 1 | colum 2 |\n| :--: | :--: |\n| a | b |\n| c | d |\n");
+			break;
+		case "unorderedlist":
+			this.insertBefore("* ",3);
+			break;
+		default:
+			console.log("not sure what you want: " + value);
+		}
+	}
+	,onResizeHandler: function(e) {
+		var myWidth = window.innerWidth;
+		var myHeight = window.innerHeight;
+		var offset = 23;
+		window.document.getElementById("monk_markdown_container").setAttribute("data-comment","w:" + myWidth + "px, h:" + myHeight + "px");
+		window.document.getElementById("workbench_parts_title");
+		window.document.getElementById("workbench_parts_editor_container").setAttribute("style","width:100%; height:" + (myHeight - offset) + "px;");
+		window.document.getElementById("workbench_parts_editor_container").setAttribute("data-comment","w:" + myWidth + "px, h:" + (myHeight - offset) + "px");
 	}
 	,onBrowserFileOpenHandler: function(e) {
 		var _gthis = this;
