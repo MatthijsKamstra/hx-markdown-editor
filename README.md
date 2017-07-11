@@ -2,7 +2,7 @@
 
 I do a lot of writing in [markdown](http://daringfireball.net/projects/markdown/syntax) and I usually use [Macdown](http://macdown.uranusjr.com/) for that.
 
-Besides that I also use my normal editors for it: VSCode and Sublime.
+And I also use my normal (code) editors for it: VSCode and Sublime.
 
 But wouldn't it be awesome to have that all in one?
 
@@ -23,82 +23,103 @@ Contribute if you like, I will update when I feel more itches.
 
 I have looked at the editors that I use (for coding and writing)
 
-- vscode
-- sublime text
-- macdown
+- [VScode](https://code.visualstudio.com/)
+- [Sublime text](https://www.sublimetext.com/)
+- [Macdown](http://macdown.uranusjr.com/)
 
-And want to take the good parts and intergrate them:
+And want to take the good parts and integrate them:
 
-- [X] editor short cuts
-- [X] Fullscreen editing
-- [X] Status bar
-- [X] Preview mode
-- [X] distraction free edit
-- [X] toggle preview
+- [x] editor short cuts
+- [x] Fullscreen editing
+- [x] Preview mode
+- [x] distraction free edit
+- [x] toggle preview
 - [ ] subtle markdown styling (preview is full styling)
+- [ ] Spell check
+- [ ] developers keys for text manipulation (like duplicate line, move line up/down)
 - [ ] edit more then one file (tabs)
 - [ ] export to different files (html/pdf/rich text/etc)
 - [ ] snippets
-- [ ] Spell check
-- [ ] folder stucture (might be usefull with a lot of files in one folder...)
-- [ ] Windows support for Keymaps (can't test this, but might be usefull for others)
+- [ ] folder structure (might be useful with a lot of files in one folder...)
+- [ ] Windows support for keymaps (can't test this, but might be useful for others)
 
 
 
 ## Features
 
-I stole this features from other (Markdown) editors, I think they make sence to have as well.
-They are not as important as the previously mentioned
+I "stole" these features from other (Markdown) editors, I think some make sense to have as well.
+But they are not as important as the previously mentioned features:
 
-- [X] Read/Write/Preview mode
-- [X] Focus mode
-- [X] Live preview
+(down the list the features are less important)
+
+- [x] Read/Write/Preview mode
+- [x] Focus mode
+- [x] Live preview
 - [x] Shortcuts (ctrl-S, Ctrl-O, etc) read the [shortcut list](/src/assets/shortcut.md)
 - [x] Fullscreen (distraction-free) mode
-- [X] Preview HTML
+- [x] Preview HTML
+- [x] Markdown & code block highlighting
 - [ ] GitHub Flavored Markdown
+- [ ] Multiple documents
 - [ ] Code highlight in preview
 - [ ] Code highlight themes (powered by highlight.js)
-- [ ] Auto reload
-- [ ] Localization
-- [ ] GitHub Flavored Markdown support
-- [ ] Search in Markdown
 - [ ] Syntax highlighting
-- [ ] Emoji Support
-- [ ] Words count
-- [ ] Resizable panels
-- [ ] Finder integration (OS X)
-- [ ] Dialog for image
-- [ ] Dialog for videos (mp4)
-- [ ] Dialog for tables
-- [ ] Multiple documents
-- [ ] Allow drag’n’drop files onto app icon (Finder or Dock)
-- [ ] Markdown & code block highlighting
+- [ ] Auto reload
+- [ ] Search in Markdown
 - [ ] Find & replace
-- [ ] Emoji support in preview 🎉
-- [ ] Day & Night themes
+- [ ] Words count
 - [ ] Copy HTML to clipboard
 - [ ] Export HTML
 - [ ] Export PDF
 - [ ] Printing
+- [ ] Resizable panels
+- [ ] Dialog for image
+- [ ] Dialog for videos (mp4)
+- [ ] Dialog for tables
+- [ ] Allow drag’n’drop files onto app icon (Finder or Dock)
+- [ ] Day & Night themes
+- [ ] Localization
+- [ ] Finder integration (OS X)
 - [ ] App will stay alive in tray for quick usage
+- [ ] Emoji Support
 
+
+## Electron features
+
+You can [test and try online](https://matthijskamstra.github.io/hx-markdown-editor/) the markdown editor.
+But my personal focus is on Desktop
+
+That needs a lot more love before its an workable app:
+
+- [x] Status bar
+- [ ] key short cuts
+- [ ] icon
+- [ ] menu
+- [ ] distraction free mode (important that it feels right)
+- [ ] download app (osx, windows, linux)
 
 
 ## Technologies used
 
-I use [Haxe](https://haxe.org/) type definitions for [Electron](http://electron.atom.io/) from <https://github.com/fponticelli/hxelectron>
+I use [Haxe](https://haxe.org/) for this project but essentially it's a JavaScript project.
+
+- Haxe externs for [Codemirror](https://codemirror.net/): <https://github.com/clemos/try-haxe/tree/master/src/js/codemirror>
+- Haxe type definitions for [Electron](http://electron.atom.io/) from <https://github.com/fponticelli/hxelectron>
+
+
+The biggest part of this project is based upon:
 
 - [Electron](http://electron.atom.io/)
 - <https://codemirror.net/>
-- Haxe externs for Codemirror: <https://github.com/clemos/try-haxe/tree/master/src/js/codemirror>
 
-- default preview css from macdown (like github.css)
+And some smaller libs are:
+
+- default preview css from MacDown (like github.css)
 - <http://fontawesome.io/>
 - normalize.css
 - FileSaver.js
 
-**markdown**
+And obviously **markdown** lib (haven't descides yet which one):
 
 - ~~For the conversion of markdown to html I use haxe-markdown:  <https://github.com/dpeek/haxe-markdown>~~
 - https://github.com/markdown-it/markdown-it
