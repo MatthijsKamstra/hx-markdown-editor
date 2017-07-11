@@ -3,8 +3,6 @@ package;
 import js.jquery.Event;
 import js.jquery.JQuery;
 import js.html.*;
-import js.html.KeyboardEvent;
-import js.html.Selection;
 
 import js.Browser.console;
 import js.Browser.document;
@@ -13,9 +11,6 @@ import js.Browser.window;
 import js.html.FileReader;
 import js.html.Blob;
 
-import haxe.ds.ArraySort;
-
-import codemirror.*;
 import codemirror.CodeMirror;
 
 #if (!browser)
@@ -27,7 +22,6 @@ using StringTools;
 using DateTools;
 using Reflect;
 
-// import Markdown;
 import model.constant.Channel;
 
 class AppMain {
@@ -274,7 +268,7 @@ class AppMain {
 			}
 			doc.setCursor({ line: pos[0], ch: (cursorOffset!=null) ? cursorOffset : 0 });
 		} else {
-			trace('check hier');
+			// trace('check hier');
 			doc.setSelection({line:cursor.line, ch:cursor.ch},{line:cursor.line, ch:0});
 			var selection = doc.getSelection();
 			doc.replaceSelection(insertion + selection.replace("#",'').replace(insertion,'').trim());
@@ -317,7 +311,7 @@ class AppMain {
 	 */
 	function toggleDistractionFreeHandler(){
 		var isToggle = true;
-		if(IS_FULL_SCREEN){
+		if( IS_FULL_SCREEN ) {
 			isToggle = false;
 		}
 		fullscreenToggleHandler(isToggle);
@@ -463,6 +457,9 @@ requestFullScreen(elem);
 			default:
 				trace('not sure what you want: $value');
 		}
+
+		// outMarkdownValue = str;
+		updatePreview();
 	}
 
 	function onResizeHandler(e){
@@ -510,10 +507,8 @@ requestFullScreen(elem);
 		untyped saveAs(blob, '${currentFileName}_${date}.md');
 	}
 
-	function onBrowserChange (?e:Event){
-		// trace( 'onBrowserChange: ' + e );
-		var str = inMarkdown.innerText;
-		outMarkdownValue = str;
+	function updatePreview (){
+		outMarkdownValue = editor.getValue();
 	}
 
 	// ____________________________________ getter/setter ____________________________________
@@ -524,19 +519,11 @@ requestFullScreen(elem);
 	 *  @return String
 	 */
 	function get_inMarkdownValue():String {
-		// trace(Type.typeof(inMarkdownValue));
-		// inMarkdownValue = inMarkdown.value;
-		// inMarkdownValue = inMarkdown.innerHTML;
 		inMarkdownValue = inMarkdown.innerText;
-		// inMarkdownValue = editor.getValue();
 		return inMarkdownValue;
 	}
 	function set_inMarkdownValue(value:String):String {
-		// trace(Type.typeof(inMarkdownValue));
-		// inMarkdown.value = value;
 		inMarkdown.innerHTML = value;
-		// editor.setValue(value);
-		// inMarkdown.innerText = value;
 		return inMarkdownValue = value;
 	}
 
@@ -556,9 +543,8 @@ requestFullScreen(elem);
 
 
 	function convertToMarkdown(md):String{
-		// var markdownit = js.Lib.require('markdown-it')();
-		var result = untyped markdownit().render(md);
 		// var result = Markdown.markdownToHtml(md);
+		var result = untyped markdownit().render(md);
 		return result;
 	}
 	// ____________________________________ main ____________________________________

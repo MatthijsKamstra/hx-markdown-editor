@@ -1,27 +1,6 @@
 # Monk Markdown Editor
 
-line one
-line two
-line three
-line four
-
-
-# lists
-
-quick (unordered) list: `cmd` + `l`
-
-unordered list: `shift` + `cmd` + `u`
-
-ordered list: `shift` + `cmd` + `o`
-
-
-just because we can
-
-line one
-line two
-line three
-line four
-
+this is a test document
 
 # heading
 
@@ -63,6 +42,7 @@ line one
 line two
 line three
 line four
+
 
 # block quote
 

@@ -34,6 +34,8 @@ And want to take the good parts and integrate them:
 - [x] Preview mode
 - [x] distraction free edit
 - [x] toggle preview
+- [ ] auto update preview
+- [ ] scroll sync
 - [ ] subtle markdown styling (preview is full styling)
 - [ ] Spell check
 - [ ] developers keys for text manipulation (like duplicate line, move line up/down)
@@ -42,6 +44,8 @@ And want to take the good parts and integrate them:
 - [ ] snippets
 - [ ] folder structure (might be useful with a lot of files in one folder...)
 - [ ] Windows support for keymaps (can't test this, but might be useful for others)
+- [ ] open last document
+- [ ] start screen with links (for no documents open)
 
 
 
