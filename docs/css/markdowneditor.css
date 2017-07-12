@@ -45,6 +45,7 @@ containers / workbench
 	background-color: #505050;
 	height: 23px;
 	display: flex;
+	font-size: 14px;
 }
 #workbench_parts_title > div {
   flex: 1; /*grow*/
