@@ -44,12 +44,28 @@ containers / workbench
 #workbench_parts_title{
 	background-color: #505050;
 	height: 23px;
-	text-align: center
+	display: flex;
+}
+#workbench_parts_title > div {
+  flex: 1; /*grow*/
+}
+.window-close{
+	/* background-color: green; */
 }
 .window-title{
+	/* background-color: yellow; */
 	color: #C9C9C9;
 	line-height: 22px;
+	text-align: center;
 }
+.window-wordcount{
+	/* background-color: pink; */
+  	color: #949AA1;
+    line-height: 22px;
+    text-align: right;
+    margin-right: 20px;
+}
+
 
 #workbench_parts_editor_container{
 	width: 100%;
