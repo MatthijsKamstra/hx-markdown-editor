@@ -20,16 +20,17 @@ import model.constant.Channel;
 
 class Main {
 
-	static function main() {
 
+	// Keep a global reference of the window object, if you don't, the window will
+	// be closed automatically when the JavaScript object is garbage collected.
+	var mainWindow : BrowserWindow = null;
+
+	function new (){
 		electron.CrashReporter.start({
 			companyName : "Monk Markdown Editor",
 			submitURL : "https://github.com/MatthijsKamstra/hx-markdown-editor/issues"
 		});
 
-		// Keep a global reference of the window object, if you don't, the window will
-		// be closed automatically when the JavaScript object is garbage collected.
-		var mainWindow = null;
 
 		// Quit when all windows are closed.
 		App.on( 'window_all_closed', function(e) {
@@ -92,7 +93,7 @@ class Main {
 			// 	});
 			// });
 
-			new MainMenu();
+			new MainMenu(this);
 
 			IpcMain.on('test', function (event, test) {
 				var content = "Some text to save into the file";
@@ -116,31 +117,7 @@ class Main {
 			});
 
 			IpcMain.on(Channel.OPEN_DIALOG, function (event){
-				Dialog.showOpenDialog({}, function (fileNames) {
-					// fileNames is an array that contains all the selected
-
-					trace(fileNames);
-
-					if(fileNames == null){
-						trace("No file selected");
-						return;
-					}
-
-					var filepath = fileNames[0];
-
-					Fs.readFile(filepath, 'utf-8', function (err, data) {
-						if(err != null){
-							trace("An error ocurred reading the file :" + err.message);
-							return;
-						}
-
-						// Change how to handle the file content
-						// trace("The file content is : " + data);
-
-						event.sender.send(Channel.SEND_FILE_CONTENT, filepath, data);
-					});
-				});
-
+				onOpenDialogHandler(event);
 			});
 
 			IpcMain.on(Channel.SAVE_FILE, function (event, filepath, content){
@@ -185,6 +162,40 @@ class Main {
 		});
 
 
+	}
+
+	public function onOpenDialogHandler (event){
+		Dialog.showOpenDialog({}, function (fileNames) {
+			// fileNames is an array that contains all the selected
+
+			trace(fileNames);
+
+			if(fileNames == null){
+				trace("No file selected");
+				return;
+			}
+
+			var filepath = fileNames[0];
+
+			Fs.readFile(filepath, 'utf-8', function (err, data) {
+				if(err != null){
+					trace("An error ocurred reading the file :" + err.message);
+					return;
+				}
+
+				// Change how to handle the file content
+				// trace("The file content is : " + data);
+				if(event != null)
+					event.sender.send(Channel.SEND_FILE_CONTENT, filepath, data);
+				else
+					this.mainWindow.webContents.send(Channel.SEND_FILE_CONTENT, filepath, data);
+					// mainWindow..send('dd');
+			});
+		});
+	}
+
+	static function main() {
+		new Main();
 	}
 
 }

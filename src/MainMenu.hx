@@ -1,11 +1,16 @@
 import electron.main.Menu;
 import js.Node.process;
+import js.Node.console;
 import haxe.Constraints.Function;
 
 class MainMenu {
 
+	private var main : Main;
 
-	public function new () {
+	public function new (main:Main) {
+
+		this.main = main;
+
 		var template : Array<MenuObj>  =
 		[
 			{
@@ -138,7 +143,18 @@ class MainMenu {
 	}
 
 	function keyMapping(name:String){
-		trace('keyMapping($name)');
+		// trace('keyMapping($name)');
+		switch (name) {
+			case 'open' : trace("--> open"); this.main.onOpenDialogHandler(null);
+
+			case 'saveas' : trace("--> saveas");
+			case 'newfile' : trace("--> newfile");
+			case 'saveall' : trace("--> saveall");
+
+			case 'save' : trace('--> save') ;
+			default: console.info('case \'${name}\' : trace("--> ${name}"); ');
+
+		}
 	}
 
 }
