@@ -393,6 +393,8 @@ class AppMain {
 		var doc = document;
 		// var el = this.editor.getWrapperElement();
 		var el = document.documentElement;
+		// [mck] weird js stuff going on... onclick the mouseevent is send
+		if(isFocus != true) isFocus = false;
 		if(isFocus) IS_FULL_SCREEN = false;
 		if (!IS_FULL_SCREEN) {
 			if (el.requestFullscreen != null) {
