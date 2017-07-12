@@ -3,7 +3,7 @@ if (process.version < "v4.0.0") console.warn("Module " + (typeof(module) == "und
 (function () { "use strict";
 var Main = function() { };
 Main.main = function() {
-	electron_CrashReporter.start({ companyName : "hxelectron (not a company)", submitURL : "https://github.com/fponticelli/hxelectron/issues"});
+	electron_CrashReporter.start({ companyName : "Monk Markdown Editor", submitURL : "https://github.com/MatthijsKamstra/hx-markdown-editor/issues"});
 	var mainWindow = null;
 	electron_main_App.on("window_all_closed",function(e) {
 		if(process.platform != "darwin") {
@@ -20,6 +20,7 @@ Main.main = function() {
 		});
 		mainWindow.webContents.openDevTools();
 		mainWindow.loadURL("file://" + __dirname + "/index.html");
+		new MainMenu();
 		electron_main_IpcMain.on("test",function(event,test) {
 			var content = "Some text to save into the file";
 		});
@@ -64,11 +65,20 @@ Main.main = function() {
 		});
 	});
 };
+var MainMenu = function() {
+	var template = [{ label : "File", submenu : [{ label : "New File", accelerator : "CmdOrCtrl+N"},{ type : "separator"},{ label : "Open...", accelerator : "CmdOrCtrl+O"},{ type : "separator"},{ label : "Save", accelerator : "CmdOrCtrl+S"},{ label : "Save As...", accelerator : "Shift+CmdOrCtrl+S"},{ label : "Save all", accelerator : "Alt+CmdOrCtrl+S"}]},{ label : "Edit", submenu : [{ label : "Undo", accelerator : "CmdOrCtrl+Z", role : "undo"},{ label : "Redo", accelerator : "Shift+CmdOrCtrl+Z", role : "redo"},{ label : "Cut", accelerator : "CmdOrCtrl+X", role : "cut"},{ label : "Copy", accelerator : "CmdOrCtrl+C", role : "copy"},{ label : "Paste", accelerator : "CmdOrCtrl+V", role : "paste"},{ label : "Select All", accelerator : "CmdOrCtrl+A", role : "selectall"}]},{ label : "View", submenu : [{ role : "reload"},{ role : "forcereload"},{ role : "toggledevtools"},{ type : "separator"},{ role : "resetzoom"},{ role : "zoomin"},{ role : "zoomout"},{ type : "separator"},{ role : "togglefullscreen"}]},{ role : "window", submenu : [{ role : "minimize"},{ role : "close"}]},{ role : "help", submenu : [{ label : "Learn More"}]}];
+	if(process.platform == "darwin") {
+		template.unshift({ label : electron_main_App.getName(), submenu : [{ role : "about"},{ type : "separator"},{ role : "services"},{ type : "separator"},{ role : "hide"},{ role : "hideothers"},{ role : "unhide"},{ type : "separator"},{ role : "quit"}]});
+	}
+	var menu = electron_main_Menu.buildFromTemplate(template);
+	electron_main_Menu.setApplicationMenu(menu);
+};
 var electron_CrashReporter = require("electron").crashReporter;
 var electron_main_App = require("electron").app;
 var electron_main_BrowserWindow = require("electron").BrowserWindow;
 var electron_main_Dialog = require("electron").dialog;
 var electron_main_IpcMain = require("electron").ipcMain;
+var electron_main_Menu = require("electron").Menu;
 var haxe_io_Bytes = function() { };
 var js_node_Fs = require("fs");
 var js_node_buffer_Buffer = require("buffer").Buffer;

@@ -96,6 +96,8 @@ class AppMain {
 
 			setMonkDocumentTitle('Monk Markdown Editor');
 
+			updatePreview();
+
 			// document.addEventListener('keydown', onKeydownHandler, false);
 		});
 	}
@@ -195,6 +197,27 @@ class AppMain {
 	function setMonkDocumentTitle(title:String){
 		var widowtitle : Element = document.getElementsByClassName('window-title')[0];
 		widowtitle.innerText = title;
+	}
+
+	/**
+	 *  this is a rought estimation, need to look better at this
+	 *  @param content - editor.getValue()
+	 */
+	function setWordcount(content:String){
+		// trace(content);
+		var wordcount : Element = document.getElementsByClassName('window-wordcount')[0];
+		// replace the basic markdown stuff
+		var str = content.replace('\t', '')
+					.replace('\n', '')
+					.replace('\r', '')
+					.replace('#', '')
+					.replace('*', '')
+					.replace('_', '')
+					.replace('`', '')
+					.replace('  ', '');
+		var array = str.split(' ');
+		// trace(array);
+		wordcount.innerText = '${array.length} words';
 	}
 
 	/**
@@ -512,6 +535,7 @@ requestFullScreen(elem);
 
 	function updatePreview (){
 		outMarkdownValue = editor.getValue();
+		setWordcount(editor.getValue());
 	}
 
 	// ____________________________________ getter/setter ____________________________________
