@@ -46,7 +46,7 @@ class AppMain {
 	var keyMarkdown : String;
 
 	var isMac : Bool = true;
-	public static var IS_FULL_SCREEN : Bool = false;
+	var IS_FULL_SCREEN : Bool = false;
 
 	var shortCuts : Array<KeyBindings> = haxe.Json.parse(haxe.Resource.getString("key"));
 
@@ -137,6 +137,9 @@ class AppMain {
 			// lineNumbers: true,
 			// lineWrapping: true,
 			// viewportMargin: 'Infinity'
+		});
+		editor.on("change", function(cm, change) {
+			updatePreview();
 		});
 		editor.focus(); // make sure the shortcuts work asap by focussing on the editor
 	}
@@ -459,7 +462,7 @@ requestFullScreen(elem);
 		}
 
 		// outMarkdownValue = str;
-		updatePreview();
+		// updatePreview();
 	}
 
 	function onResizeHandler(e){
