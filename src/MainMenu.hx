@@ -1,6 +1,6 @@
 import electron.main.Menu;
 import js.Node.process;
-
+import haxe.Constraints.Function;
 
 class MainMenu {
 
@@ -13,25 +13,38 @@ class MainMenu {
 				submenu: [
 					{
 						label: 'New File',
-						accelerator: 'CmdOrCtrl+N'
+						accelerator: 'CmdOrCtrl+N',
+						click: function (){keyMapping('newfile');}
 					},
 					{type: 'separator'},
 					{
 						label: 'Open...',
-						accelerator: 'CmdOrCtrl+O'
+						accelerator: 'CmdOrCtrl+O',
+						click: function (){keyMapping('open');}
+					},
+					{
+						label: 'Open Recent',
+						enabled: false,
+						submenu:[
+							{label: 'a',click: function (){keyMapping('a');}},
+							{label: 'b',click: function (){keyMapping('b');}},
+						]
 					},
 					{type: 'separator'},
 					{
 						label: 'Save',
-						accelerator: 'CmdOrCtrl+S'
+						accelerator: 'CmdOrCtrl+S',
+						click: function (){keyMapping('save');}
 					},
 					{
 						label: 'Save As...',
-						accelerator: 'Shift+CmdOrCtrl+S'
+						accelerator: 'Shift+CmdOrCtrl+S',
+						click: function (){keyMapping('saveas');}
 					},
 					{
 						label: 'Save all',
-						accelerator: 'Alt+CmdOrCtrl+S'
+						accelerator: 'Alt+CmdOrCtrl+S',
+						click: function (){keyMapping('saveall');}
 					}
 				]
 			},
@@ -93,9 +106,12 @@ class MainMenu {
 			{
 				role: 'help',
 				submenu: [
-				{
-					label: 'Learn More'
-				}
+					{
+						label: 'Learn More',
+						click: function (){
+							electron.Shell.openExternal('https://github.com/MatthijsKamstra/hx-markdown-editor');
+						}
+					}
 				]
 			}
 		];
@@ -120,6 +136,11 @@ class MainMenu {
 		var menu = Menu.buildFromTemplate(template);
 		Menu.setApplicationMenu(menu);
 	}
+
+	function keyMapping(name:String){
+		trace('keyMapping($name)');
+	}
+
 }
 
 // https://github.com/electron/electron/blob/master/docs/api/menu-item.md
@@ -144,10 +165,16 @@ typedef MenuObj = {
 };
 
 typedef SubMenuObj = {
+	// [mck] not sure this works
+	@:optional var click:Function;
+
 	@:optional var role:Roles; 			// 'selectall'
 	@:optional var type:String; 		// 'separator',
 	@:optional var label:String;		// 'Select All',
 	@:optional var accelerator:String;	// 'CmdOrCtrl+A',
+	@:optional var enabled : Bool; // (optional) - If false, the menu item will be greyed out and unclickable.
+	@:optional var submenu : Array<SubMenuObj>; //(; //MenuItemConstructorOptions[] | Menu) (optional) - Should be specified for submenu type menu items. If submenu is specified, the type: 'submenu' can be omitted. If the value is not a Menu then it will be automatically converted to one using Menu.buildFromTemplate.
+
 };
 
 @:enum abstract Roles(String) {

@@ -72,6 +72,13 @@ class Main {
 			// win.loadURL( 'file://' + js.Node.__dirname + '/index.html' );
 
 
+			// GlobalShortcut.register('CommandOrControl+X', function () {
+			// 	console.log('CommandOrControl+X is pressed');
+			// });
+			// GlobalShortcut.register('CommandOrControl+S', function () {
+			// 	console.log('CommandOrControl+S is pressed');
+			// });
+
 			// GlobalShortcut.register('CommandOrControl+X', function (){
 			// 	trace('CommandOrControl+X is pressed');
 			// });
