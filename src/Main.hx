@@ -23,11 +23,9 @@ class Main {
 	static function main() {
 
 		electron.CrashReporter.start({
-			companyName : "hxelectron (not a company)",
-			submitURL : "https://github.com/fponticelli/hxelectron/issues"
+			companyName : "Monk Markdown Editor",
+			submitURL : "https://github.com/MatthijsKamstra/hx-markdown-editor/issues"
 		});
-
-
 
 		// Keep a global reference of the window object, if you don't, the window will
 		// be closed automatically when the JavaScript object is garbage collected.
@@ -87,7 +85,7 @@ class Main {
 			// 	});
 			// });
 
-			// new MainMenu();
+			new MainMenu();
 
 			IpcMain.on('test', function (event, test) {
 				var content = "Some text to save into the file";
