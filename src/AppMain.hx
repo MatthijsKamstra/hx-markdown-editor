@@ -351,7 +351,8 @@ class AppMain {
 	function previewToggleHandler(?isFocus:Bool = false){
 		var toggle = document.getElementById('workbench_parts_editor_two');
 		var button = document.getElementById('btn-preview').firstElementChild;
-		// trace(button);
+		// [mck] weird js stuff going on... onclick the mouseevent is send
+		if(isFocus != true) isFocus = false;
 		if(isFocus){
 			toggle.style.display = "none";
 			button.setAttribute('class', 'fa fa-eye-slash');
@@ -368,23 +369,23 @@ class AppMain {
 
 
 	/**
-	 *
-function requestFullScreen(element) {
-    // Supports most browsers and their versions.
-    var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
 
-    if (requestMethod) { // Native full screen.
-        requestMethod.call(element);
-    } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
-        var wscript = new ActiveXObject("WScript.Shell");
-        if (wscript !== null) {
-            wscript.SendKeys("{F11}");
-        }
-    }
-}
+		function requestFullScreen(element) {
+			// Supports most browsers and their versions.
+			var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
 
-var elem = document.body; // Make the body go full screen.
-requestFullScreen(elem);
+			if (requestMethod) { // Native full screen.
+				requestMethod.call(element);
+			} else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
+				var wscript = new ActiveXObject("WScript.Shell");
+				if (wscript !== null) {
+					wscript.SendKeys("{F11}");
+				}
+			}
+		}
+
+		var elem = document.body; // Make the body go full screen.
+		requestFullScreen(elem);
 	 */
 	function fullscreenToggleHandler(?isFocus:Bool=false){
 		trace('fullscreenToggleHandler');
@@ -426,9 +427,10 @@ requestFullScreen(elem);
 			trace('${Channel.OPEN_DIALOG}');
 		});
 		IpcRenderer.on(Channel.SEND_FILE_CONTENT, function(event, filepath, data) {
-			// trace(filepath);
+			trace(filepath);
 			currentFile = filepath;
 			inMarkdownValue = data;
+			editor.setValue(data);
 		});
 	}
 
@@ -444,13 +446,16 @@ requestFullScreen(elem);
 
 
 	function onKeyMappedHandler (value){
+
+		trace('onKeyMappedHandler ( ${value} )');
+
 		switch (value) {
 
 			case 'new': newHandler(null);
 			case 'save': saveHandler(null);
 			case 'open': openHandler(null);
 			case 'fullscreen': fullscreenToggleHandler();
-			case 'preview': previewToggleHandler();
+			case 'preview': previewToggleHandler(false);
 
 			case 'header1': this.insertBefore('# ', 2);
 			case 'header2': this.insertBefore('## ', 3);
