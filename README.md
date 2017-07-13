@@ -34,10 +34,10 @@ And want to take the good parts and integrate them:
 - [x] Preview mode
 - [x] distraction free edit
 - [x] toggle preview
-- [ ] auto update preview
-- [ ] scroll sync
+- [x] auto update preview
 - [ ] subtle markdown styling (preview is full styling)
 - [ ] Spell check
+- [ ] scroll sync
 - [ ] developers keys for text manipulation (like duplicate line, move line up/down)
 - [ ] edit more then one file (tabs)
 - [ ] export to different files (html/pdf/rich text/etc)
@@ -71,7 +71,7 @@ But they are not as important as the previously mentioned features:
 - [ ] Auto reload
 - [ ] Search in Markdown
 - [ ] Find & replace
-- [ ] Words count
+- [x] Words count
 - [ ] Copy HTML to clipboard
 - [ ] Export HTML
 - [ ] Export PDF
@@ -93,13 +93,22 @@ But they are not as important as the previously mentioned features:
 You can [test and try online](https://matthijskamstra.github.io/hx-markdown-editor/) the markdown editor.
 But my personal focus is on Desktop
 
-That needs a lot more love before its an workable app:
+That needs a lot more love before its a workable app:
+
+
+**key short cuts**
+
+- [ ] new document
+- [ ] save document
+- [ ] toggle distraction free mode
+- [ ] toggle Preview HTML
+- [ ] toggle fullscreen
+
+**electron stuff**
 
 - [x] Status bar
-- [ ] key short cuts
 - [ ] icon
 - [ ] menu
-- [ ] distraction free mode (important that it feels right)
 - [ ] download app (osx, windows, linux)
 
 

@@ -182,6 +182,9 @@ AppMain.prototype = {
 		}
 		var toggle = window.document.getElementById("workbench_parts_editor_two");
 		var button = window.document.getElementById("btn-preview").firstElementChild;
+		if(isFocus != true) {
+			isFocus = false;
+		}
 		if(isFocus) {
 			toggle.style.display = "none";
 			button.setAttribute("class","fa fa-eye-slash");
@@ -202,6 +205,9 @@ AppMain.prototype = {
 		console.log("fullscreenToggleHandler");
 		var doc = window.document;
 		var el = window.document.documentElement;
+		if(isFocus != true) {
+			isFocus = false;
+		}
 		if(isFocus) {
 			this.IS_FULL_SCREEN = false;
 		}
@@ -228,6 +234,7 @@ AppMain.prototype = {
 		}
 	}
 	,onKeyMappedHandler: function(value) {
+		console.log("onKeyMappedHandler ( " + value + " )");
 		switch(value) {
 		case "blockquote":
 			this.insertBefore("> ",3);
@@ -290,7 +297,7 @@ AppMain.prototype = {
 			this.insertBefore("1. ",3);
 			break;
 		case "preview":
-			this.previewToggleHandler();
+			this.previewToggleHandler(false);
 			break;
 		case "save":
 			this.saveHandler(null);

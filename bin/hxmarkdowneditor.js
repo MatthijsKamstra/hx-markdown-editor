@@ -179,6 +179,9 @@ AppMain.prototype = {
 		}
 		var toggle = window.document.getElementById("workbench_parts_editor_two");
 		var button = window.document.getElementById("btn-preview").firstElementChild;
+		if(isFocus != true) {
+			isFocus = false;
+		}
 		if(isFocus) {
 			toggle.style.display = "none";
 			button.setAttribute("class","fa fa-eye-slash");
@@ -196,9 +199,12 @@ AppMain.prototype = {
 		if(isFocus == null) {
 			isFocus = false;
 		}
-		haxe_Log.trace("fullscreenToggleHandler",{ fileName : "AppMain.hx", lineNumber : 390, className : "AppMain", methodName : "fullscreenToggleHandler"});
+		haxe_Log.trace("fullscreenToggleHandler",{ fileName : "AppMain.hx", lineNumber : 391, className : "AppMain", methodName : "fullscreenToggleHandler"});
 		var doc = window.document;
 		var el = window.document.documentElement;
+		if(isFocus != true) {
+			isFocus = false;
+		}
 		if(isFocus) {
 			this.IS_FULL_SCREEN = false;
 		}
@@ -227,11 +233,13 @@ AppMain.prototype = {
 	,onFolderOpenHandler: function() {
 		var _gthis = this;
 		electron_renderer_IpcRenderer.send("OpenDialog",function() {
-			haxe_Log.trace("OpenDialog",{ fileName : "AppMain.hx", lineNumber : 426, className : "AppMain", methodName : "onFolderOpenHandler"});
+			haxe_Log.trace("OpenDialog",{ fileName : "AppMain.hx", lineNumber : 429, className : "AppMain", methodName : "onFolderOpenHandler"});
 		});
 		electron_renderer_IpcRenderer.on("SEND_FILE_CONTENT",function(event,filepath,data) {
+			haxe_Log.trace(filepath,{ fileName : "AppMain.hx", lineNumber : 432, className : "AppMain", methodName : "onFolderOpenHandler"});
 			_gthis.currentFile = filepath;
 			_gthis.set_inMarkdownValue(data);
+			_gthis.editor.setValue(data);
 		});
 	}
 	,onSaveHandler: function() {
@@ -239,10 +247,11 @@ AppMain.prototype = {
 			return;
 		}
 		electron_renderer_IpcRenderer.send("SAVE_FILE",this.currentFile,this.get_inMarkdownValue(),function() {
-			haxe_Log.trace("SAVE_FILE",{ fileName : "AppMain.hx", lineNumber : 438, className : "AppMain", methodName : "onSaveHandler"});
+			haxe_Log.trace("SAVE_FILE",{ fileName : "AppMain.hx", lineNumber : 442, className : "AppMain", methodName : "onSaveHandler"});
 		});
 	}
 	,onKeyMappedHandler: function(value) {
+		haxe_Log.trace("onKeyMappedHandler ( " + value + " )",{ fileName : "AppMain.hx", lineNumber : 452, className : "AppMain", methodName : "onKeyMappedHandler"});
 		switch(value) {
 		case "blockquote":
 			this.insertBefore("> ",3);
@@ -305,7 +314,7 @@ AppMain.prototype = {
 			this.insertBefore("1. ",3);
 			break;
 		case "preview":
-			this.previewToggleHandler();
+			this.previewToggleHandler(false);
 			break;
 		case "save":
 			this.saveHandler(null);
@@ -317,7 +326,7 @@ AppMain.prototype = {
 			this.insertBefore("* ",3);
 			break;
 		default:
-			haxe_Log.trace("not sure what you want: " + value,{ fileName : "AppMain.hx", lineNumber : 484, className : "AppMain", methodName : "onKeyMappedHandler"});
+			haxe_Log.trace("not sure what you want: " + value,{ fileName : "AppMain.hx", lineNumber : 491, className : "AppMain", methodName : "onKeyMappedHandler"});
 		}
 	}
 	,onResizeHandler: function(e) {

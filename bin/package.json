@@ -1,5 +1,5 @@
 {
-    "name"    : "markdown-editor",
+    "name"    : "Monk-Markdown-Editor",
     "version" : "0.0.1",
     "main"    : "main.js",
     "scripts": {
