@@ -91,10 +91,9 @@ But they are not as important as the previously mentioned features:
 ## Electron features
 
 You can [test and try online](https://matthijskamstra.github.io/hx-markdown-editor/) the markdown editor.
-But my personal focus is on Desktop
+But my personal focus is on Desktop/Electron from now on.
 
 That needs a lot more love before its a workable app:
-
 
 **key short cuts**
 
@@ -143,7 +142,44 @@ And obviously **markdown** lib (haven't descides yet which one):
 
 This is a [Haxe](http://www.haxe.org) project, read more about it in the [README_HAXE.MD](README_HAXE.MD)!
 
+## Haxe vs JS
 
+Yes I used Haxe, which will throw of some people.... But it shouldn't:
+
+Because Haxe is a compiler language, the folder structure has a `src` and `bin`.
+But that is that different from some JS projects out there.
+
+```
++ .vscode
++ bin
++ docs
++ externs
++ src
+```
+
+
+
+**.vscode**
+
+Visual Studio Code folder, currently the best crossplatfrom IDE for Haxe
+This is something you can ignore if you use an other editor
+
+**bin**
+
+export folder, from a JavaScript developer point of view the source folder
+
+**docs**
+
+I use this folder to change the `css` and `html`, every change will be copied to `bin` folder.
+This is also used by Github  to create "documentation" pages for your project. I use it to show the web version of the Editor
+
+**externs**
+
+A folder specific for Haxe. The libraries we use are pure JS. The externs are a strongly typed "connector" between the dynamic language JS and the strongly typed language Haxe.
+
+**src**
+
+Haxe source folder, the original code is here.
 
 <!--
 
