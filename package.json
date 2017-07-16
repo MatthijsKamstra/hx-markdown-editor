@@ -8,17 +8,15 @@
   "scripts": {
     "prewatch": "haxe build_debug.hxml",
     "haxebuild": "haxe build_debug.hxml",
-    "watch": "onchange 'src/*.hx' 'src/*/*.hx' 'src/*/*/*.hx' 'src/*/*/*/*.hx' 'src/assets/*/*.css' 'src/assets/*/*.html' 'src/assets/*/*.md' -v -- haxe build_debug.hxml & livereload docs/ && electron docs/",
+    "watch": "onchange 'src/*.hx' 'src/*/*.hx' 'src/*/*/*.hx' 'src/*/*/*/*.hx' 'src/assets/*/*.css' 'src/assets/*/*.html' 'src/assets/*/*.md' -v -- haxe build_debug.hxml && livereload docs/",
     "electronbuild": "electron bin/",
     "electron": "haxe build_debug.hxml && electron bin/",
     "package": "electron-packager bin/ Monk-Markdown-Editor --platform darwin --out download --electron-version 1.6.8 --overwrite --icon=src/assets/icons/icon.png.icns"
   },
   "dependencies": {
-    "marked": "^0.3.6"
-  },
-  "devDependencies": {
+    "livereload": "^0.6.2",
+    "marked": "^0.3.6",
     "electron-packager": "^8.7.2",
-    "livereload": "0.6.0",
-    "onchange": "3.0.2"
+    "onchange": "^3.2.1"
   }
 }

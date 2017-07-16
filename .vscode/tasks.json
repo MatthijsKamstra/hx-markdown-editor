@@ -8,6 +8,21 @@
             "type": "npm",
             "script": "electronbuild",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "haxebuild",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "prewatch",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "watch",
+            "problemMatcher": []
         }
     ]
 }
