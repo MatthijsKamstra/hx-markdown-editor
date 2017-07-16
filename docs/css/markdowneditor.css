@@ -47,6 +47,58 @@ containers / workbench
 	display: flex;
 	font-size: 14px;
 }
+.icon-wrapper{
+ 	position:relative;
+    float:left;
+}
+*.icon-blue {color: #0088cc}
+*.icon-grey {color: grey}
+i {
+    /* width:100px; */
+    text-align:center;
+    vertical-align:middle;
+}
+.badge{
+	background: #3655B5;
+	color: white;
+    width: auto;
+    height: auto;
+    margin: 0;
+    border-radius: 50%;
+	position:absolute;
+    min-width: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+	padding: 3px;
+	right: 5px;
+}
+.badge:empty{
+	display: none;
+}
+
+
+
+
+ /* .badge {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: #777;
+    border-radius: 10px;
+} */
+
+
 #workbench_parts_title > div {
   flex: 1; /*grow*/
 }

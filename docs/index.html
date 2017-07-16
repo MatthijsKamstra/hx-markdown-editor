@@ -46,10 +46,13 @@
 
 					<div class-"activitybar-top">
 						<div class="sep">
+
+							<!-- new document button -->
 							<a class="activitybar-btn" href="#" role="button" id="btn-new" title="New document">
 								<i class="fa fa-file-text-o" aria-hidden="true"></i>
 							</a>
 
+							<!-- electron: open document button -->
 							<div id="container-btn-open-electron">
 								<a class="activitybar-btn" href="#" role="button" id="btn-open" title="Open document">
 									<!--<i class="fa fa-folder-open-o" aria-hidden="true"></i>-->
@@ -57,6 +60,7 @@
 								</a>
 							</div>
 
+							<!-- browser: open document button -->
 							<div id="container-btn-open-browser">
 								<label for="file-upload" class="custom-file-upload activitybar-btn" title="Open document in browser">
 									<i class="fa fa-folder-open-o" aria-hidden="true"></i>
@@ -64,9 +68,13 @@
 								<input id="file-upload" type="file" accept=".txt,.text,.md"/>
 							</div>
 
-							<a class="activitybar-btn" href="#" role="button" id="btn-save" title="Save current document">
-								<i class="fa fa-floppy-o" aria-hidden="true"></i>
-							</a>
+							<!-- save button -->
+							<div class="icon-wrapper">
+								<a class="activitybar-btn" href="#" role="button" id="btn-save" title="Save current document">
+									<i class="fa fa-floppy-o" aria-hidden="true"></i>
+									<span class="badge"></span>
+								</a>
+							</div>
 						</div>
 						<div class="sep">
 							<a class="activitybar-btn" href="#" role="button" id="btn-preview" title="Live preview">
