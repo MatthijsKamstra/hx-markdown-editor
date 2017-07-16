@@ -27,8 +27,11 @@ import model.constant.Channel;
 class AppMain {
 
 	var isElectron = false;
-	var currentFile:String;
+	var currentFilePath:String = '';
 	var currentFileName:String = 'monk';
+	var currentArray:Array<CurrentDoc> = [];
+	var memoryArray:Array<CurrentDoc> = [];
+	var currentID:Int = 0;
 
 	var editor : CodeMirror;
 
@@ -64,6 +67,22 @@ class AppMain {
 		trace( 'electron', 'electron '+process.versions['electron'] );
 		trace( 'node', 'node '+process.version );
 		trace( 'system', process.platform +' '+ process.arch );
+
+
+		// [mck] get messages from Electron wrapper
+		IpcRenderer.on(Channel.PING_SAVE, function(event){
+			onSaveHandler();
+		});
+		IpcRenderer.on(Channel.SAVE_FILE, function(event){
+			onSaveHandler();
+		});
+		IpcRenderer.on(Channel.SAVE_AS_FILE, function(event){
+			trace("Channel.SAVE_AS_FILE");
+		});
+		IpcRenderer.on(Channel.SEND_FILE_PATH, function(event, path){
+			setMonkDocumentTitle(path);
+		});
+
 		#end
 
 		init();
@@ -78,6 +97,9 @@ class AppMain {
 
 			// keymaps
 			initShortcuts();
+
+			// first screen
+			initScreen();
 
 			// register the handler
 			document.getElementById('btn-new').addEventListener('click', newHandler, false);
@@ -96,7 +118,7 @@ class AppMain {
 
 			setMonkDocumentTitle('Monk Markdown Editor');
 
-			updatePreview();
+			updateAll();
 
 			// document.addEventListener('keydown', onKeydownHandler, false);
 		});
@@ -141,9 +163,12 @@ class AppMain {
 			// viewportMargin: 'Infinity'
 		});
 		editor.on("change", function(cm, change) {
-			updatePreview();
+			updateAll();
 		});
 		editor.focus(); // make sure the shortcuts work asap by focussing on the editor
+
+
+
 	}
 
 	/**
@@ -164,6 +189,24 @@ class AppMain {
 		}
 		editor.addKeyMap(map);
 		// console.info(keyMarkdown);
+	}
+
+	function initScreen ()  {
+		if (currentArray.length == 0){
+			trace('show start up screen');
+		} else if(memoryArray.length != 0){
+			trace('show last opend document(s)');
+		} else {
+		}
+		currentID = 0;
+		var item : CurrentDoc = {
+			path : currentFilePath,
+			name : currentFileName,
+			isSave : false,
+			content : ''
+		}
+		currentArray[currentID] = item;
+
 	}
 
 	// ____________________________________ misc ____________________________________
@@ -192,10 +235,18 @@ class AppMain {
 
 	/**
 	 *  set the document title (draggable part in electron)
-	 *  @param title -  String
+	 *  @param titleOrPath -  String
 	 */
-	function setMonkDocumentTitle(title:String){
+	function setMonkDocumentTitle(titleOrPath:String){
 		var widowtitle : Element = document.getElementsByClassName('window-title')[0];
+
+		var title = titleOrPath;
+		// todo make sure the path and document name are split
+		if (titleOrPath.indexOf('/') != -1) {
+			title = titleOrPath.substring ( titleOrPath.lastIndexOf('/') + 1 , titleOrPath.length);
+			currentFileName = title;
+			currentFilePath = titleOrPath;
+		}
 		widowtitle.innerText = title;
 	}
 
@@ -203,8 +254,8 @@ class AppMain {
 	 *  this is a rought estimation, need to look better at this
 	 *  @param content - editor.getValue()
 	 */
-	function setWordcount(content:String){
-		// trace(content);
+	function setWordcount(){
+		var content = inMarkdownValue;
 		var wordcount : Element = document.getElementsByClassName('window-wordcount')[0];
 		// replace the basic markdown stuff
 		var str = content.replace('\t', '')
@@ -218,6 +269,22 @@ class AppMain {
 		var array = str.split(' ');
 		// trace(array);
 		wordcount.innerText = '${array.length} words';
+	}
+
+	function setBadges (){
+		var badge : Element = document.getElementById('btn-save').getElementsByClassName('badge')[0];
+		var count = 0;
+		var out = '';
+		for (i in currentArray){
+			if (!i.isSave){
+				count ++;
+			}
+		}
+		if(count == 0)
+			out = '';
+		else
+			out = Std.string(count);
+		badge.innerText = (out);
 	}
 
 	/**
@@ -303,16 +370,25 @@ class AppMain {
 		}
 	}
 
-
-
-
-
 	// ____________________________________ handlers for electron and browser ____________________________________
 
-
+	/**
+	 *  new file, needs to be added to listen list
+	 *  @param e -
+	 */
 	function newHandler(e){
+		currentFilePath = '';
 		currentFileName = 'new_document';
-		editor.setValue('# New document\n\nmonk');
+		var content = '# New document\n\nCreate on: ${DateTools.format(Date.now(), "%Y-%m-%d_%H:%M:%S")}\n\nmonk';
+		var item : CurrentDoc = {
+			path : currentFilePath,
+			name : currentFileName,
+			isSave : false,
+			content : content
+		}
+		currentArray.push(item);
+		// and now update editor (and re-populate views)
+		editor.setValue(content);
 		editor.focus();
 	}
 
@@ -430,18 +506,27 @@ class AppMain {
 		});
 		IpcRenderer.on(Channel.SEND_FILE_CONTENT, function(event, filepath, data) {
 			trace(filepath);
-			currentFile = filepath;
+			currentFilePath = filepath;
 			inMarkdownValue = data;
 			editor.setValue(data);
 		});
 	}
 
 	function onSaveHandler(){
-		if(currentFile == null) return;
-		IpcRenderer.send(Channel.SAVE_FILE, currentFile, inMarkdownValue,  function (){
-			trace('${Channel.SAVE_FILE}');
-		});
+		trace('onSaveHandler :: ${currentFilePath}');
+		var _current : CurrentDoc = currentArray[currentID];
+		if(_current.path == ''){
+			trace('new file?');
+			currentArray[currentID].isSave = false;
+			IpcRenderer.send(Channel.SAVE_AS_FILE, currentFilePath, editor.getValue());
+		} else {
+			trace(_current);
+			trace('open file ${currentFilePath}');
+			currentArray[currentID].isSave = false;
+			IpcRenderer.send(Channel.SAVE_FILE, currentFilePath, editor.getValue());
+		}
 	}
+
 	#end
 
 	// ____________________________________ handlers (for browser and electron) ____________________________________
@@ -492,7 +577,7 @@ class AppMain {
 		}
 
 		// outMarkdownValue = str;
-		// updatePreview();
+		// updateAll();
 	}
 
 	function onResizeHandler(e){
@@ -531,6 +616,7 @@ class AppMain {
 	function onBrowserSaveHandler(?e:Event){
 		if(e != null) e.preventDefault();
 		if(e != null) e.stopPropagation();
+		currentArray[currentID].isSave = true;
 		// inMarkdownValue
 		// var text = inMarkdown.innerText;
 		var text = editor.getValue();
@@ -540,9 +626,22 @@ class AppMain {
 		untyped saveAs(blob, '${currentFileName}_${date}.md');
 	}
 
-	function updatePreview (){
+	function updateAll (){
 		outMarkdownValue = editor.getValue();
-		setWordcount(editor.getValue());
+		inMarkdownValue = editor.getValue();
+		checkSave();
+		setWordcount();
+		setBadges();
+	}
+
+	function checkSave(){
+		// for (i in 0...currentArray.length){
+		// 	var _currentArray = currentArray[i];
+		// 	if(_currentArray[i].isSave){
+		// 		_currentArray[i]
+		// 	}
+		// }
+		currentArray[currentID].isSave = false;
 	}
 
 	// ____________________________________ getter/setter ____________________________________
@@ -592,4 +691,11 @@ class AppMain {
 typedef KeyBindings = {
 	var key : String;
 	var action : String;
+}
+
+typedef CurrentDoc = {
+	var path : String;
+	var name : String;
+	var isSave : Bool;
+	var content : String;
 }

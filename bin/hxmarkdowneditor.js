@@ -11,14 +11,31 @@ var AppMain = function() {
 	this.shortCuts = JSON.parse(haxe_Resource.getString("key"));
 	this.IS_FULL_SCREEN = false;
 	this.markdowExample2 = haxe_Resource.getString("markdown02");
+	this.currentID = 0;
+	this.memoryArray = [];
+	this.currentArray = [];
 	this.currentFileName = "monk";
+	this.currentFilePath = "";
 	this.isElectron = false;
+	var _gthis = this;
 	window.console.info("This project is a WIP-sideproject written in Haxe (www.haxe.org)");
 	window.console.info("For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor");
 	this.isElectron = true;
-	haxe_Log.trace("electron",{ fileName : "AppMain.hx", lineNumber : 64, className : "AppMain", methodName : "new", customParams : ["electron " + process.versions["electron"]]});
-	haxe_Log.trace("node",{ fileName : "AppMain.hx", lineNumber : 65, className : "AppMain", methodName : "new", customParams : ["node " + process.version]});
-	haxe_Log.trace("system",{ fileName : "AppMain.hx", lineNumber : 66, className : "AppMain", methodName : "new", customParams : [process.platform + " " + process.arch]});
+	haxe_Log.trace("electron",{ fileName : "AppMain.hx", lineNumber : 67, className : "AppMain", methodName : "new", customParams : ["electron " + process.versions["electron"]]});
+	haxe_Log.trace("node",{ fileName : "AppMain.hx", lineNumber : 68, className : "AppMain", methodName : "new", customParams : ["node " + process.version]});
+	haxe_Log.trace("system",{ fileName : "AppMain.hx", lineNumber : 69, className : "AppMain", methodName : "new", customParams : [process.platform + " " + process.arch]});
+	electron_renderer_IpcRenderer.on("PING_SAVE",function(event) {
+		_gthis.onSaveHandler();
+	});
+	electron_renderer_IpcRenderer.on("SAVE_FILE",function(event1) {
+		_gthis.onSaveHandler();
+	});
+	electron_renderer_IpcRenderer.on("SAVE_AS_FILE",function(event2) {
+		haxe_Log.trace("Channel.SAVE_AS_FILE",{ fileName : "AppMain.hx", lineNumber : 80, className : "AppMain", methodName : "new"});
+	});
+	electron_renderer_IpcRenderer.on("SEND_FILE_PATH",function(event3,path) {
+		_gthis.setMonkDocumentTitle(path);
+	});
 	this.init();
 };
 AppMain.__name__ = true;
@@ -31,6 +48,7 @@ AppMain.prototype = {
 		$(function() {
 			_gthis.initEditors();
 			_gthis.initShortcuts();
+			_gthis.initScreen();
 			window.document.getElementById("btn-new").addEventListener("click",$bind(_gthis,_gthis.newHandler),false);
 			window.document.getElementById("btn-open").addEventListener("click",$bind(_gthis,_gthis.openHandler),false);
 			window.document.getElementById("file-upload").addEventListener("change",$bind(_gthis,_gthis.openHandler));
@@ -42,7 +60,7 @@ AppMain.prototype = {
 			window.addEventListener("resize",$bind(_gthis,_gthis.onResizeHandler));
 			_gthis.onResizeHandler(null);
 			_gthis.setMonkDocumentTitle("Monk Markdown Editor");
-			_gthis.updatePreview();
+			_gthis.updateAll();
 		});
 	}
 	,initEditors: function() {
@@ -64,7 +82,7 @@ AppMain.prototype = {
 		this.set_outMarkdownValue(md);
 		this.editor = CodeMirror.fromTextArea(this.inMarkdown,{ tabSize : "2", indentWithTabs : true, lineWrapping : true, extraKeys : { "Enter" : "newlineAndIndentContinueMarkdownList"}, mode : "markdown", tabMode : "indent", theme : "monk"});
 		this.editor.on("change",function(cm,change) {
-			_gthis.updatePreview();
+			_gthis.updateAll();
 		});
 		this.editor.focus();
 	}
@@ -90,19 +108,58 @@ AppMain.prototype = {
 		}
 		this.editor.addKeyMap(map);
 	}
+	,initScreen: function() {
+		if(this.currentArray.length == 0) {
+			haxe_Log.trace("show start up screen",{ fileName : "AppMain.hx", lineNumber : 196, className : "AppMain", methodName : "initScreen"});
+		} else if(this.memoryArray.length != 0) {
+			haxe_Log.trace("show last opend document(s)",{ fileName : "AppMain.hx", lineNumber : 198, className : "AppMain", methodName : "initScreen"});
+		}
+		this.currentID = 0;
+		var item = { path : this.currentFilePath, name : this.currentFileName, isSave : false, content : ""};
+		this.currentArray[this.currentID] = item;
+	}
 	,replaceString2Symbols: function(keybinding) {
 		var str = "`" + StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(keybinding,"Cmd","⌘"),"Alt","⌥"),"Ctrl","⌃"),"Shift","⇧"),"-","` `") + "`";
 		return StringTools.replace(str,"``","`");
 	}
-	,setMonkDocumentTitle: function(title) {
+	,setMonkDocumentTitle: function(titleOrPath) {
 		var widowtitle = window.document.getElementsByClassName("window-title")[0];
+		var title = titleOrPath;
+		if(titleOrPath.indexOf("/") != -1) {
+			title = titleOrPath.substring(titleOrPath.lastIndexOf("/") + 1,titleOrPath.length);
+			this.currentFileName = title;
+			this.currentFilePath = titleOrPath;
+		}
 		widowtitle.innerText = title;
 	}
-	,setWordcount: function(content) {
+	,setWordcount: function() {
+		var content = this.get_inMarkdownValue();
 		var wordcount = window.document.getElementsByClassName("window-wordcount")[0];
 		var str = StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(content,"\t",""),"\n",""),"\r",""),"#",""),"*",""),"_",""),"`",""),"  ","");
 		var array = str.split(" ");
 		wordcount.innerText = "" + array.length + " words";
+	}
+	,setBadges: function() {
+		var badge = window.document.getElementById("btn-save").getElementsByClassName("badge")[0];
+		var count = 0;
+		var out = "";
+		var _g = 0;
+		var _g1 = this.currentArray;
+		while(_g < _g1.length) {
+			var i = _g1[_g];
+			++_g;
+			if(!i.isSave) {
+				++count;
+			}
+		}
+		if(count == 0) {
+			out = "";
+		} else if(count == null) {
+			out = "null";
+		} else {
+			out = "" + count;
+		}
+		badge.innerText = out;
 	}
 	,toggleOpenBtn: function() {
 		var electronContainer = window.document.getElementById("container-btn-open-electron");
@@ -131,7 +188,7 @@ AppMain.prototype = {
 		var cursor = doc.getCursor();
 		if(doc.somethingSelected()) {
 			var selections = doc.listSelections();
-			haxe_Log.trace(selections,{ fileName : "AppMain.hx", lineNumber : 285, className : "AppMain", methodName : "insertBefore"});
+			haxe_Log.trace(selections,{ fileName : "AppMain.hx", lineNumber : 352, className : "AppMain", methodName : "insertBefore"});
 			var pos = [selections[0].head.line,selections[0].anchor.line];
 			pos.sort(function(a,b) {
 				if(a < b) {
@@ -155,8 +212,12 @@ AppMain.prototype = {
 		}
 	}
 	,newHandler: function(e) {
+		this.currentFilePath = "";
 		this.currentFileName = "new_document";
-		this.editor.setValue("# New document\n\nmonk");
+		var content = "# New document\n\nCreate on: " + DateTools.format(new Date(),"%Y-%m-%d_%H:%M:%S") + "\n\nmonk";
+		var item = { path : this.currentFilePath, name : this.currentFileName, isSave : false, content : content};
+		this.currentArray.push(item);
+		this.editor.setValue(content);
 		this.editor.focus();
 	}
 	,saveHandler: function(e) {
@@ -199,7 +260,7 @@ AppMain.prototype = {
 		if(isFocus == null) {
 			isFocus = false;
 		}
-		haxe_Log.trace("fullscreenToggleHandler",{ fileName : "AppMain.hx", lineNumber : 391, className : "AppMain", methodName : "fullscreenToggleHandler"});
+		haxe_Log.trace("fullscreenToggleHandler",{ fileName : "AppMain.hx", lineNumber : 467, className : "AppMain", methodName : "fullscreenToggleHandler"});
 		var doc = window.document;
 		var el = window.document.documentElement;
 		if(isFocus != true) {
@@ -233,25 +294,31 @@ AppMain.prototype = {
 	,onFolderOpenHandler: function() {
 		var _gthis = this;
 		electron_renderer_IpcRenderer.send("OpenDialog",function() {
-			haxe_Log.trace("OpenDialog",{ fileName : "AppMain.hx", lineNumber : 429, className : "AppMain", methodName : "onFolderOpenHandler"});
+			haxe_Log.trace("OpenDialog",{ fileName : "AppMain.hx", lineNumber : 505, className : "AppMain", methodName : "onFolderOpenHandler"});
 		});
 		electron_renderer_IpcRenderer.on("SEND_FILE_CONTENT",function(event,filepath,data) {
-			haxe_Log.trace(filepath,{ fileName : "AppMain.hx", lineNumber : 432, className : "AppMain", methodName : "onFolderOpenHandler"});
-			_gthis.currentFile = filepath;
+			haxe_Log.trace(filepath,{ fileName : "AppMain.hx", lineNumber : 508, className : "AppMain", methodName : "onFolderOpenHandler"});
+			_gthis.currentFilePath = filepath;
 			_gthis.set_inMarkdownValue(data);
 			_gthis.editor.setValue(data);
 		});
 	}
 	,onSaveHandler: function() {
-		if(this.currentFile == null) {
-			return;
+		haxe_Log.trace("onSaveHandler :: " + this.currentFilePath,{ fileName : "AppMain.hx", lineNumber : 516, className : "AppMain", methodName : "onSaveHandler"});
+		var _current = this.currentArray[this.currentID];
+		if(_current.path == "") {
+			haxe_Log.trace("new file?",{ fileName : "AppMain.hx", lineNumber : 519, className : "AppMain", methodName : "onSaveHandler"});
+			this.currentArray[this.currentID].isSave = false;
+			electron_renderer_IpcRenderer.send("SAVE_AS_FILE",this.currentFilePath,this.editor.getValue());
+		} else {
+			haxe_Log.trace(_current,{ fileName : "AppMain.hx", lineNumber : 523, className : "AppMain", methodName : "onSaveHandler"});
+			haxe_Log.trace("open file " + this.currentFilePath,{ fileName : "AppMain.hx", lineNumber : 524, className : "AppMain", methodName : "onSaveHandler"});
+			this.currentArray[this.currentID].isSave = false;
+			electron_renderer_IpcRenderer.send("SAVE_FILE",this.currentFilePath,this.editor.getValue());
 		}
-		electron_renderer_IpcRenderer.send("SAVE_FILE",this.currentFile,this.get_inMarkdownValue(),function() {
-			haxe_Log.trace("SAVE_FILE",{ fileName : "AppMain.hx", lineNumber : 442, className : "AppMain", methodName : "onSaveHandler"});
-		});
 	}
 	,onKeyMappedHandler: function(value) {
-		haxe_Log.trace("onKeyMappedHandler ( " + value + " )",{ fileName : "AppMain.hx", lineNumber : 452, className : "AppMain", methodName : "onKeyMappedHandler"});
+		haxe_Log.trace("onKeyMappedHandler ( " + value + " )",{ fileName : "AppMain.hx", lineNumber : 537, className : "AppMain", methodName : "onKeyMappedHandler"});
 		switch(value) {
 		case "blockquote":
 			this.insertBefore("> ",3);
@@ -326,7 +393,7 @@ AppMain.prototype = {
 			this.insertBefore("* ",3);
 			break;
 		default:
-			haxe_Log.trace("not sure what you want: " + value,{ fileName : "AppMain.hx", lineNumber : 491, className : "AppMain", methodName : "onKeyMappedHandler"});
+			haxe_Log.trace("not sure what you want: " + value,{ fileName : "AppMain.hx", lineNumber : 576, className : "AppMain", methodName : "onKeyMappedHandler"});
 		}
 	}
 	,onResizeHandler: function(e) {
@@ -338,9 +405,15 @@ AppMain.prototype = {
 		window.document.getElementById("workbench_parts_editor_container").setAttribute("style","width:100%; height:" + (myHeight - offset) + "px;");
 		window.document.getElementById("workbench_parts_editor_container").setAttribute("data-comment","w:" + myWidth + "px, h:" + (myHeight - offset) + "px");
 	}
-	,updatePreview: function() {
+	,updateAll: function() {
 		this.set_outMarkdownValue(this.editor.getValue());
-		this.setWordcount(this.editor.getValue());
+		this.set_inMarkdownValue(this.editor.getValue());
+		this.checkSave();
+		this.setWordcount();
+		this.setBadges();
+	}
+	,checkSave: function() {
+		this.currentArray[this.currentID].isSave = false;
 	}
 	,get_inMarkdownValue: function() {
 		this.set_inMarkdownValue(this.inMarkdown.innerText);
@@ -358,6 +431,100 @@ AppMain.prototype = {
 		var result = markdownit().render(md);
 		return result;
 	}
+};
+var DateTools = function() { };
+DateTools.__name__ = true;
+DateTools.__format_get = function(d,e) {
+	switch(e) {
+	case "%":
+		return "%";
+	case "A":
+		return DateTools.DAY_NAMES[d.getDay()];
+	case "B":
+		return DateTools.MONTH_NAMES[d.getMonth()];
+	case "C":
+		return StringTools.lpad(Std.string(d.getFullYear() / 100 | 0),"0",2);
+	case "D":
+		return DateTools.__format(d,"%m/%d/%y");
+	case "F":
+		return DateTools.__format(d,"%Y-%m-%d");
+	case "I":case "l":
+		var hour = d.getHours() % 12;
+		return StringTools.lpad(Std.string(hour == 0 ? 12 : hour),e == "I" ? "0" : " ",2);
+	case "M":
+		return StringTools.lpad(Std.string(d.getMinutes()),"0",2);
+	case "R":
+		return DateTools.__format(d,"%H:%M");
+	case "S":
+		return StringTools.lpad(Std.string(d.getSeconds()),"0",2);
+	case "T":
+		return DateTools.__format(d,"%H:%M:%S");
+	case "Y":
+		return Std.string(d.getFullYear());
+	case "a":
+		return DateTools.DAY_SHORT_NAMES[d.getDay()];
+	case "b":case "h":
+		return DateTools.MONTH_SHORT_NAMES[d.getMonth()];
+	case "d":
+		return StringTools.lpad(Std.string(d.getDate()),"0",2);
+	case "e":
+		return Std.string(d.getDate());
+	case "H":case "k":
+		return StringTools.lpad(Std.string(d.getHours()),e == "H" ? "0" : " ",2);
+	case "m":
+		return StringTools.lpad(Std.string(d.getMonth() + 1),"0",2);
+	case "n":
+		return "\n";
+	case "p":
+		if(d.getHours() > 11) {
+			return "PM";
+		} else {
+			return "AM";
+		}
+		break;
+	case "r":
+		return DateTools.__format(d,"%I:%M:%S %p");
+	case "s":
+		return Std.string(d.getTime() / 1000 | 0);
+	case "t":
+		return "\t";
+	case "u":
+		var t = d.getDay();
+		if(t == 0) {
+			return "7";
+		} else if(t == null) {
+			return "null";
+		} else {
+			return "" + t;
+		}
+		break;
+	case "w":
+		return Std.string(d.getDay());
+	case "y":
+		return StringTools.lpad(Std.string(d.getFullYear() % 100),"0",2);
+	default:
+		throw new js__$Boot_HaxeError("Date.format %" + e + "- not implemented yet.");
+	}
+};
+DateTools.__format = function(d,f) {
+	var r_b = "";
+	var p = 0;
+	while(true) {
+		var np = f.indexOf("%",p);
+		if(np < 0) {
+			break;
+		}
+		var len = np - p;
+		r_b += len == null ? HxOverrides.substr(f,p,null) : HxOverrides.substr(f,p,len);
+		r_b += Std.string(DateTools.__format_get(d,HxOverrides.substr(f,np + 1,1)));
+		p = np + 2;
+	}
+	var len1 = f.length - p;
+	r_b += len1 == null ? HxOverrides.substr(f,p,null) : HxOverrides.substr(f,p,len1);
+	return r_b;
+};
+DateTools.format = function(d,f) {
+	return DateTools.__format(d,f);
 };
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
@@ -381,6 +548,11 @@ HxOverrides.substr = function(s,pos,len) {
 	return s.substr(pos,len);
 };
 Math.__name__ = true;
+var Std = function() { };
+Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
 var StringTools = function() { };
 StringTools.__name__ = true;
 StringTools.isSpace = function(s,pos) {
@@ -413,6 +585,13 @@ StringTools.rtrim = function(s) {
 };
 StringTools.trim = function(s) {
 	return StringTools.ltrim(StringTools.rtrim(s));
+};
+StringTools.lpad = function(s,c,l) {
+	if(c.length <= 0) {
+		return s;
+	}
+	while(s.length < l) s = c + s;
+	return s;
 };
 StringTools.replace = function(s,sub,by) {
 	return s.split(sub).join(by);
@@ -728,7 +907,12 @@ var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
 String.__name__ = true;
 Array.__name__ = true;
+Date.__name__ = ["Date"];
 haxe_Resource.content = [{ name : "markdown00", data : "IyBBbiBleGhpYml0IG9mIE1hcmtkb3duCgpUaGlzIG5vdGUgZGVtb25zdHJhdGVzIHNvbWUgb2Ygd2hhdCBbTWFya2Rvd25dWzFdIGlzIGNhcGFibGUgb2YgZG9pbmcuCgoqTm90ZTogRmVlbCBmcmVlIHRvIHBsYXkgd2l0aCB0aGlzIHBhZ2UuIFVubGlrZSByZWd1bGFyIG5vdGVzLCB0aGlzIGRvZXNuJ3QgYXV0b21hdGljYWxseSBzYXZlIGl0c2VsZi4qCgojIyBCYXNpYyBmb3JtYXR0aW5nCgpQYXJhZ3JhcGhzIGNhbiBiZSB3cml0dGVuIGxpa2Ugc28uIEEgcGFyYWdyYXBoIGlzIHRoZSBiYXNpYyBibG9jayBvZiBNYXJrZG93bi4gQSBwYXJhZ3JhcGggaXMgd2hhdCB0ZXh0IHdpbGwgdHVybiBpbnRvIHdoZW4gdGhlcmUgaXMgbm8gcmVhc29uIGl0IHNob3VsZCBiZWNvbWUgYW55dGhpbmcgZWxzZS4KClBhcmFncmFwaHMgbXVzdCBiZSBzZXBhcmF0ZWQgYnkgYSBibGFuayBsaW5lLiBCYXNpYyBmb3JtYXR0aW5nIG9mICppdGFsaWNzKiBhbmQgKipib2xkKiogaXMgc3VwcG9ydGVkLiBUaGlzICpjYW4gYmUgKipuZXN0ZWQqKiBsaWtlKiBzby4KCiMjIExpc3RzCgojIyMgT3JkZXJlZCBsaXN0CgoxLiBJdGVtIDEKMi4gQSBzZWNvbmQgaXRlbQozLiBOdW1iZXIgMwo0LiDihaMKCipOb3RlOiB0aGUgZm91cnRoIGl0ZW0gdXNlcyB0aGUgVW5pY29kZSBjaGFyYWN0ZXIgZm9yIFtSb21hbiBudW1lcmFsIGZvdXJdWzJdLioKCiMjIyBVbm9yZGVyZWQgbGlzdAoKKiBBbiBpdGVtCiogQW5vdGhlciBpdGVtCiogWWV0IGFub3RoZXIgaXRlbQoqIEFuZCB0aGVyZSdzIG1vcmUuLi4KCiMjIFBhcmFncmFwaCBtb2RpZmllcnMKCiMjIyBDb2RlIGJsb2NrCgogICAgQ29kZSBibG9ja3MgYXJlIHZlcnkgdXNlZnVsIGZvciBkZXZlbG9wZXJzIGFuZCBvdGhlciBwZW9wbGUgd2hvIGxvb2sgYXQgY29kZSBvciBvdGhlciB0aGluZ3MgdGhhdCBhcmUgd3JpdHRlbiBpbiBwbGFpbiB0ZXh0LiBBcyB5b3UgY2FuIHNlZSwgaXQgdXNlcyBhIGZpeGVkLXdpZHRoIGZvbnQuCgpZb3UgY2FuIGFsc28gbWFrZSBgaW5saW5lIGNvZGVgIHRvIGFkZCBjb2RlIGludG8gb3RoZXIgdGhpbmdzLgoKIyMjIFF1b3RlCgo+IEhlcmUgaXMgYSBxdW90ZS4gV2hhdCB0aGlzIGlzIHNob3VsZCBiZSBzZWxmIGV4cGxhbmF0b3J5LiBRdW90ZXMgYXJlIGF1dG9tYXRpY2FsbHkgaW5kZW50ZWQgd2hlbiB0aGV5IGFyZSB1c2VkLgoKIyMgSGVhZGluZ3MKClRoZXJlIGFyZSBzaXggbGV2ZWxzIG9mIGhlYWRpbmdzLiBUaGV5IGNvcnJlc3BvbmQgd2l0aCB0aGUgc2l4IGxldmVscyBvZiBIVE1MIGhlYWRpbmdzLiBZb3UndmUgcHJvYmFibHkgbm90aWNlZCB0aGVtIGFscmVhZHkgaW4gdGhlIHBhZ2UuIEVhY2ggbGV2ZWwgZG93biB1c2VzIG9uZSBtb3JlIGhhc2ggY2hhcmFjdGVyLgoKIyMjIEhlYWRpbmdzICpjYW4qIGFsc28gY29udGFpbiAqKmZvcm1hdHRpbmcqKgoKIyMjIFRoZXkgY2FuIGV2ZW4gY29udGFpbiBgaW5saW5lIGNvZGVgCgpPZiBjb3Vyc2UsIGRlbW9uc3RyYXRpbmcgd2hhdCBoZWFkaW5ncyBsb29rIGxpa2UgbWVzc2VzIHVwIHRoZSBzdHJ1Y3R1cmUgb2YgdGhlIHBhZ2UuCgpJIGRvbid0IHJlY29tbWVuZCB1c2luZyBtb3JlIHRoYW4gdGhyZWUgb3IgZm91ciBsZXZlbHMgb2YgaGVhZGluZ3MgaGVyZSwgYmVjYXVzZSwgd2hlbiB5b3UncmUgc21hbGxlc3QgaGVhZGluZyBpc24ndCB0b28gc21hbGwsIGFuZCB5b3UncmUgbGFyZ2VzdCBoZWFkaW5nIGlzbid0IHRvbyBiaWcsIGFuZCB5b3Ugd2FudCBlYWNoIHNpemUgdXAgdG8gbG9vayBub3RpY2VhYmx5IGxhcmdlciBhbmQgbW9yZSBpbXBvcnRhbnQsIHRoZXJlIHRoZXJlIGFyZSBvbmx5IHNvIG1hbnkgc2l6ZXMgdGhhdCB5b3UgY2FuIHVzZS4KCiMjIFVSTHMKClVSTHMgY2FuIGJlIG1hZGUgaW4gYSBoYW5kZnVsIG9mIHdheXM6CgoqIEEgbmFtZWQgbGluayB0byBbTWFya0l0RG93bl1bM10uIFRoZSBlYXNpZXN0IHdheSB0byBkbyB0aGVzZSBpcyB0byBzZWxlY3Qgd2hhdCB5b3Ugd2FudCB0byBtYWtlIGEgbGluayBhbmQgaGl0IGBDdHJsK0xgLgoqIEFub3RoZXIgbmFtZWQgbGluayB0byBbTWFya0l0RG93bl0oaHR0cDovL3d3dy5tYXJraXRkb3duLm5ldC8pCiogU29tZXRpbWVzIHlvdSBqdXN0IHdhbnQgYSBVUkwgbGlrZSA8aHR0cDovL3d3dy5tYXJraXRkb3duLm5ldC8+LgoKIyMgSG9yaXpvbnRhbCBydWxlCgpBIGhvcml6b250YWwgcnVsZSBpcyBhIGxpbmUgdGhhdCBnb2VzIGFjcm9zcyB0aGUgbWlkZGxlIG9mIHRoZSBwYWdlLgoKLS0tCgpJdCdzIHNvbWV0aW1lcyBoYW5keSBmb3IgYnJlYWtpbmcgdGhpbmdzIHVwLgoKIyMgSW1hZ2VzCgpNYXJrZG93biBjYW4gYWxzbyBjb250YWluIGltYWdlcy4gSSdsbCBuZWVkIHRvIGFkZCBzb21ldGhpbmcgaGVyZSBzb21ldGltZS4KCiMjIEZpbmFsbHkKClRoZXJlJ3MgYWN0dWFsbHkgYSBsb3QgbW9yZSB0byBNYXJrZG93biB0aGFuIHRoaXMuIFNlZSB0aGUgb2ZmaWNpYWwgW2ludHJvZHVjdGlvbl1bNF0gYW5kIFtzeW50YXhdWzVdIGZvciBtb3JlIGluZm9ybWF0aW9uLiBIb3dldmVyLCBiZSBhd2FyZSB0aGF0IHRoaXMgaXMgbm90IHVzaW5nIHRoZSBvZmZpY2lhbCBpbXBsZW1lbnRhdGlvbiwgYW5kIHRoaXMgbWlnaHQgd29yayBzdWJ0bHkgZGlmZmVyZW50bHkgaW4gc29tZSBvZiB0aGUgbGl0dGxlIHRoaW5ncy4KCgogIFsxXTogaHR0cDovL2RhcmluZ2ZpcmViYWxsLm5ldC9wcm9qZWN0cy9tYXJrZG93bi8KICBbMl06IGh0dHA6Ly93d3cuZmlsZWZvcm1hdC5pbmZvL2luZm8vdW5pY29kZS9jaGFyLzIxNjMvaW5kZXguaHRtCiAgWzNdOiBodHRwOi8vd3d3Lm1hcmtpdGRvd24ubmV0LwogIFs0XTogaHR0cDovL2RhcmluZ2ZpcmViYWxsLm5ldC9wcm9qZWN0cy9tYXJrZG93bi9iYXNpY3MKICBbNV06IGh0dHA6Ly9kYXJpbmdmaXJlYmFsbC5uZXQvcHJvamVjdHMvbWFya2Rvd24vc3ludGF4Cg"},{ name : "markdown02", data : "IyBNb25rIE1hcmtkb3duIEVkaXRvcgoKdGhpcyBpcyBhIHRlc3QgZG9jdW1lbnQKCiMgaGVhZGluZwoKVGVzdCB0aGUga2V5Ym9hcmQgc2hvcnRjdXRzIGZvciBoZWFkaW5nczogYGNtZGAgKyBgMWAgKDEsMiwzLDQsNSw2KQoKaGVhZGluZyAxCgpoZWFkaW5nIDIKCmhlYWRpbmcgMwoKaGVhZGluZyA0CgpoZWFkaW5nIDUKCmhlYWRpbmcgNgoKIyBiYXNpYyBmb3JtYXQKClRlc3QgdGhlIGtleWJvYXJkIHNob3J0Y3V0cwoKLSBib2xkIChzdHJvbmcpOiBgY21kYCArIGBiYAotIGl0YWxpYyAoZW1waGFzaXMpOiBgY21kYCArIGBpYAotIGlubGluZSBjb2RlOiBgY21kYCArIGBrYAotIGNvbW1lbnQ6IGBjbWRgICsgYC9gCgojIGxpc3RzCgpxdWljayAodW5vcmRlcmVkKSBsaXN0OiBgY21kYCArIGBsYAoKdW5vcmRlcmVkIGxpc3Q6IGBzaGlmdGAgKyBgY21kYCArIGB1YAoKb3JkZXJlZCBsaXN0OiBgc2hpZnRgICsgYGNtZGAgKyBgb2AKCgpqdXN0IGJlY2F1c2Ugd2UgY2FuCgpsaW5lIG9uZQpsaW5lIHR3bwpsaW5lIHRocmVlCmxpbmUgZm91cgoKCiMgYmxvY2sgcXVvdGUKCmJsb2NrIHF1b3RlOiBgc2hpZnRgICsgYGNtZGAgKyBgYmAKCnRoaXMgaXMgYSBxdW90ZQoKIyBsaW5rCgpjcmVhdGUgYSBsaW5rOiBgc2hpZnRgICsgYGNtZGAgKyBgbGAKCmh0dHA6Ly93d3cubWF0dGhpanNrYW1zdHJhLm5sCgojIGltYWdlCgpjcmVhdGUgYSBpbWFnZTogYHNoaWZ0YCArIGBjbWRgICsgYGlgCgpodHRwOi8vbWF0dGhpanNrYW1zdHJhLm5sL3Bob3Rvcy9ib3RzLzY0MC8xMF9JTUdfNDE2NS5qcGcKCgo"},{ name : "markdown01", data : "IyBoZWFkaW5nIDEKCnRoaXMgaXMgYSB0ZXN0IHBpZWNlIG9mIHRleHQganVzdCBmb3IgdGVzdGluZwoKIyMgaGVhZGluZyAyCgpqdXN0IGJlY2F1c2Ugd2UgY2FuCi0gb25lCi0gdHdvCgo"},{ name : "key", data : "WwoKCXsKCQkia2V5IiA6ICJDbWQtUyIsCgkJImFjdGlvbiIgOiAic2F2ZSIsCgkJImljb24iIDogImZhIGZhLWZsb3BweS1vIgoJfSx7CgkJImtleSIgOiAiQ21kLU8iLAoJCSJhY3Rpb24iIDogIm9wZW4iLAoJCSJpY29uIiA6ICJmYSBmYS1mb2xkZXItb3Blbi1vIgoJfSx7CgkJImtleSIgOiAiQ21kLUN0cmwtRiIsCgkJImFjdGlvbiIgOiAiZnVsbHNjcmVlbiIsCgkJImljb24iIDogImZhLWFycm93cy1hbHQiCgl9LHsKCQkia2V5IiA6ICJDbWQtRSIsCgkJImFjdGlvbiIgOiAicHJldmlldyIsCgkJImljb24iIDogImZhLWV5ZSIsCgkJImljb24tdG9nZ2xlIiA6ICJmYS1leWUtc2xhc2giCgl9LHsKCQkia2V5IiA6ICJDbWQtTiIsCgkJImFjdGlvbiIgOiAibmV3IiwKCQkiaWNvbiIgOiAiZmEgZmEtZmlsZS10ZXh0LW8iCgl9LAoKCgl7CgkJImtleSIgOiAiQ21kLTEiLAoJCSJhY3Rpb24iIDogImhlYWRlcjEiCgl9LHsKCQkia2V5IiA6ICJDbWQtMiIsCgkJImFjdGlvbiIgOiAiaGVhZGVyMiIKCX0sewoJCSJrZXkiIDogIkNtZC0zIiwKCQkiYWN0aW9uIiA6ICJoZWFkZXIzIgoJfSx7CgkJImtleSIgOiAiQ21kLTQiLAoJCSJhY3Rpb24iIDogImhlYWRlcjQiCgl9LHsKCQkia2V5IiA6ICJDbWQtNSIsCgkJImFjdGlvbiIgOiAiaGVhZGVyNSIKCX0sewoJCSJrZXkiIDogIkNtZC02IiwKCQkiYWN0aW9uIiA6ICJoZWFkZXI2IgoJfSx7CgkJImtleSIgOiAiQ21kLTAiLAoJCSJhY3Rpb24iIDogImhlYWRlcjAiCgl9LHsKCQkia2V5IiA6ICJDbWQtQiIsCgkJImFjdGlvbiIgOiAiYm9sZCIKCX0sewoJCSJrZXkiIDogIkNtZC1JIiwKCQkiYWN0aW9uIiA6ICJpdGFsaWMiCgl9LHsKCQkia2V5IiA6ICJDbWQtSyIsCgkJImFjdGlvbiIgOiAiaW5saW5lY29kZSIKCX0sewoJCSJrZXkiIDogIlNoaWZ0LUNtZC1LIiwKCQkiYWN0aW9uIiA6ICJjb2RlYmxvY2siCgl9LHsKCQkia2V5IiA6ICJDbWQtLyIsCgkJImFjdGlvbiIgOiAgImNvbW1lbnQiCgl9LHsKCQkia2V5IiA6ICJDbWQtSCIsCgkJImFjdGlvbiIgOiAiaHIiCgl9LHsKCQkia2V5IiA6ICJDbWQtTCIsCgkJImFjdGlvbiIgOiAidW5vcmRlcmVkbGlzdCIKCX0sewoJCSJrZXkiIDogIlNoaWZ0LUNtZC1PIiwKCQkiYWN0aW9uIiA6ICJvcmRlcmVkbGlzdCIKCX0sewoJCSJrZXkiIDogIkNtZC1BbHQtTCIsCgkJImFjdGlvbiIgOiAib3JkZXJlZGxpc3QiCgl9LHsKCQkia2V5IiA6ICJTaGlmdC1DbWQtVSIsCgkJImFjdGlvbiIgOiAidW5vcmRlcmVkbGlzdCIKCX0sewoJCSJrZXkiIDogIkNtZC0nIiwKCQkiYWN0aW9uIiA6ICJibG9ja3F1b3RlIgoJfSx7CgkJImtleSIgOiAiU2hpZnQtQ21kLUIiLAoJCSJhY3Rpb24iIDogImJsb2NrcXVvdGUiCgl9LHsKCQkia2V5IiA6ICJTaGlmdC1DbWQtQyIsCgkJImFjdGlvbiIgOiAiYmxvY2txdW90ZSIKCX0sewoJCSJrZXkiIDogIlNoaWZ0LUNtZC1JIiwKCQkiYWN0aW9uIiA6ICJpbWFnZSIKCX0sewoJCSJrZXkiIDogIlNoaWZ0LUNtZC1MIiwKCQkiYWN0aW9uIiA6ICJsaW5rIgoJfSx7CgkJImtleSIgOiAiU2hpZnQtQ21kLVQiLAoJCSJhY3Rpb24iIDogInRhYmxlIgoJfQpd"}];
+DateTools.DAY_SHORT_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+DateTools.DAY_NAMES = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+DateTools.MONTH_SHORT_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+DateTools.MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 haxe_crypto_Base64.CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 haxe_crypto_Base64.BYTES = haxe_io_Bytes.ofString(haxe_crypto_Base64.CHARS);
 AppMain.main();

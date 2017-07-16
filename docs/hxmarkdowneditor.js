@@ -11,7 +11,11 @@ var AppMain = function() {
 	this.shortCuts = JSON.parse(haxe_Resource.getString("key"));
 	this.IS_FULL_SCREEN = false;
 	this.markdowExample2 = haxe_Resource.getString("markdown02");
+	this.currentID = 0;
+	this.memoryArray = [];
+	this.currentArray = [];
 	this.currentFileName = "monk";
+	this.currentFilePath = "";
 	this.isElectron = false;
 	window.console.info("This project is a WIP-sideproject written in Haxe (www.haxe.org)");
 	window.console.info("For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor");
@@ -28,6 +32,7 @@ AppMain.prototype = {
 		$(function() {
 			_gthis.initEditors();
 			_gthis.initShortcuts();
+			_gthis.initScreen();
 			window.document.getElementById("btn-new").addEventListener("click",$bind(_gthis,_gthis.newHandler),false);
 			window.document.getElementById("btn-open").addEventListener("click",$bind(_gthis,_gthis.openHandler),false);
 			window.document.getElementById("file-upload").addEventListener("change",$bind(_gthis,_gthis.openHandler));
@@ -39,7 +44,7 @@ AppMain.prototype = {
 			window.addEventListener("resize",$bind(_gthis,_gthis.onResizeHandler));
 			_gthis.onResizeHandler(null);
 			_gthis.setMonkDocumentTitle("Monk Markdown Editor");
-			_gthis.updatePreview();
+			_gthis.updateAll();
 		});
 	}
 	,initEditors: function() {
@@ -61,7 +66,7 @@ AppMain.prototype = {
 		this.set_outMarkdownValue(md);
 		this.editor = CodeMirror.fromTextArea(this.inMarkdown,{ tabSize : "2", indentWithTabs : true, lineWrapping : true, extraKeys : { "Enter" : "newlineAndIndentContinueMarkdownList"}, mode : "markdown", tabMode : "indent", theme : "monk"});
 		this.editor.on("change",function(cm,change) {
-			_gthis.updatePreview();
+			_gthis.updateAll();
 		});
 		this.editor.focus();
 	}
@@ -87,19 +92,58 @@ AppMain.prototype = {
 		}
 		this.editor.addKeyMap(map);
 	}
+	,initScreen: function() {
+		if(this.currentArray.length == 0) {
+			console.log("show start up screen");
+		} else if(this.memoryArray.length != 0) {
+			console.log("show last opend document(s)");
+		}
+		this.currentID = 0;
+		var item = { path : this.currentFilePath, name : this.currentFileName, isSave : false, content : ""};
+		this.currentArray[this.currentID] = item;
+	}
 	,replaceString2Symbols: function(keybinding) {
 		var str = "`" + StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(keybinding,"Cmd","⌘"),"Alt","⌥"),"Ctrl","⌃"),"Shift","⇧"),"-","` `") + "`";
 		return StringTools.replace(str,"``","`");
 	}
-	,setMonkDocumentTitle: function(title) {
+	,setMonkDocumentTitle: function(titleOrPath) {
 		var widowtitle = window.document.getElementsByClassName("window-title")[0];
+		var title = titleOrPath;
+		if(titleOrPath.indexOf("/") != -1) {
+			title = titleOrPath.substring(titleOrPath.lastIndexOf("/") + 1,titleOrPath.length);
+			this.currentFileName = title;
+			this.currentFilePath = titleOrPath;
+		}
 		widowtitle.innerText = title;
 	}
-	,setWordcount: function(content) {
+	,setWordcount: function() {
+		var content = this.get_inMarkdownValue();
 		var wordcount = window.document.getElementsByClassName("window-wordcount")[0];
 		var str = StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(content,"\t",""),"\n",""),"\r",""),"#",""),"*",""),"_",""),"`",""),"  ","");
 		var array = str.split(" ");
 		wordcount.innerText = "" + array.length + " words";
+	}
+	,setBadges: function() {
+		var badge = window.document.getElementById("btn-save").getElementsByClassName("badge")[0];
+		var count = 0;
+		var out = "";
+		var _g = 0;
+		var _g1 = this.currentArray;
+		while(_g < _g1.length) {
+			var i = _g1[_g];
+			++_g;
+			if(!i.isSave) {
+				++count;
+			}
+		}
+		if(count == 0) {
+			out = "";
+		} else if(count == null) {
+			out = "null";
+		} else {
+			out = "" + count;
+		}
+		badge.innerText = out;
 	}
 	,toggleOpenBtn: function() {
 		var electronContainer = window.document.getElementById("container-btn-open-electron");
@@ -158,8 +202,12 @@ AppMain.prototype = {
 		}
 	}
 	,newHandler: function(e) {
+		this.currentFilePath = "";
 		this.currentFileName = "new_document";
-		this.editor.setValue("# New document\n\nmonk");
+		var content = "# New document\n\nCreate on: " + DateTools.format(new Date(),"%Y-%m-%d_%H:%M:%S") + "\n\nmonk";
+		var item = { path : this.currentFilePath, name : this.currentFileName, isSave : false, content : content};
+		this.currentArray.push(item);
+		this.editor.setValue(content);
 		this.editor.focus();
 	}
 	,saveHandler: function(e) {
@@ -343,14 +391,25 @@ AppMain.prototype = {
 		if(e != null) {
 			e.stopPropagation();
 		}
+		this.currentArray[this.currentID].isSave = true;
 		var text = this.editor.getValue();
 		var date = DateTools.format(new Date(),"%Y-%m-%d_%H:%M:%S");
 		var blob = new Blob([text],{ type : "text/plain;charset=utf-8"});
 		saveAs(blob,"" + this.currentFileName + "_" + date + ".md");
 	}
-	,updatePreview: function() {
+	,updateAll: function() {
 		this.set_outMarkdownValue(this.editor.getValue());
-		this.setWordcount(this.editor.getValue());
+		this.set_inMarkdownValue(this.editor.getValue());
+		this.checkSave();
+		this.setWordcount();
+		this.setBadges();
+	}
+	,checkSave: function() {
+		this.currentArray[this.currentID].isSave = false;
+	}
+	,get_inMarkdownValue: function() {
+		this.set_inMarkdownValue(this.inMarkdown.innerText);
+		return this.inMarkdownValue;
 	}
 	,set_inMarkdownValue: function(value) {
 		this.inMarkdown.innerHTML = value;

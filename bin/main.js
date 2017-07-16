@@ -18,7 +18,6 @@ var Main = function() {
 			}
 			_gthis.mainWindow = null;
 		});
-		_gthis.mainWindow.webContents.openDevTools();
 		_gthis.mainWindow.loadURL("file://" + __dirname + "/index.html");
 		new MainMenu(_gthis);
 		electron_main_IpcMain.on("test",function(event,test) {
@@ -28,29 +27,27 @@ var Main = function() {
 			_gthis.onOpenDialogHandler(event1);
 		});
 		electron_main_IpcMain.on("SAVE_FILE",function(event2,filepath,content1) {
-			js_node_Fs.writeFile(filepath,content1,function(err) {
-				if(err != null) {
-					console.log("An error ocurred updating the file" + err.message);
-					console.log(err);
-					return;
-				}
-				console.log("The file has been succesfully saved");
-			});
+			_gthis.onSaveFileHandler(event2,filepath,content1);
 		});
-		electron_main_IpcMain.on("asynchronous-message",function(event3,arg) {
-			console.log(arg);
-			event3.sender.send("asynchronous-reply","pong");
+		electron_main_IpcMain.on("SAVE_AS_FILE",function(event3,filepath1,content2) {
+			_gthis.onSaveAsFileHandler(event3,filepath1,content2);
+			haxe_Log.trace("yep",{ fileName : "Main.hx", lineNumber : 123, className : "Main", methodName : "new"});
 		});
-		electron_main_IpcMain.on("synchronous-message",function(event4,arg1) {
-			console.log(arg1);
-			event4.returnValue = "pong";
+		electron_main_IpcMain.on("asynchronous-message",function(event4,arg) {
+			haxe_Log.trace(arg,{ fileName : "Main.hx", lineNumber : 129, className : "Main", methodName : "new"});
+			event4.sender.send("asynchronous-reply","pong");
 		});
-		electron_main_IpcMain.on("doorBell",function(event5,arg2) {
-			console.log(arg2);
-			event5.returnValue = "dong";
+		electron_main_IpcMain.on("synchronous-message",function(event5,arg1) {
+			haxe_Log.trace(arg1,{ fileName : "Main.hx", lineNumber : 135, className : "Main", methodName : "new"});
+			event5.returnValue = "pong";
+		});
+		electron_main_IpcMain.on("doorBell",function(event6,arg2) {
+			haxe_Log.trace(arg2,{ fileName : "Main.hx", lineNumber : 142, className : "Main", methodName : "new"});
+			event6.returnValue = "dong";
 		});
 	});
 };
+Main.__name__ = true;
 Main.main = function() {
 	new Main();
 };
@@ -58,15 +55,15 @@ Main.prototype = {
 	onOpenDialogHandler: function(event) {
 		var _gthis = this;
 		electron_main_Dialog.showOpenDialog(null,{ },function(fileNames) {
-			console.log(fileNames);
+			haxe_Log.trace(fileNames,{ fileName : "Main.hx", lineNumber : 159, className : "Main", methodName : "onOpenDialogHandler"});
 			if(fileNames == null) {
-				console.log("No file selected");
+				haxe_Log.trace("No file selected",{ fileName : "Main.hx", lineNumber : 162, className : "Main", methodName : "onOpenDialogHandler"});
 				return;
 			}
 			var filepath = fileNames[0];
 			js_node_Fs.readFile(filepath,"utf-8",function(err,data) {
 				if(err != null) {
-					console.log("An error ocurred reading the file :" + err.message);
+					haxe_Log.trace("An error ocurred reading the file :" + err.message,{ fileName : "Main.hx", lineNumber : 170, className : "Main", methodName : "onOpenDialogHandler"});
 					return;
 				}
 				if(event != null) {
@@ -75,6 +72,26 @@ Main.prototype = {
 					_gthis.mainWindow.webContents.send("SEND_FILE_CONTENT",filepath,data);
 				}
 			});
+		});
+	}
+	,onSaveFileHandler: function(event,filepath,content) {
+		var _gthis = this;
+		haxe_Log.trace(filepath,{ fileName : "Main.hx", lineNumber : 185, className : "Main", methodName : "onSaveFileHandler", customParams : [content]});
+		js_node_Fs.writeFile(filepath,content,function(err) {
+			if(err != null) {
+				haxe_Log.trace("An error ocurred updating the file" + err.message,{ fileName : "Main.hx", lineNumber : 188, className : "Main", methodName : "onSaveFileHandler"});
+				haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 189, className : "Main", methodName : "onSaveFileHandler"});
+				return;
+			}
+			haxe_Log.trace("The file has been succesfully saved",{ fileName : "Main.hx", lineNumber : 192, className : "Main", methodName : "onSaveFileHandler"});
+			_gthis.mainWindow.webContents.send("SEND_FILE_PATH",filepath);
+		});
+	}
+	,onSaveAsFileHandler: function(event,filepath,content) {
+		var _gthis = this;
+		electron_main_Dialog.showSaveDialog(this.mainWindow,{ title : "foo", defaultPath : "~/foo.md"},function(result) {
+			haxe_Log.trace("" + result,{ fileName : "Main.hx", lineNumber : 202, className : "Main", methodName : "onSaveAsFileHandler"});
+			_gthis.onSaveFileHandler(null,result,content);
 		});
 	}
 };
@@ -104,30 +121,34 @@ var MainMenu = function(main) {
 	var menu = electron_main_Menu.buildFromTemplate(template);
 	electron_main_Menu.setApplicationMenu(menu);
 };
+MainMenu.__name__ = true;
 MainMenu.prototype = {
 	keyMapping: function(name) {
 		switch(name) {
 		case "newfile":
-			console.log("--> newfile");
+			haxe_Log.trace("--> newfile",{ fileName : "MainMenu.hx", lineNumber : 152, className : "MainMenu", methodName : "keyMapping"});
 			break;
 		case "open":
-			console.log("--> open");
+			haxe_Log.trace("--> open",{ fileName : "MainMenu.hx", lineNumber : 149, className : "MainMenu", methodName : "keyMapping"});
 			this.main.onOpenDialogHandler(null);
 			break;
 		case "save":
-			console.log("--> save");
+			haxe_Log.trace("--> save",{ fileName : "MainMenu.hx", lineNumber : 155, className : "MainMenu", methodName : "keyMapping"});
+			this.main.mainWindow.webContents.send("PING_SAVE");
 			break;
 		case "saveall":
-			console.log("--> saveall");
+			haxe_Log.trace("--> saveall",{ fileName : "MainMenu.hx", lineNumber : 153, className : "MainMenu", methodName : "keyMapping"});
 			break;
 		case "saveas":
-			console.log("--> saveas");
+			haxe_Log.trace("--> saveas",{ fileName : "MainMenu.hx", lineNumber : 151, className : "MainMenu", methodName : "keyMapping"});
+			this.main.mainWindow.webContents.send("SAVE_AS_FILE");
 			break;
 		default:
 			console.info("case '" + name + "' : trace(\"--> " + name + "\"); ");
 		}
 	}
 };
+Math.__name__ = true;
 var electron_CrashReporter = require("electron").crashReporter;
 var electron_Shell = require("electron").shell;
 var electron_main_App = require("electron").app;
@@ -135,9 +156,132 @@ var electron_main_BrowserWindow = require("electron").BrowserWindow;
 var electron_main_Dialog = require("electron").dialog;
 var electron_main_IpcMain = require("electron").ipcMain;
 var electron_main_Menu = require("electron").Menu;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_io_Bytes = function() { };
+haxe_io_Bytes.__name__ = true;
+var js_Boot = function() { };
+js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg = i != null ? i.fileName + ":" + i.lineNumber + ": " : "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	var tmp;
+	if(typeof(document) != "undefined") {
+		d = document.getElementById("haxe:trace");
+		tmp = d != null;
+	} else {
+		tmp = false;
+	}
+	if(tmp) {
+		d.innerHTML += js_Boot.__unhtml(msg) + "<br/>";
+	} else if(typeof console != "undefined" && console.log != null) {
+		console.log(msg);
+	}
+};
+js_Boot.__string_rec = function(o,s) {
+	if(o == null) {
+		return "null";
+	}
+	if(s.length >= 5) {
+		return "<...>";
+	}
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) {
+		t = "object";
+	}
+	switch(t) {
+	case "function":
+		return "<function>";
+	case "object":
+		if(o instanceof Array) {
+			if(o.__enum__) {
+				if(o.length == 2) {
+					return o[0];
+				}
+				var str = o[0] + "(";
+				s += "\t";
+				var _g1 = 2;
+				var _g = o.length;
+				while(_g1 < _g) {
+					var i = _g1++;
+					if(i != 2) {
+						str += "," + js_Boot.__string_rec(o[i],s);
+					} else {
+						str += js_Boot.__string_rec(o[i],s);
+					}
+				}
+				return str + ")";
+			}
+			var l = o.length;
+			var i1;
+			var str1 = "[";
+			s += "\t";
+			var _g11 = 0;
+			var _g2 = l;
+			while(_g11 < _g2) {
+				var i2 = _g11++;
+				str1 += (i2 > 0 ? "," : "") + js_Boot.__string_rec(o[i2],s);
+			}
+			str1 += "]";
+			return str1;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( e ) {
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") {
+				return s2;
+			}
+		}
+		var k = null;
+		var str2 = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		for( var k in o ) {
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str2.length != 2) {
+			str2 += ", \n";
+		}
+		str2 += s + k + " : " + js_Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str2 += "\n" + s + "}";
+		return str2;
+	case "string":
+		return o;
+	default:
+		return String(o);
+	}
+};
 var js_node_Fs = require("fs");
 var js_node_buffer_Buffer = require("buffer").Buffer;
+String.__name__ = true;
+Array.__name__ = true;
 Main.main();
 })();
 

@@ -1,19 +1,13 @@
+package;
+
 import electron.main.App;
 import electron.main.BrowserWindow;
 import electron.CrashReporter;
 
 import electron.main.IpcMain;
 import electron.main.Dialog;
-import electron.main.Menu;
-import electron.main.MenuItem;
-import electron.main.GlobalShortcut;
-
-// import js.Browser.*;
 
 import js.Node;
-import js.Node.console;
-// import js.Node.;
-// import js.npm.Express;
 import js.node.Fs;
 
 import model.constant.Channel;
@@ -23,7 +17,7 @@ class Main {
 
 	// Keep a global reference of the window object, if you don't, the window will
 	// be closed automatically when the JavaScript object is garbage collected.
-	var mainWindow : BrowserWindow = null;
+	public var mainWindow : BrowserWindow = null;
 
 	function new (){
 		electron.CrashReporter.start({
@@ -63,7 +57,7 @@ class Main {
 			});
 
 			// Open the DevTools.
-			mainWindow.webContents.openDevTools();
+			// mainWindow.webContents.openDevTools();
 
 			// and load the index.html of the app.
 			mainWindow.loadURL('file://' + js.Node.__dirname + '/index.html');
@@ -121,18 +115,12 @@ class Main {
 			});
 
 			IpcMain.on(Channel.SAVE_FILE, function (event, filepath, content){
-
-				// trace(filepath,content);
-
-				Fs.writeFile(filepath, content, function (err) {
-					if (err != null) {
-						trace("An error ocurred updating the file" + err.message);
-						trace(err);
-						return;
-					}
-
-					trace("The file has been succesfully saved");
-				});
+				onSaveFileHandler(event, filepath, content);
+			});
+			IpcMain.on(Channel.SAVE_AS_FILE, function (event, filepath, content){
+				// onSaveFileHandler(event, filepath, content);
+				onSaveAsFileHandler(event, filepath, content);
+				trace('yep');
 			});
 
 
@@ -189,8 +177,30 @@ class Main {
 					event.sender.send(Channel.SEND_FILE_CONTENT, filepath, data);
 				else
 					this.mainWindow.webContents.send(Channel.SEND_FILE_CONTENT, filepath, data);
-					// mainWindow..send('dd');
 			});
+		});
+	}
+
+	public function onSaveFileHandler(event:Dynamic, filepath:String, content:String){
+		trace(filepath,content);
+		Fs.writeFile(filepath, content, function (err) {
+			if (err != null) {
+				trace("An error ocurred updating the file" + err.message);
+				trace(err);
+				return;
+			}
+			trace("The file has been succesfully saved");
+			this.mainWindow.webContents.send(Channel.SEND_FILE_PATH, filepath);
+		});
+	}
+
+	public function onSaveAsFileHandler(event:Dynamic, filepath:String, content:String){
+		Dialog.showSaveDialog(mainWindow, {
+			title: 'foo',
+			defaultPath: '~/foo.md'
+		}, function (result) {
+			trace('$result');
+			onSaveFileHandler(null, result, content);
 		});
 	}
 

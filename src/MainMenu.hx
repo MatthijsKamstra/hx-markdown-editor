@@ -1,3 +1,4 @@
+import model.constant.Channel;
 import electron.main.Menu;
 import js.Node.process;
 import js.Node.console;
@@ -147,11 +148,11 @@ class MainMenu {
 		switch (name) {
 			case 'open' : trace("--> open"); this.main.onOpenDialogHandler(null);
 
-			case 'saveas' : trace("--> saveas");
+			case 'saveas' : trace("--> saveas"); this.main.mainWindow.webContents.send(Channel.SAVE_AS_FILE);
 			case 'newfile' : trace("--> newfile");
 			case 'saveall' : trace("--> saveall");
 
-			case 'save' : trace('--> save') ;
+			case 'save' : trace('--> save'); this.main.mainWindow.webContents.send(Channel.PING_SAVE);
 			default: console.info('case \'${name}\' : trace("--> ${name}"); ');
 
 		}
