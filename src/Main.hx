@@ -196,8 +196,8 @@ class Main {
 
 	public function onSaveAsFileHandler(event:Dynamic, filepath:String, content:String){
 		Dialog.showSaveDialog(mainWindow, {
-			title: 'foo',
-			defaultPath: '~/foo.md'
+			title: '_foo',
+			defaultPath: '~/_foo.md'
 		}, function (result) {
 			trace('$result');
 			onSaveFileHandler(null, result, content);

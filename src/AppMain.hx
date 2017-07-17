@@ -27,11 +27,13 @@ import model.constant.Channel;
 class AppMain {
 
 	var isElectron = false;
+
 	var currentFilePath:String = '';
 	var currentFileName:String = 'monk';
-	var currentArray:Array<CurrentDoc> = [];
-	var memoryArray:Array<CurrentDoc> = [];
+
 	var currentID:Int = 0;
+	var currentArray:Array<CurrentDoc> = [];
+	var memoryArray:Array<CurrentDoc> = []; // doesn't do anything yet
 
 	var editor : CodeMirror;
 
@@ -54,8 +56,8 @@ class AppMain {
 	var shortCuts : Array<KeyBindings> = haxe.Json.parse(haxe.Resource.getString("key"));
 
     public function new(){
-		console.info('This project is a WIP-sideproject written in Haxe (www.haxe.org)');
-		console.info('For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor');
+		console.info('This is a WIP markdown-editor sideproject written in Haxe (www.haxe.org)');
+		console.info('For more info about Monk Markdown Editor check https://github.com/MatthijsKamstra/hx-markdown-editor');
 
 		// Some variables
 		// var isMac = /Mac/.test(navigator.platform);
@@ -80,7 +82,12 @@ class AppMain {
 			trace("Channel.SAVE_AS_FILE");
 		});
 		IpcRenderer.on(Channel.SEND_FILE_PATH, function(event, path){
+			trace('path: $path');
+			currentArray[currentID].isSave = true;
+			currentArray[currentID].path = path;
+			currentFilePath=path; // TODO: [mck] remove and make work with currentArray[currentID]
 			setMonkDocumentTitle(path);
+			updateAll();
 		});
 
 		#end
@@ -163,6 +170,7 @@ class AppMain {
 			// viewportMargin: 'Infinity'
 		});
 		editor.on("change", function(cm, change) {
+			currentArray[currentID].isSave = false;
 			updateAll();
 		});
 		editor.focus(); // make sure the shortcuts work asap by focussing on the editor
@@ -198,14 +206,14 @@ class AppMain {
 			trace('show last opend document(s)');
 		} else {
 		}
-		currentID = 0;
-		var item : CurrentDoc = {
-			path : currentFilePath,
-			name : currentFileName,
-			isSave : false,
-			content : ''
-		}
-		currentArray[currentID] = item;
+		// currentID = 0;
+		// var item : CurrentDoc = {
+		// 	path : currentFilePath,
+		// 	name : currentFileName,
+		// 	isSave : false,
+		// 	content : ''
+		// }
+		// currentArray[currentID] = item;
 
 	}
 
@@ -244,8 +252,8 @@ class AppMain {
 		// todo make sure the path and document name are split
 		if (titleOrPath.indexOf('/') != -1) {
 			title = titleOrPath.substring ( titleOrPath.lastIndexOf('/') + 1 , titleOrPath.length);
-			currentFileName = title;
-			currentFilePath = titleOrPath;
+			currentFileName = title; // TODO: [mck] remove and make work with currentArray[currentID].name
+			currentFilePath = titleOrPath; // TODO: [mck] remove and make work with currentArray[currentID].path
 		}
 		widowtitle.innerText = title;
 	}
@@ -377,8 +385,8 @@ class AppMain {
 	 *  @param e -
 	 */
 	function newHandler(e){
-		currentFilePath = '';
-		currentFileName = 'new_document';
+		currentFileName = 'new_document'; // TODO: [mck] remove and make work with currentArray[currentID].name
+		currentFilePath = ''; // TODO: [mck] remove and make work with currentArray[currentID].path
 		var content = '# New document\n\nCreate on: ${DateTools.format(Date.now(), "%Y-%m-%d_%H:%M:%S")}\n\nmonk';
 		var item : CurrentDoc = {
 			path : currentFilePath,
@@ -386,7 +394,10 @@ class AppMain {
 			isSave : false,
 			content : content
 		}
-		currentArray.push(item);
+		// [mck] this should work with more tabs, but for now we ignore more
+		// currentArray.push(item);
+		currentArray[currentID] = item;
+		setMonkDocumentTitle(currentFileName);
 		// and now update editor (and re-populate views)
 		editor.setValue(content);
 		editor.focus();
@@ -508,6 +519,14 @@ class AppMain {
 			trace(filepath);
 			currentFilePath = filepath;
 			inMarkdownValue = data;
+			var item : CurrentDoc = {
+				path : filepath,
+				name : filepath,
+				isSave : true,
+				content : data
+			}
+			currentArray[currentID] = item;
+			setMonkDocumentTitle(currentFileName);
 			editor.setValue(data);
 		});
 	}
@@ -520,7 +539,7 @@ class AppMain {
 			currentArray[currentID].isSave = false;
 			IpcRenderer.send(Channel.SAVE_AS_FILE, currentFilePath, editor.getValue());
 		} else {
-			trace(_current);
+			// trace(_current);
 			trace('open file ${currentFilePath}');
 			currentArray[currentID].isSave = false;
 			IpcRenderer.send(Channel.SAVE_FILE, currentFilePath, editor.getValue());
@@ -602,7 +621,7 @@ class AppMain {
 		if (file == null) {
 			return;
 		}
-		currentFileName = file.name;
+		currentFileName = file.name; // TODO: [mck] remove and make work with currentArray[currentID]
 		setMonkDocumentTitle(currentFileName);
 
 		var reader = new FileReader();
@@ -629,20 +648,20 @@ class AppMain {
 	function updateAll (){
 		outMarkdownValue = editor.getValue();
 		inMarkdownValue = editor.getValue();
-		checkSave();
+		// checkSave();
 		setWordcount();
 		setBadges();
 	}
 
-	function checkSave(){
-		// for (i in 0...currentArray.length){
-		// 	var _currentArray = currentArray[i];
-		// 	if(_currentArray[i].isSave){
-		// 		_currentArray[i]
-		// 	}
-		// }
-		currentArray[currentID].isSave = false;
-	}
+	// function checkSave(){
+	// 	// for (i in 0...currentArray.length){
+	// 	// 	var _currentArray = currentArray[i];
+	// 	// 	if(_currentArray[i].isSave){
+	// 	// 		_currentArray[i]
+	// 	// 	}
+	// 	// }
+	// 	currentArray[currentID].isSave = false;
+	// }
 
 	// ____________________________________ getter/setter ____________________________________
 

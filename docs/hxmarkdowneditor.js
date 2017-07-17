@@ -11,14 +11,14 @@ var AppMain = function() {
 	this.shortCuts = JSON.parse(haxe_Resource.getString("key"));
 	this.IS_FULL_SCREEN = false;
 	this.markdowExample2 = haxe_Resource.getString("markdown02");
-	this.currentID = 0;
 	this.memoryArray = [];
 	this.currentArray = [];
+	this.currentID = 0;
 	this.currentFileName = "monk";
 	this.currentFilePath = "";
 	this.isElectron = false;
-	window.console.info("This project is a WIP-sideproject written in Haxe (www.haxe.org)");
-	window.console.info("For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor");
+	window.console.info("This is a WIP markdown-editor sideproject written in Haxe (www.haxe.org)");
+	window.console.info("For more info about Monk Markdown Editor check https://github.com/MatthijsKamstra/hx-markdown-editor");
 	this.isElectron = false;
 	this.init();
 };
@@ -66,6 +66,7 @@ AppMain.prototype = {
 		this.set_outMarkdownValue(md);
 		this.editor = CodeMirror.fromTextArea(this.inMarkdown,{ tabSize : "2", indentWithTabs : true, lineWrapping : true, extraKeys : { "Enter" : "newlineAndIndentContinueMarkdownList"}, mode : "markdown", tabMode : "indent", theme : "monk"});
 		this.editor.on("change",function(cm,change) {
+			_gthis.currentArray[_gthis.currentID].isSave = false;
 			_gthis.updateAll();
 		});
 		this.editor.focus();
@@ -98,9 +99,6 @@ AppMain.prototype = {
 		} else if(this.memoryArray.length != 0) {
 			console.log("show last opend document(s)");
 		}
-		this.currentID = 0;
-		var item = { path : this.currentFilePath, name : this.currentFileName, isSave : false, content : ""};
-		this.currentArray[this.currentID] = item;
 	}
 	,replaceString2Symbols: function(keybinding) {
 		var str = "`" + StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(keybinding,"Cmd","⌘"),"Alt","⌥"),"Ctrl","⌃"),"Shift","⇧"),"-","` `") + "`";
@@ -202,11 +200,12 @@ AppMain.prototype = {
 		}
 	}
 	,newHandler: function(e) {
-		this.currentFilePath = "";
 		this.currentFileName = "new_document";
+		this.currentFilePath = "";
 		var content = "# New document\n\nCreate on: " + DateTools.format(new Date(),"%Y-%m-%d_%H:%M:%S") + "\n\nmonk";
 		var item = { path : this.currentFilePath, name : this.currentFileName, isSave : false, content : content};
-		this.currentArray.push(item);
+		this.currentArray[this.currentID] = item;
+		this.setMonkDocumentTitle(this.currentFileName);
 		this.editor.setValue(content);
 		this.editor.focus();
 	}
@@ -400,12 +399,8 @@ AppMain.prototype = {
 	,updateAll: function() {
 		this.set_outMarkdownValue(this.editor.getValue());
 		this.set_inMarkdownValue(this.editor.getValue());
-		this.checkSave();
 		this.setWordcount();
 		this.setBadges();
-	}
-	,checkSave: function() {
-		this.currentArray[this.currentID].isSave = false;
 	}
 	,get_inMarkdownValue: function() {
 		this.set_inMarkdownValue(this.inMarkdown.innerText);

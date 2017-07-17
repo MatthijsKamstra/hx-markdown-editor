@@ -89,7 +89,7 @@ Main.prototype = {
 	}
 	,onSaveAsFileHandler: function(event,filepath,content) {
 		var _gthis = this;
-		electron_main_Dialog.showSaveDialog(this.mainWindow,{ title : "foo", defaultPath : "~/foo.md"},function(result) {
+		electron_main_Dialog.showSaveDialog(this.mainWindow,{ title : "_foo", defaultPath : "~/_foo.md"},function(result) {
 			haxe_Log.trace("" + result,{ fileName : "Main.hx", lineNumber : 202, className : "Main", methodName : "onSaveAsFileHandler"});
 			_gthis.onSaveFileHandler(null,result,content);
 		});

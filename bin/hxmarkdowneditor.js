@@ -11,19 +11,19 @@ var AppMain = function() {
 	this.shortCuts = JSON.parse(haxe_Resource.getString("key"));
 	this.IS_FULL_SCREEN = false;
 	this.markdowExample2 = haxe_Resource.getString("markdown02");
-	this.currentID = 0;
 	this.memoryArray = [];
 	this.currentArray = [];
+	this.currentID = 0;
 	this.currentFileName = "monk";
 	this.currentFilePath = "";
 	this.isElectron = false;
 	var _gthis = this;
-	window.console.info("This project is a WIP-sideproject written in Haxe (www.haxe.org)");
-	window.console.info("For more info about this markdown editor check https://github.com/MatthijsKamstra/hx-markdown-editor");
+	window.console.info("This is a WIP markdown-editor sideproject written in Haxe (www.haxe.org)");
+	window.console.info("For more info about Monk Markdown Editor check https://github.com/MatthijsKamstra/hx-markdown-editor");
 	this.isElectron = true;
-	haxe_Log.trace("electron",{ fileName : "AppMain.hx", lineNumber : 67, className : "AppMain", methodName : "new", customParams : ["electron " + process.versions["electron"]]});
-	haxe_Log.trace("node",{ fileName : "AppMain.hx", lineNumber : 68, className : "AppMain", methodName : "new", customParams : ["node " + process.version]});
-	haxe_Log.trace("system",{ fileName : "AppMain.hx", lineNumber : 69, className : "AppMain", methodName : "new", customParams : [process.platform + " " + process.arch]});
+	haxe_Log.trace("electron",{ fileName : "AppMain.hx", lineNumber : 69, className : "AppMain", methodName : "new", customParams : ["electron " + process.versions["electron"]]});
+	haxe_Log.trace("node",{ fileName : "AppMain.hx", lineNumber : 70, className : "AppMain", methodName : "new", customParams : ["node " + process.version]});
+	haxe_Log.trace("system",{ fileName : "AppMain.hx", lineNumber : 71, className : "AppMain", methodName : "new", customParams : [process.platform + " " + process.arch]});
 	electron_renderer_IpcRenderer.on("PING_SAVE",function(event) {
 		_gthis.onSaveHandler();
 	});
@@ -31,10 +31,15 @@ var AppMain = function() {
 		_gthis.onSaveHandler();
 	});
 	electron_renderer_IpcRenderer.on("SAVE_AS_FILE",function(event2) {
-		haxe_Log.trace("Channel.SAVE_AS_FILE",{ fileName : "AppMain.hx", lineNumber : 80, className : "AppMain", methodName : "new"});
+		haxe_Log.trace("Channel.SAVE_AS_FILE",{ fileName : "AppMain.hx", lineNumber : 82, className : "AppMain", methodName : "new"});
 	});
 	electron_renderer_IpcRenderer.on("SEND_FILE_PATH",function(event3,path) {
+		haxe_Log.trace("path: " + path,{ fileName : "AppMain.hx", lineNumber : 85, className : "AppMain", methodName : "new"});
+		_gthis.currentArray[_gthis.currentID].isSave = true;
+		_gthis.currentArray[_gthis.currentID].path = path;
+		_gthis.currentFilePath = path;
 		_gthis.setMonkDocumentTitle(path);
+		_gthis.updateAll();
 	});
 	this.init();
 };
@@ -82,6 +87,7 @@ AppMain.prototype = {
 		this.set_outMarkdownValue(md);
 		this.editor = CodeMirror.fromTextArea(this.inMarkdown,{ tabSize : "2", indentWithTabs : true, lineWrapping : true, extraKeys : { "Enter" : "newlineAndIndentContinueMarkdownList"}, mode : "markdown", tabMode : "indent", theme : "monk"});
 		this.editor.on("change",function(cm,change) {
+			_gthis.currentArray[_gthis.currentID].isSave = false;
 			_gthis.updateAll();
 		});
 		this.editor.focus();
@@ -110,13 +116,10 @@ AppMain.prototype = {
 	}
 	,initScreen: function() {
 		if(this.currentArray.length == 0) {
-			haxe_Log.trace("show start up screen",{ fileName : "AppMain.hx", lineNumber : 196, className : "AppMain", methodName : "initScreen"});
+			haxe_Log.trace("show start up screen",{ fileName : "AppMain.hx", lineNumber : 204, className : "AppMain", methodName : "initScreen"});
 		} else if(this.memoryArray.length != 0) {
-			haxe_Log.trace("show last opend document(s)",{ fileName : "AppMain.hx", lineNumber : 198, className : "AppMain", methodName : "initScreen"});
+			haxe_Log.trace("show last opend document(s)",{ fileName : "AppMain.hx", lineNumber : 206, className : "AppMain", methodName : "initScreen"});
 		}
-		this.currentID = 0;
-		var item = { path : this.currentFilePath, name : this.currentFileName, isSave : false, content : ""};
-		this.currentArray[this.currentID] = item;
 	}
 	,replaceString2Symbols: function(keybinding) {
 		var str = "`" + StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(keybinding,"Cmd","⌘"),"Alt","⌥"),"Ctrl","⌃"),"Shift","⇧"),"-","` `") + "`";
@@ -188,7 +191,7 @@ AppMain.prototype = {
 		var cursor = doc.getCursor();
 		if(doc.somethingSelected()) {
 			var selections = doc.listSelections();
-			haxe_Log.trace(selections,{ fileName : "AppMain.hx", lineNumber : 352, className : "AppMain", methodName : "insertBefore"});
+			haxe_Log.trace(selections,{ fileName : "AppMain.hx", lineNumber : 360, className : "AppMain", methodName : "insertBefore"});
 			var pos = [selections[0].head.line,selections[0].anchor.line];
 			pos.sort(function(a,b) {
 				if(a < b) {
@@ -212,11 +215,12 @@ AppMain.prototype = {
 		}
 	}
 	,newHandler: function(e) {
-		this.currentFilePath = "";
 		this.currentFileName = "new_document";
+		this.currentFilePath = "";
 		var content = "# New document\n\nCreate on: " + DateTools.format(new Date(),"%Y-%m-%d_%H:%M:%S") + "\n\nmonk";
 		var item = { path : this.currentFilePath, name : this.currentFileName, isSave : false, content : content};
-		this.currentArray.push(item);
+		this.currentArray[this.currentID] = item;
+		this.setMonkDocumentTitle(this.currentFileName);
 		this.editor.setValue(content);
 		this.editor.focus();
 	}
@@ -260,7 +264,7 @@ AppMain.prototype = {
 		if(isFocus == null) {
 			isFocus = false;
 		}
-		haxe_Log.trace("fullscreenToggleHandler",{ fileName : "AppMain.hx", lineNumber : 467, className : "AppMain", methodName : "fullscreenToggleHandler"});
+		haxe_Log.trace("fullscreenToggleHandler",{ fileName : "AppMain.hx", lineNumber : 478, className : "AppMain", methodName : "fullscreenToggleHandler"});
 		var doc = window.document;
 		var el = window.document.documentElement;
 		if(isFocus != true) {
@@ -294,31 +298,33 @@ AppMain.prototype = {
 	,onFolderOpenHandler: function() {
 		var _gthis = this;
 		electron_renderer_IpcRenderer.send("OpenDialog",function() {
-			haxe_Log.trace("OpenDialog",{ fileName : "AppMain.hx", lineNumber : 505, className : "AppMain", methodName : "onFolderOpenHandler"});
+			haxe_Log.trace("OpenDialog",{ fileName : "AppMain.hx", lineNumber : 516, className : "AppMain", methodName : "onFolderOpenHandler"});
 		});
 		electron_renderer_IpcRenderer.on("SEND_FILE_CONTENT",function(event,filepath,data) {
-			haxe_Log.trace(filepath,{ fileName : "AppMain.hx", lineNumber : 508, className : "AppMain", methodName : "onFolderOpenHandler"});
+			haxe_Log.trace(filepath,{ fileName : "AppMain.hx", lineNumber : 519, className : "AppMain", methodName : "onFolderOpenHandler"});
 			_gthis.currentFilePath = filepath;
 			_gthis.set_inMarkdownValue(data);
+			var item = { path : filepath, name : filepath, isSave : true, content : data};
+			_gthis.currentArray[_gthis.currentID] = item;
+			_gthis.setMonkDocumentTitle(_gthis.currentFileName);
 			_gthis.editor.setValue(data);
 		});
 	}
 	,onSaveHandler: function() {
-		haxe_Log.trace("onSaveHandler :: " + this.currentFilePath,{ fileName : "AppMain.hx", lineNumber : 516, className : "AppMain", methodName : "onSaveHandler"});
+		haxe_Log.trace("onSaveHandler :: " + this.currentFilePath,{ fileName : "AppMain.hx", lineNumber : 535, className : "AppMain", methodName : "onSaveHandler"});
 		var _current = this.currentArray[this.currentID];
 		if(_current.path == "") {
-			haxe_Log.trace("new file?",{ fileName : "AppMain.hx", lineNumber : 519, className : "AppMain", methodName : "onSaveHandler"});
+			haxe_Log.trace("new file?",{ fileName : "AppMain.hx", lineNumber : 538, className : "AppMain", methodName : "onSaveHandler"});
 			this.currentArray[this.currentID].isSave = false;
 			electron_renderer_IpcRenderer.send("SAVE_AS_FILE",this.currentFilePath,this.editor.getValue());
 		} else {
-			haxe_Log.trace(_current,{ fileName : "AppMain.hx", lineNumber : 523, className : "AppMain", methodName : "onSaveHandler"});
-			haxe_Log.trace("open file " + this.currentFilePath,{ fileName : "AppMain.hx", lineNumber : 524, className : "AppMain", methodName : "onSaveHandler"});
+			haxe_Log.trace("open file " + this.currentFilePath,{ fileName : "AppMain.hx", lineNumber : 543, className : "AppMain", methodName : "onSaveHandler"});
 			this.currentArray[this.currentID].isSave = false;
 			electron_renderer_IpcRenderer.send("SAVE_FILE",this.currentFilePath,this.editor.getValue());
 		}
 	}
 	,onKeyMappedHandler: function(value) {
-		haxe_Log.trace("onKeyMappedHandler ( " + value + " )",{ fileName : "AppMain.hx", lineNumber : 537, className : "AppMain", methodName : "onKeyMappedHandler"});
+		haxe_Log.trace("onKeyMappedHandler ( " + value + " )",{ fileName : "AppMain.hx", lineNumber : 556, className : "AppMain", methodName : "onKeyMappedHandler"});
 		switch(value) {
 		case "blockquote":
 			this.insertBefore("> ",3);
@@ -393,7 +399,7 @@ AppMain.prototype = {
 			this.insertBefore("* ",3);
 			break;
 		default:
-			haxe_Log.trace("not sure what you want: " + value,{ fileName : "AppMain.hx", lineNumber : 576, className : "AppMain", methodName : "onKeyMappedHandler"});
+			haxe_Log.trace("not sure what you want: " + value,{ fileName : "AppMain.hx", lineNumber : 595, className : "AppMain", methodName : "onKeyMappedHandler"});
 		}
 	}
 	,onResizeHandler: function(e) {
@@ -408,12 +414,8 @@ AppMain.prototype = {
 	,updateAll: function() {
 		this.set_outMarkdownValue(this.editor.getValue());
 		this.set_inMarkdownValue(this.editor.getValue());
-		this.checkSave();
 		this.setWordcount();
 		this.setBadges();
-	}
-	,checkSave: function() {
-		this.currentArray[this.currentID].isSave = false;
 	}
 	,get_inMarkdownValue: function() {
 		this.set_inMarkdownValue(this.inMarkdown.innerText);
